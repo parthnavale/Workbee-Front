@@ -7,6 +7,8 @@ class AnimatedScaleButton extends StatefulWidget {
   final Color? foregroundColor;
   final Size? minimumSize;
   final IconData? icon;
+  final Color? borderColor;
+  final double? borderWidth;
   
   const AnimatedScaleButton({
     super.key, 
@@ -15,7 +17,9 @@ class AnimatedScaleButton extends StatefulWidget {
     this.backgroundColor, 
     this.foregroundColor, 
     this.minimumSize, 
-    this.icon
+    this.icon,
+    this.borderColor,
+    this.borderWidth,
   });
 
   @override
@@ -63,6 +67,15 @@ class _AnimatedScaleButtonState extends State<AnimatedScaleButton>
             backgroundColor: widget.backgroundColor,
             foregroundColor: widget.foregroundColor,
             minimumSize: widget.minimumSize,
+            side: widget.borderColor != null 
+                ? BorderSide(
+                    color: widget.borderColor!,
+                    width: widget.borderWidth ?? 2.0,
+                  )
+                : null,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12.0),
+            ),
           ),
         ),
       ),

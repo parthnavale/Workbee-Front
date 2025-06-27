@@ -1,8 +1,15 @@
 import 'package:flutter/material.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/fade_page_route.dart';
+import '../widgets/app_header.dart';
+import '../widgets/gradient_background.dart';
 import 'poster_home_screen.dart';
 import 'seeker_home_screen.dart';
+import 'sign_in_screen.dart';
+import 'package:provider/provider.dart';
+import '../providers/auth_provider.dart';
+import '../constants/user_roles.dart';
+import '../utils/navigation_utils.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
@@ -45,133 +52,20 @@ class _LoginScreenState extends State<LoginScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.flutter_dash,
-              color: Colors.amber,
-              size: 32,
-            ),
-            const SizedBox(width: 6),
-            const Text(
-              'WORKBEE',
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                color: Colors.white,
-              ),
-            ),
-          ],
-        ),
-        backgroundColor: const Color(0xFF1E293B),
-        elevation: 0,
-        actions: [
-          Builder(
-            builder: (context) {
-              final isWide = MediaQuery.of(context).size.width > 600;
-              if (isWide) {
-                return Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'Home',
-                        style: TextStyle(
-                          color: Colors.white, 
-                          fontWeight: FontWeight.w500
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'ForBusiness',
-                        style: TextStyle(
-                          color: Colors.white, 
-                          fontWeight: FontWeight.w500
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      child: const Text(
-                        'For Workers',
-                        style: TextStyle(
-                          color: Colors.white, 
-                          fontWeight: FontWeight.w500
-                        ),
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom(
-                        backgroundColor: Color(0xFFEAB308),
-                        foregroundColor: Color(0xFF10182B),
-                        padding: EdgeInsets.symmetric(horizontal: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.all(Radius.circular(6)),
-                        ),
-                      ),
-                      child: const Text(
-                        '->] Sign In',
-                        style: TextStyle(
-                          color: Color(0xFF10182B), 
-                          fontWeight: FontWeight.w500
-                        ),
-                      ),
-                    ),
-                  ],
-                );
-              } else {
-                return PopupMenuButton<String>(
-                  color: const Color(0xFF1E293B),
-                  icon: const Icon(Icons.more_vert, color: Colors.white),
-                  onSelected: (value) {
-                    // Handle menu selection here
-                  },
-                  itemBuilder: (context) => [
-                    const PopupMenuItem(
-                      value: 'Home',
-                      child: Text('Home', style: TextStyle(color: Colors.white)),
-                    ),
-                    const PopupMenuItem(
-                      value: 'ForBusiness',
-                      child: Text('ForBusiness', style: TextStyle(color: Colors.white)),
-                    ),
-                    const PopupMenuItem(
-                      value: 'For Workers',
-                      child: Text('For Workers', style: TextStyle(color: Colors.white)),
-                    ),
-                    const PopupMenuItem(
-                      value: 'Sign In',
-                      child: Text('->] Sign In', style: TextStyle(color: Color(0xFFEAB308))),
-                    ),
-                  ],
-                );
-              }
-            },
-          ),
-        ],
+      appBar: AppHeader(
+        onNavigation: (action) => NavigationUtils.handleNavigation(action, context),
       ),
-      body: Container(
-        width: double.infinity,
-        decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF1E293B), Color(0xFF10182B)],
-            begin: Alignment.bottomLeft,
-            end: Alignment.topLeft,
-          ),
-        ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            SlideTransition(
-              position: _slide,
-              child: FadeTransition(
-                opacity: _opacity,
-                child: FittedBox(
+      body: GradientBackground(
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                const SizedBox(height: 60),
+                // App Logo/Title
+                FittedBox(
                   fit: BoxFit.scaleDown,
                   child: RichText(
                     textAlign: TextAlign.center,
@@ -190,37 +84,221 @@ class _LoginScreenState extends State<LoginScreen>
                     ),
                   ),
                 ),
-              ),
+                const SizedBox(height: 10),
+                Text(
+                  'India\'s Premier Job Portal',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey[300],
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Description
+                Text(
+                  'Connect with verified workers and find the perfect job opportunities. '
+                  'Whether you\'re hiring or seeking work, WorkBee makes it simple and secure.',
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: Colors.grey[300],
+                    height: 1.5,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                const SizedBox(height: 40),
+                // Statistics Section
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _buildStatistic('≤5 Min', 'Average Job\nFill Time', Icons.timer),
+                    _buildStatistic('24/7', 'Platform\nAvailability', Icons.access_time),
+                    _buildStatistic('100%', 'Verified\nWorkers', Icons.verified_user),
+                  ],
+                ),
+                const SizedBox(height: 40),
+                // Action Buttons
+                AnimatedScaleButton(
+                  onTap: () {
+                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                    
+                    if (authProvider.isBusinessOwner()) {
+                      // Already signed in as business owner, go to job posting
+                      Navigator.of(context).push(FadePageRoute(
+                        page: const PosterHomeScreen(),
+                      ));
+                    } else {
+                      // Not signed in or signed in as worker, go to sign-in with business owner role
+                      Navigator.of(context).push(FadePageRoute(
+                        page: const SignInScreen(preSelectedRole: UserRole.poster),
+                      ));
+                    }
+                  },
+                  icon: Icons.add_business,
+                  backgroundColor: const Color(0xFFEAB308),
+                  foregroundColor: const Color(0xFF10182B),
+                  minimumSize: const Size(250, 50),
+                  child: const Text("Hire Workers"),
+                  borderColor: const Color(0xFFEAB308),
+                ),
+                const SizedBox(height: 20),
+                AnimatedScaleButton(
+                  onTap: () {
+                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+                    
+                    if (authProvider.isWorker()) {
+                      // Already signed in as worker, go to job search
+                      Navigator.of(context).push(FadePageRoute(
+                        page: const SeekerHomeScreen(),
+                      ));
+                    } else {
+                      // Not signed in or signed in as business owner, go to sign-in with worker role
+                      Navigator.of(context).push(FadePageRoute(
+                        page: const SignInScreen(preSelectedRole: UserRole.seeker),
+                      ));
+                    }
+                  },
+                  icon: Icons.search,
+                  backgroundColor: const Color(0xFF1E293B),
+                  foregroundColor: Colors.white,
+                  minimumSize: const Size(250, 50),
+                  child: const Text("Find Work"),
+                  borderColor: Colors.white,
+                ),
+                const SizedBox(height: 60),
+                // Why Choose Us Section
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  decoration: const BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(30),
+                      topRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: Column(
+                    children: [
+                      const Text(
+                        'Why Choose Us?',
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: Color(0xFF1E293B),
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        "Built for India's unique needs with cutting-edge technology and local insights",
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: Colors.grey,
+                          height: 1.4,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                      const SizedBox(height: 28),
+                      // Features Grid
+                      Column(
+                        children: [
+                          _buildFeatureCard(
+                            'Lightning Fast',
+                            'Jobs filled in 5 minutes or less with our smart matching system',
+                            Icons.flash_on,
+                            Colors.amberAccent,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildFeatureCard(
+                            'Trust & Safety',
+                            'Aadhaar-KYC, background-checked & rated by peers',
+                            Icons.security,
+                            Colors.blueAccent,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildFeatureCard(
+                            'Work From Your City',
+                            'No long drives, no extra allowances. Find work opportunities near you',
+                            Icons.location_city,
+                            Colors.green,
+                          ),
+                          const SizedBox(height: 16),
+                          _buildFeatureCard(
+                            'Instant Payments',
+                            'No more cash hassles—instant UPI payout after shift',
+                            Icons.payment,
+                            Colors.deepPurpleAccent,
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 40),
+              ],
             ),
-            const SizedBox(height: 50),
-            AnimatedScaleButton(
-              onTap: () {
-                Navigator.of(context).push(FadePageRoute(
-                  page: const PosterHomeScreen(),
-                ));
-              },
-              icon: Icons.business_center,
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.indigo,
-              minimumSize: const Size(250, 50),
-              child: const Text("Login as Job Poster"),
-            ),
-            const SizedBox(height: 20),
-            AnimatedScaleButton(
-              onTap: () {
-                Navigator.of(context).push(FadePageRoute(
-                  page: const SeekerHomeScreen(),
-                ));
-              },
-              icon: Icons.search,
-              backgroundColor: Colors.white,
-              foregroundColor: Colors.indigo,
-              minimumSize: const Size(250, 50),
-              child: const Text("Login as Job Seeker"),
-            ),
-          ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStatistic(String value, String label, IconData icon) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(
+          icon,
+          size: 40,
+          color: Colors.white,
+        ),
+        const SizedBox(height: 10),
+        Text(
+          value,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 18,
+            color: Colors.white,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          label,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 14,
+            color: Colors.grey[300],
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildFeatureCard(String title, String description, IconData icon, Color iconColor) {
+    return Column(
+      children: [
+        Icon(
+          icon,
+          size: 32,
+          color: iconColor,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          title,
+          textAlign: TextAlign.center,
+          style: const TextStyle(
+            fontSize: 15,
+            color: Color(0xFF1E293B),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        Text(
+          description,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            fontSize: 12,
+            color: Colors.grey[700],
+          ),
+        ),
+      ],
     );
   }
 } 

@@ -60,11 +60,44 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
         child: Card(
           elevation: 3,
           margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
+          color: const Color(0xFF1E293B),
           child: ListTile(
-            title: Text(widget.job.title),
-            subtitle: Text(widget.job.location),
+            title: Text(
+              widget.job.title,
+              style: const TextStyle(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.job.designation,
+                  style: const TextStyle(
+                    color: Color(0xFFEAB308),
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(
+                      Icons.location_on,
+                      color: Colors.grey,
+                      size: 16,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      widget.job.location,
+                      style: const TextStyle(color: Colors.grey),
+                    ),
+                  ],
+                ),
+              ],
+            ),
             trailing: widget.onTap != null 
-                ? const Icon(Icons.arrow_forward_ios) 
+                ? const Icon(Icons.arrow_forward_ios, color: Color(0xFFEAB308)) 
                 : null,
             onTap: widget.onTap,
           ),

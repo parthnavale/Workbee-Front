@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'providers/job_provider.dart';
-import 'screens/login_screen.dart';
-import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'providers/auth_provider.dart';
+import 'screens/home_screen.dart';
 
 /// Flutter Job Portal App (Updated with Login, Role Separation, and Animation)
 ///
@@ -13,8 +13,11 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 /// - Job posting and viewing functionality
 void main() {
   runApp(
-    ChangeNotifierProvider(
-      create: (_) => JobProvider(),
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => JobProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
       child: const MyApp(),
     ),
   );
@@ -31,8 +34,8 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.indigo,
         fontFamily: 'Montserrat',
       ),
-      debugShowCheckedModeBanner: true,
-      home: const LoginScreen(),
+      debugShowCheckedModeBanner: false,
+      home: const HomeScreen(),
     );
   }
 } 
