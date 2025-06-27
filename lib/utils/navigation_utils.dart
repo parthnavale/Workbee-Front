@@ -7,6 +7,7 @@ import '../screens/add_job_screen.dart';
 import '../screens/home_screen.dart';
 import '../widgets/fade_page_route.dart';
 import '../providers/auth_provider.dart';
+import '../constants/user_roles.dart';
 
 class NavigationUtils {
   static void handleNavigation(String action, BuildContext context) {
@@ -17,14 +18,30 @@ class NavigationUtils {
         // Already on home
         break;
       case 'ForBusiness':
-        Navigator.of(context).push(FadePageRoute(
-          page: const PosterHomeScreen(),
-        ));
+        if (authProvider.isLoggedIn && authProvider.userRole == UserRole.poster) {
+          // Logged in as business owner, go to manage jobs
+          Navigator.of(context).push(FadePageRoute(
+            page: const PosterHomeScreen(),
+          ));
+        } else {
+          // Not logged in or wrong role, go to sign in with business owner role
+          Navigator.of(context).push(FadePageRoute(
+            page: const SignInScreen(preSelectedRole: UserRole.poster),
+          ));
+        }
         break;
       case 'For Workers':
-        Navigator.of(context).push(FadePageRoute(
-          page: const SeekerHomeScreen(),
-        ));
+        if (authProvider.isLoggedIn && authProvider.userRole == UserRole.seeker) {
+          // Logged in as worker, go to find jobs
+          Navigator.of(context).push(FadePageRoute(
+            page: const SeekerHomeScreen(),
+          ));
+        } else {
+          // Not logged in or wrong role, go to sign in with worker role
+          Navigator.of(context).push(FadePageRoute(
+            page: const SignInScreen(preSelectedRole: UserRole.seeker),
+          ));
+        }
         break;
       case 'Sign In':
         Navigator.of(context).push(FadePageRoute(
