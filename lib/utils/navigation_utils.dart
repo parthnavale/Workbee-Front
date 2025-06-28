@@ -3,7 +3,7 @@ import 'package:provider/provider.dart';
 import '../screens/poster_home_screen.dart';
 import '../screens/seeker_home_screen.dart';
 import '../screens/sign_in_screen.dart';
-import '../screens/add_job_screen.dart';
+import '../screens/post_job_screen.dart';
 import '../screens/home_screen.dart';
 import '../widgets/fade_page_route.dart';
 import '../providers/auth_provider.dart';
@@ -19,12 +19,12 @@ class NavigationUtils {
         break;
       case 'ForBusiness':
         if (authProvider.isLoggedIn && authProvider.userRole == UserRole.poster) {
-          // Logged in as business owner, go to manage jobs
+          // Logged in as business, go to manage jobs
           Navigator.of(context).push(FadePageRoute(
             page: const PosterHomeScreen(),
           ));
         } else {
-          // Not logged in or wrong role, go to sign in with business owner role
+          // Not logged in or wrong role, go to sign in with business role
           Navigator.of(context).push(FadePageRoute(
             page: const SignInScreen(preSelectedRole: UserRole.poster),
           ));
@@ -61,7 +61,7 @@ class NavigationUtils {
   
   static void navigateToAddJob(BuildContext context) {
     Navigator.of(context).push(FadePageRoute(
-      page: const AddJobScreen(),
+      page: const PostJobScreen(),
     ));
   }
 } 

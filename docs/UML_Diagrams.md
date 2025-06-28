@@ -109,10 +109,48 @@ classDiagram
     
     %% Models
     class Job {
-        +title: String
-        +description: String
-        +location: String
-        +Job(title, description, location)
+        +String id
+        +String businessId
+        +String businessName
+        +String title
+        +String description
+        +List~String~ requiredSkills
+        +String location
+        +String address
+        +String state
+        +String city
+        +String pinCode
+        +double hourlyRate
+        +int estimatedHours
+        +DateTime postedDate
+        +DateTime? startDate
+        +JobStatus status
+        +List~JobApplication~ applications
+        +String contactPerson
+        +String contactPhone
+        +String contactEmail
+        +copyWith()
+        +toJson()
+        +fromJson()
+    }
+    
+    class JobApplication {
+        +String id
+        +String jobId
+        +String workerId
+        +String workerName
+        +String workerEmail
+        +String workerPhone
+        +List~String~ workerSkills
+        +int yearsOfExperience
+        +String previousWorkExperience
+        +ApplicationStatus status
+        +DateTime appliedDate
+        +DateTime? respondedDate
+        +String? message
+        +copyWith()
+        +toJson()
+        +fromJson()
     }
     
     %% Enums
@@ -124,25 +162,57 @@ classDiagram
     
     %% Providers
     class JobProvider {
-        -_jobs: List~Job~
-        +jobs: List~Job~
-        +addJob(Job)
-        +notifyListeners()
+        -List~Job~ _jobs
+        -List~JobApplication~ _myApplications
+        -List~Job~ _myPostedJobs
+        +List~Job~ jobs
+        +List~JobApplication~ myApplications
+        +List~Job~ myPostedJobs
+        +List~Job~ openJobs
+        +List~Job~ jobsWithPendingApplications
+        +postJob(Job job)
+        +applyForJob(JobApplication application)
+        +respondToApplication(String jobId, String applicationId, ApplicationStatus status)
+        +updateJobStatus(String jobId, JobStatus status)
+        +getJobById(String jobId)
+        +getMyApplicationForJob(String jobId)
+        +hasAppliedForJob(String jobId)
+        +getPendingApplicationsCount()
+        +loadJobs()
+        +clearData()
     }
     
     class AuthProvider {
-        -_isLoggedIn: bool
-        -_userRole: UserRole?
-        -_userName: String?
-        +isLoggedIn: bool
-        +userRole: UserRole?
-        +userName: String?
-        +loginAsBusinessOwner(String)
-        +loginAsWorker(String)
+        -bool _isLoggedIn
+        -String? _userName
+        -UserRole? _userRole
+        +bool isLoggedIn
+        +String? userName
+        +UserRole? userRole
+        +login(String email, String password, UserRole role)
         +logout()
-        +isBusinessOwner(): bool
-        +isWorker(): bool
-        +notifyListeners()
+        +register(String email, String password, UserRole role)
+    }
+    
+    class ThemeProvider {
+        -bool _isDarkMode
+        +bool isDarkMode
+        +toggleTheme()
+    }
+    
+    class JobStatus {
+        <<enumeration>>
+        open
+        inProgress
+        completed
+        cancelled
+    }
+    
+    class ApplicationStatus {
+        <<enumeration>>
+        pending
+        accepted
+        rejected
     }
     
     %% Relationships
@@ -172,7 +242,11 @@ classDiagram
     SignInScreen --> FadePageRoute
     DashboardScreen --> FadePageRoute
     JobProvider --> Job
+    JobProvider --> JobApplication
     AuthProvider --> UserRole
+    Job --> JobStatus
+    JobApplication --> ApplicationStatus
+    ThemeProvider --> JobProvider
 ```
 
 ---

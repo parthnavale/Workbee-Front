@@ -2,14 +2,16 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/job_provider.dart';
+import '../providers/theme_provider.dart';
 import '../constants/user_roles.dart';
+import '../constants/app_colors.dart';
 import '../widgets/app_header.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/fade_page_route.dart';
 import '../widgets/gradient_background.dart';
 import 'poster_home_screen.dart';
 import 'seeker_home_screen.dart';
-import 'add_job_screen.dart';
+import 'post_job_screen.dart';
 import '../utils/navigation_utils.dart';
 
 class DashboardScreen extends StatelessWidget {
@@ -19,6 +21,8 @@ class DashboardScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context);
     final jobProvider = Provider.of<JobProvider>(context);
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
     
     return Scaffold(
       appBar: AppHeader(
@@ -33,18 +37,18 @@ class DashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.1),
+                color: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: const Color(0xFFEAB308), width: 2),
+                border: Border.all(color: AppColors.primary, width: 2),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.person,
-                        color: Color(0xFFEAB308),
+                        color: AppColors.primary,
                         size: 32,
                       ),
                       const SizedBox(width: 12),
@@ -54,17 +58,17 @@ class DashboardScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Welcome back, ${authProvider.userName ?? 'User'}!',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 fontSize: 24,
                                 fontWeight: FontWeight.bold,
-                                color: Colors.white,
+                                color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                               ),
                             ),
                             Text(
-                              'You are logged in as ${authProvider.userRole == UserRole.poster ? 'Business Owner' : 'Worker'}',
-                              style: const TextStyle(
+                              'You are logged in as ${authProvider.userRole == UserRole.poster ? 'Business' : 'Worker'}',
+                              style: TextStyle(
                                 fontSize: 16,
-                                color: Colors.grey,
+                                color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
                               ),
                             ),
                           ],
@@ -72,9 +76,9 @@ class DashboardScreen extends StatelessWidget {
                       ),
                       IconButton(
                         onPressed: () => NavigationUtils.handleNavigation('Logout', context),
-                        icon: const Icon(
+                        icon: Icon(
                           Icons.logout,
-                          color: Color(0xFFEAB308),
+                          color: AppColors.primary,
                         ),
                       ),
                     ],
@@ -86,24 +90,24 @@ class DashboardScreen extends StatelessWidget {
             const SizedBox(height: 30),
             
             // Quick Actions
-            const Text(
+            Text(
               'Quick Actions',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
-                color: Colors.white,
+                color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
               ),
             ),
             const SizedBox(height: 20),
             
             // Action Buttons
             if (authProvider.userRole == UserRole.poster) ...[
-              // Business Owner Actions
+              // Business Actions
               AnimatedScaleButton(
                 onTap: () => NavigationUtils.handleNavigation('ForBusiness', context),
                 icon: Icons.business_center,
-                backgroundColor: const Color(0xFFEAB308),
-                foregroundColor: const Color(0xFF10182B),
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.primaryDark,
                 minimumSize: const Size(double.infinity, 50),
                 child: const Text(
                   'Manage Jobs',
@@ -115,11 +119,16 @@ class DashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               AnimatedScaleButton(
-                onTap: () => NavigationUtils.navigateToAddJob(context),
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => const PostJobScreen(),
+                  ),
+                ),
                 icon: Icons.add,
-                backgroundColor: Colors.white.withOpacity(0.1),
-                foregroundColor: Colors.white,
-                borderColor: const Color(0xFFEAB308),
+                backgroundColor: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                borderColor: AppColors.primary,
                 minimumSize: const Size(double.infinity, 50),
                 child: const Text(
                   'Post New Job',
@@ -134,8 +143,8 @@ class DashboardScreen extends StatelessWidget {
               AnimatedScaleButton(
                 onTap: () => NavigationUtils.handleNavigation('For Workers', context),
                 icon: Icons.search,
-                backgroundColor: const Color(0xFFEAB308),
-                foregroundColor: const Color(0xFF10182B),
+                backgroundColor: AppColors.primary,
+                foregroundColor: AppColors.primaryDark,
                 minimumSize: const Size(double.infinity, 50),
                 child: const Text(
                   'Find Jobs',
@@ -151,9 +160,9 @@ class DashboardScreen extends StatelessWidget {
                   // Navigate to applied jobs
                 },
                 icon: Icons.work,
-                backgroundColor: Colors.white.withOpacity(0.1),
-                foregroundColor: Colors.white,
-                borderColor: const Color(0xFFEAB308),
+                backgroundColor: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                borderColor: AppColors.primary,
                 minimumSize: const Size(double.infinity, 50),
                 child: const Text(
                   'My Applications',
@@ -171,18 +180,18 @@ class DashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: Colors.white.withOpacity(0.05),
+                color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Statistics',
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.bold,
-                      color: Colors.white,
+                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 15),
@@ -193,6 +202,7 @@ class DashboardScreen extends StatelessWidget {
                           'Total Jobs',
                           '${jobProvider.jobs.length}',
                           Icons.work,
+                          isDarkMode,
                         ),
                       ),
                       const SizedBox(width: 15),
@@ -201,6 +211,7 @@ class DashboardScreen extends StatelessWidget {
                           'Active',
                           '${jobProvider.jobs.length}',
                           Icons.check_circle,
+                          isDarkMode,
                         ),
                       ),
                     ],
@@ -214,35 +225,35 @@ class DashboardScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String title, String value, IconData icon) {
+  Widget _buildStatCard(String title, String value, IconData icon, bool isDarkMode) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFEAB308).withOpacity(0.1),
+        color: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFFEAB308).withOpacity(0.3)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
       ),
       child: Column(
         children: [
           Icon(
             icon,
-            color: const Color(0xFFEAB308),
+            color: AppColors.primary,
             size: 24,
           ),
           const SizedBox(height: 8),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.white,
+              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
             ),
           ),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
-              color: Colors.grey,
+              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
             ),
           ),
         ],

@@ -1,234 +1,222 @@
-# WorkBee App Flow Chart Diagram
+# WorkBee - Flow Chart Diagram
 
-## Application Flow Overview
-
-```mermaid
-flowchart TD
-    A[App Launch] --> B[main.dart]
-    B --> C[HomeScreen]
-    C --> D{AuthProvider.isLoggedIn?}
-    
-    D -->|No| E[LoginScreen]
-    D -->|Yes| F[DashboardScreen]
-    
-    E --> G[User Sees Landing Page]
-    G --> H[Statistics Section]
-    H --> I[Action Buttons]
-    I --> J[Why Choose Us Section]
-    
-    I --> K{User Clicks}
-    K -->|Hire Workers| L[SignInScreen with Poster Role]
-    K -->|Find Work| M[SignInScreen with Seeker Role]
-    
-    L --> N[Business Owner Sign In]
-    M --> O[Worker Sign In]
-    
-    N --> P{Authentication Success?}
-    O --> P
-    P -->|Yes| Q[AuthProvider Updates State]
-    P -->|No| R[Show Error Message]
-    R --> L
-    
-    Q --> S[User Role Determined]
-    S --> T{User Role}
-    T -->|Business Owner| U[PosterHomeScreen]
-    T -->|Worker| V[SeekerHomeScreen]
-    
-    F --> W{User Role from AuthProvider}
-    W -->|Business Owner| U
-    W -->|Worker| V
-    
-    U --> X[Manage Posted Jobs]
-    U --> Y[Add New Job]
-    U --> Z[Cancel Jobs]
-    
-    V --> AA[Browse Available Jobs]
-    V --> BB[Apply for Jobs]
-    V --> CC[View Job Details]
-    
-    Y --> DD[AddJobScreen]
-    DD --> EE[Job Form with Designation]
-    EE --> FF[JobProvider.addJob]
-    FF --> GG[Job Added to Active Jobs]
-    GG --> U
-    
-    AA --> HH[JobProvider.getJobs]
-    HH --> II[Display Job Cards]
-    II --> JJ[AnimatedJobCard]
-    JJ --> CC
-    
-    CC --> KK[Job Detail Dialog]
-    KK --> LL[Close Dialog]
-    LL --> V
-    
-    Z --> MM[JobProvider.cancelJob]
-    MM --> NN[Job Moved to History]
-    NN --> U
-    
-    BB --> OO[Job Application Process]
-    OO --> PP[Application Submitted]
-    PP --> V
-    
-    %% Navigation Flow
-    U --> QQ[AppHeader Navigation]
-    V --> QQ
-    QQ --> RR{Navigation Action}
-    RR -->|Logout| SS[AuthProvider.logout]
-    RR -->|Sign In| TT[SignInScreen]
-    RR -->|Sign Up| UU[SignUpScreen]
-    RR -->|For Business| U
-    RR -->|For Workers| V
-    
-    SS --> C
-    
-    TT --> N
-    UU --> VV[Role Selection]
-    VV --> WW[Form Validation]
-    WW --> XX[Registration Success]
-    XX --> C
-    
-    %% Error Handling
-    P -->|Network Error| YY[Show Network Error]
-    P -->|Invalid Credentials| ZZ[Show Auth Error]
-    YY --> L
-    ZZ --> L
-    
-    %% UI Components
-    JJ --> AAA[GradientBackground]
-    JJ --> BBB[AnimatedScaleButton]
-    JJ --> CCC[FadePageRoute]
-    
-    %% Providers
-    Q --> DDD[AuthProvider State Management]
-    FF --> EEE[JobProvider State Management]
-    MM --> EEE
-    
-    %% Constants
-    EE --> FFF[JobDesignations Constants]
-    QQ --> GGG[UserRole Constants]
-    QQ --> HHH[AppColors Constants]
-    
-    %% Utils
-    QQ --> III[NavigationUtils]
-    III --> RR
-    
-    style A fill:#e1f5fe
-    style C fill:#f3e5f5
-    style E fill:#fff3e0
-    style F fill:#e8f5e8
-    style U fill:#e3f2fd
-    style V fill:#f1f8e9
-    style DD fill:#fff8e1
-    style QQ fill:#fce4ec
-```
-
-## Detailed Flow Breakdown
-
-### 1. Application Startup Flow
-```
-App Launch → main.dart → HomeScreen → Check Authentication Status
-```
-
-### 2. Authentication Flow
-```
-Not Logged In → LoginScreen → User Actions → Sign In/Up → Role Selection → Dashboard
-```
-
-### 3. Business Owner Flow
-```
-Dashboard → PosterHomeScreen → Manage Jobs → Add/Cancel Jobs → Job Management
-```
-
-### 4. Worker Flow
-```
-Dashboard → SeekerHomeScreen → Browse Jobs → View Details → Apply for Jobs
-```
-
-### 5. Navigation Flow
-```
-AppHeader → Navigation Actions → Role-based Routing → Screen Transitions
-```
-
-## Key Components and Their Roles
-
-### Screens (2,579 total lines)
-- **LoginScreen (303 lines)**: Landing page with statistics and action buttons
-- **SignInScreen (384 lines)**: Authentication with role selection
-- **SignUpScreen (450 lines)**: Registration with dynamic forms
-- **DashboardScreen (251 lines)**: Post-login hub with quick actions
-- **PosterHomeScreen (109 lines)**: Business owner job management
-- **SeekerHomeScreen (91 lines)**: Worker job browsing
-- **AddJobScreen (205 lines)**: Job posting with designation selection
-
-### Providers (65 lines)
-- **AuthProvider (40 lines)**: Authentication state management
-- **JobProvider (25 lines)**: Job data management
-
-### Widgets (614 lines)
-- **AppHeader (216 lines)**: Navigation and user interface
-- **AnimatedJobCard (107 lines)**: Job display with animations
-- **AnimatedScaleButton (83 lines)**: Interactive buttons
-- **GradientBackground (31 lines)**: Reusable background component
-
-### Models & Constants (76 lines)
-- **Job Model (18 lines)**: Job data structure
-- **AppColors (22 lines)**: Color constants
-- **JobDesignations (15 lines)**: Predefined job types
-- **UserRoles (0 lines)**: Role enumeration
-
-### Utils (49 lines)
-- **NavigationUtils (49 lines)**: Centralized navigation logic
-
-## State Management Flow
+## App Flow Overview
 
 ```mermaid
-stateDiagram-v2
-    [*] --> Unauthenticated
-    Unauthenticated --> Authenticating: Sign In/Up
-    Authenticating --> Authenticated: Success
-    Authenticating --> Unauthenticated: Failure
-    Authenticated --> BusinessOwner: Role = Poster
-    Authenticated --> Worker: Role = Seeker
-    BusinessOwner --> Unauthenticated: Logout
-    Worker --> Unauthenticated: Logout
-    Unauthenticated --> [*]
+graph TD
+    A[App Start] --> B[Home Screen]
+    B --> C{User Choice}
+    
+    C -->|Sign In| D[Sign In Screen]
+    C -->|Sign Up| E[Sign Up Screen]
+    
+    D --> F{Authentication}
+    F -->|Success| G[Dashboard Screen]
+    F -->|Failure| D
+    
+    E --> H[Role Selection]
+    H -->|Business Owner| I[Business Registration]
+    H -->|Worker| J[Worker Registration]
+    
+    I --> K[Personal Information]
+    K --> L[Business Information]
+    L --> M[Account Security]
+    M --> N[Registration Complete]
+    
+    J --> O[Personal Information]
+    O --> P[Address Information]
+    P --> Q[Skills & Education]
+    Q --> R[Account Security]
+    R --> S[Registration Complete]
+    
+    N --> G
+    S --> G
+    
+    G --> T{User Role}
+    
+    T -->|Business Owner| U[Business Dashboard]
+    T -->|Worker| V[Worker Dashboard]
+    
+    %% Business Owner Flow
+    U --> W[Post Job Screen]
+    U --> X[View Posted Jobs]
+    U --> Y[Manage Applications]
+    
+    W --> Z[Job Form]
+    Z --> AA[Skills Selection]
+    AA --> BB[Location Details]
+    BB --> CC[Compensation]
+    CC --> DD[Contact Info]
+    DD --> EE[Job Posted]
+    
+    X --> FF[Job List]
+    FF --> GG[Job Details]
+    GG --> HH[Edit Job]
+    
+    Y --> II[Applications List]
+    II --> JJ[Application Details]
+    JJ --> KK{Decision}
+    KK -->|Accept| LL[Accept Application]
+    KK -->|Reject| MM[Reject Application]
+    LL --> NN[Worker Notified]
+    MM --> NN
+    
+    %% Worker Flow
+    V --> OO[Browse Jobs]
+    V --> PP[My Applications]
+    V --> QQ[Profile]
+    
+    OO --> RR[Job Listing]
+    RR --> SS[Job Details]
+    SS --> TT{Already Applied?}
+    TT -->|No| UU[Apply for Job]
+    TT -->|Yes| VV[Application Status]
+    
+    UU --> WW[Application Submitted]
+    WW --> XX[Business Notified]
+    
+    PP --> YY[Applications List]
+    YY --> ZZ[Application Status]
+    ZZ --> AAA{Status}
+    AAA -->|Pending| BBB[Wait for Response]
+    AAA -->|Accepted| CCC[Contact Business]
+    AAA -->|Rejected| DDD[View Rejection Message]
+    
+    QQ --> EEE[Profile Management]
+    EEE --> FFF[Edit Profile]
+    FFF --> GGG[Update Information]
+    
+    %% Notifications
+    XX --> HH[Notification Badge]
+    NN --> HH
+    HH --> II
+    
+    %% Logout
+    U --> III[Logout]
+    V --> III
+    III --> B
 ```
 
-## Data Flow Architecture
+## Detailed Workflow Descriptions
 
-```mermaid
-graph LR
-    A[UI Components] --> B[Providers]
-    B --> C[Models]
-    B --> D[Constants]
-    A --> E[Utils]
-    E --> B
-    
-    B --> F[State Updates]
-    F --> A
-    
-    G[User Actions] --> A
-    A --> H[Navigation]
-    H --> I[Screen Transitions]
+### 1. Authentication Flow
+```
+User Entry → Role Selection → Registration/Login → Dashboard
 ```
 
-## Error Handling Flow
+**Key Features:**
+- Role-based registration with different forms
+- Comprehensive validation
+- Secure authentication
+- Theme support (dark/light mode)
 
-```mermaid
-flowchart TD
-    A[User Action] --> B{Validation}
-    B -->|Pass| C[Process Action]
-    B -->|Fail| D[Show Error Message]
-    D --> A
-    
-    C --> E{Network Request}
-    E -->|Success| F[Update UI]
-    E -->|Failure| G[Show Network Error]
-    G --> A
-    
-    F --> H[State Update]
-    H --> I[Provider Notify]
-    I --> J[UI Refresh]
+### 2. Business Owner Workflow
+```
+Dashboard → Post Job → Receive Applications → Review → Accept/Reject → Track Progress
 ```
 
-This flow chart represents the complete application architecture with 2,579 lines of code, showing how user interactions, state management, and navigation work together to create a seamless job portal experience. 
+**Job Posting Process:**
+1. **Job Details**: Title, description, required skills
+2. **Location**: Address, state, city, pin code
+3. **Compensation**: Hourly rate, estimated hours
+4. **Contact Info**: Person, phone, email
+5. **Skills Selection**: Multi-select from predefined list
+
+**Application Management:**
+1. **View Applications**: List all applications for each job
+2. **Review Profiles**: Worker details, skills, experience
+3. **Make Decision**: Accept or reject with optional message
+4. **Track Status**: Monitor job progress and completion
+
+### 3. Worker Workflow
+```
+Dashboard → Browse Jobs → Apply → Track Applications → Receive Response → Contact Business
+```
+
+**Job Discovery:**
+1. **Browse Jobs**: View all available jobs
+2. **Filter Options**: By location, skills, compensation
+3. **Job Details**: Complete information with business details
+4. **Apply**: Submit application with profile data
+
+**Application Tracking:**
+1. **My Applications**: View all submitted applications
+2. **Status Updates**: Real-time status changes
+3. **Response Handling**: Accept/reject notifications
+4. **Business Contact**: Reach out when accepted
+
+### 4. Notification System
+```
+Event Trigger → Notification Badge → User Action → Status Update
+```
+
+**Notification Types:**
+- New application received (Business)
+- Application status changed (Worker)
+- Job posted (Worker - if subscribed)
+- Response received (Worker)
+
+### 5. Data Flow
+```
+User Input → Validation → State Update → UI Refresh → API Call (Future)
+```
+
+**State Management:**
+- Provider pattern for state management
+- Real-time updates across screens
+- Persistent data storage (ready for backend)
+- Error handling and loading states
+
+## Key Interactions
+
+### Business Owner Interactions
+1. **Post Job**: Create comprehensive job listings
+2. **Manage Applications**: Review and respond to workers
+3. **Track Jobs**: Monitor job status and completion
+4. **View Statistics**: Dashboard with key metrics
+
+### Worker Interactions
+1. **Browse Jobs**: Discover available opportunities
+2. **Apply**: Submit applications with profile
+3. **Track Applications**: Monitor application status
+4. **Manage Profile**: Update personal information
+
+### System Interactions
+1. **Real-time Updates**: Instant status changes
+2. **Notification System**: Badge counts and alerts
+3. **Data Synchronization**: Consistent state across screens
+4. **Error Handling**: Graceful error management
+
+## Success Metrics
+
+### Business Owner Success
+- Jobs posted successfully
+- Applications received
+- Response time to applications
+- Job completion rate
+
+### Worker Success
+- Jobs applied to
+- Application acceptance rate
+- Response time from businesses
+- Job completion rate
+
+### Platform Success
+- User engagement
+- Job posting frequency
+- Application success rate
+- User satisfaction
+
+## Future Enhancements
+
+### Phase 2 Features
+- Real-time messaging
+- Push notifications
+- Payment processing
+- Rating system
+
+### Phase 3 Features
+- Advanced matching algorithms
+- Video calling
+- Document verification
+- Analytics dashboard 

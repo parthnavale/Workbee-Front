@@ -8,7 +8,9 @@ import 'seeker_home_screen.dart';
 import 'sign_in_screen.dart';
 import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
+import '../providers/theme_provider.dart';
 import '../constants/user_roles.dart';
+import '../constants/app_colors.dart';
 import '../utils/navigation_utils.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -51,6 +53,9 @@ class _LoginScreenState extends State<LoginScreen>
 
   @override
   Widget build(BuildContext context) {
+    final themeProvider = Provider.of<ThemeProvider>(context);
+    final isDarkMode = themeProvider.isDarkMode;
+    
     return Scaffold(
       appBar: AppHeader(
         onNavigation: (action) => NavigationUtils.handleNavigation(action, context),
@@ -74,11 +79,11 @@ class _LoginScreenState extends State<LoginScreen>
                       children: [
                         TextSpan(
                           text: 'Find Workers\n',
-                          style: TextStyle(color: Colors.white),
+                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
                         ),
                         TextSpan(
                           text: 'in 5 Minutes',
-                          style: TextStyle(color: Color(0xFFEAB308)),
+                          style: TextStyle(color: AppColors.primary),
                         ),
                       ],
                     ),
@@ -89,7 +94,7 @@ class _LoginScreenState extends State<LoginScreen>
                   'India\'s Premier Job Portal',
                   style: TextStyle(
                     fontSize: 18,
-                    color: Colors.grey[300],
+                    color: isDarkMode ? Colors.grey[300] : AppColors.lightTextSecondary,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -99,7 +104,7 @@ class _LoginScreenState extends State<LoginScreen>
                   'Whether you\'re hiring or seeking work, WorkBee makes it simple and secure.',
                   style: TextStyle(
                     fontSize: 16,
-                    color: Colors.grey[300],
+                    color: isDarkMode ? Colors.grey[300] : AppColors.lightTextSecondary,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -109,9 +114,9 @@ class _LoginScreenState extends State<LoginScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildStatistic('≤5 Min', 'Average Job\nFill Time', Icons.timer),
-                    _buildStatistic('24/7', 'Platform\nAvailability', Icons.access_time),
-                    _buildStatistic('100%', 'Verified\nWorkers', Icons.verified_user),
+                    _buildStatistic('≤5 Min', 'Average Job\nFill Time', Icons.timer, isDarkMode),
+                    _buildStatistic('24/7', 'Platform\nAvailability', Icons.access_time, isDarkMode),
+                    _buildStatistic('100%', 'Verified\nWorkers', Icons.verified_user, isDarkMode),
                   ],
                 ),
                 const SizedBox(height: 40),
@@ -121,23 +126,23 @@ class _LoginScreenState extends State<LoginScreen>
                     final authProvider = Provider.of<AuthProvider>(context, listen: false);
                     
                     if (authProvider.isBusinessOwner()) {
-                      // Already signed in as business owner, go to job posting
+                      // Already signed in as business, go to job posting
                       Navigator.of(context).push(FadePageRoute(
                         page: const PosterHomeScreen(),
                       ));
                     } else {
-                      // Not signed in or signed in as worker, go to sign-in with business owner role
+                      // Not signed in or signed in as worker, go to sign-in with business role
                       Navigator.of(context).push(FadePageRoute(
                         page: const SignInScreen(preSelectedRole: UserRole.poster),
                       ));
                     }
                   },
                   icon: Icons.add_business,
-                  backgroundColor: const Color(0xFFEAB308),
-                  foregroundColor: const Color(0xFF10182B),
+                  backgroundColor: AppColors.primary,
+                  foregroundColor: isDarkMode ? AppColors.primaryDark : Colors.white,
                   minimumSize: const Size(250, 50),
                   child: const Text("Hire Workers"),
-                  borderColor: const Color(0xFFEAB308),
+                  borderColor: AppColors.primary,
                 ),
                 const SizedBox(height: 20),
                 AnimatedScaleButton(
@@ -150,39 +155,39 @@ class _LoginScreenState extends State<LoginScreen>
                         page: const SeekerHomeScreen(),
                       ));
                     } else {
-                      // Not signed in or signed in as business owner, go to sign-in with worker role
+                      // Not signed in or signed in as business, go to sign-in with worker role
                       Navigator.of(context).push(FadePageRoute(
                         page: const SignInScreen(preSelectedRole: UserRole.seeker),
                       ));
                     }
                   },
                   icon: Icons.search,
-                  backgroundColor: const Color(0xFF1E293B),
-                  foregroundColor: Colors.white,
+                  backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
+                  foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                   minimumSize: const Size(250, 50),
                   child: const Text("Find Work"),
-                  borderColor: Colors.white,
+                  borderColor: isDarkMode ? Colors.white : AppColors.lightBorderPrimary,
                 ),
                 const SizedBox(height: 60),
                 // Why Choose Us Section
                 Container(
                   width: double.infinity,
                   padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
-                  decoration: const BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.only(
+                  decoration: BoxDecoration(
+                    color: isDarkMode ? AppColors.backgroundSecondary : Colors.white,
+                    borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
                     ),
                   ),
                   child: Column(
                     children: [
-                      const Text(
+                      Text(
                         'Why Choose Us?',
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: Color(0xFF1E293B),
+                          color: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -191,7 +196,7 @@ class _LoginScreenState extends State<LoginScreen>
                         "Built for India's unique needs with cutting-edge technology and local insights",
                         style: TextStyle(
                           fontSize: 13,
-                          color: Colors.grey,
+                          color: isDarkMode ? AppColors.textSecondary : AppColors.lightTextSecondary,
                           height: 1.4,
                         ),
                         textAlign: TextAlign.center,
@@ -205,6 +210,7 @@ class _LoginScreenState extends State<LoginScreen>
                             'Jobs filled in 5 minutes or less with our smart matching system',
                             Icons.flash_on,
                             Colors.amberAccent,
+                            isDarkMode,
                           ),
                           const SizedBox(height: 16),
                           _buildFeatureCard(
@@ -212,6 +218,7 @@ class _LoginScreenState extends State<LoginScreen>
                             'Aadhaar-KYC, background-checked & rated by peers',
                             Icons.security,
                             Colors.blueAccent,
+                            isDarkMode,
                           ),
                           const SizedBox(height: 16),
                           _buildFeatureCard(
@@ -219,6 +226,7 @@ class _LoginScreenState extends State<LoginScreen>
                             'No long drives, no extra allowances. Find work opportunities near you',
                             Icons.location_city,
                             Colors.green,
+                            isDarkMode,
                           ),
                           const SizedBox(height: 16),
                           _buildFeatureCard(
@@ -226,6 +234,7 @@ class _LoginScreenState extends State<LoginScreen>
                             'No more cash hassles—instant UPI payout after shift',
                             Icons.payment,
                             Colors.deepPurpleAccent,
+                            isDarkMode,
                           ),
                         ],
                       ),
@@ -241,14 +250,14 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _buildStatistic(String value, String label, IconData icon) {
+  Widget _buildStatistic(String value, String label, IconData icon, bool isDarkMode) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(
           icon,
           size: 40,
-          color: Colors.white,
+          color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
         ),
         const SizedBox(height: 10),
         Text(
@@ -256,7 +265,7 @@ class _LoginScreenState extends State<LoginScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 18,
-            color: Colors.white,
+            color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -265,14 +274,14 @@ class _LoginScreenState extends State<LoginScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 14,
-            color: Colors.grey[300],
+            color: isDarkMode ? Colors.grey[300] : AppColors.lightTextSecondary,
           ),
         ),
       ],
     );
   }
 
-  Widget _buildFeatureCard(String title, String description, IconData icon, Color iconColor) {
+  Widget _buildFeatureCard(String title, String description, IconData icon, Color iconColor, bool isDarkMode) {
     return Column(
       children: [
         Icon(
@@ -284,9 +293,9 @@ class _LoginScreenState extends State<LoginScreen>
         Text(
           title,
           textAlign: TextAlign.center,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 15,
-            color: Color(0xFF1E293B),
+            color: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -295,7 +304,7 @@ class _LoginScreenState extends State<LoginScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 12,
-            color: Colors.grey[700],
+            color: isDarkMode ? AppColors.textSecondary : AppColors.lightTextSecondary,
           ),
         ),
       ],

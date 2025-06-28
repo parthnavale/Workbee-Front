@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import '../constants/app_colors.dart';
+import '../providers/theme_provider.dart';
 
 class GradientBackground extends StatelessWidget {
   final Widget child;
@@ -17,16 +19,25 @@ class GradientBackground extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          colors: [AppColors.backgroundPrimary, AppColors.backgroundSecondary],
-          begin: begin!,
-          end: end!,
-        ),
-      ),
-      child: padding != null ? Padding(padding: padding!, child: child) : child,
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        final isDark = themeProvider.isDarkMode;
+        
+        return Container(
+          width: double.infinity,
+          height: double.infinity,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: isDark 
+                ? [AppColors.backgroundPrimary, AppColors.backgroundSecondary]
+                : [AppColors.lightBackgroundPrimary, AppColors.lightBackgroundSecondary],
+              begin: begin!,
+              end: end!,
+            ),
+          ),
+          child: padding != null ? Padding(padding: padding!, child: this.child) : this.child,
+        );
+      },
     );
   }
 } 
