@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AnimatedScaleButton extends StatefulWidget {
   final Widget child;
-  final VoidCallback? onTap;
+  final Function()? onTap;
   final Color? backgroundColor;
   final Color? foregroundColor;
   final Size? minimumSize;

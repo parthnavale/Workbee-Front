@@ -431,8 +431,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               // Apply Button
               if (!hasApplied)
                 AnimatedScaleButton(
-                  onTap: _isApplying ? null : () async {
-                    await _applyForJob();
+                  onTap: _isApplying ? null : () {
+                    _applyForJob();
                   },
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,

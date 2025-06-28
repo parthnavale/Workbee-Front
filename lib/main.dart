@@ -5,6 +5,7 @@ import 'providers/job_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/home_screen.dart';
 import 'constants/app_colors.dart';
+import 'core/di/service_locator.dart';
 
 /// Flutter Job Portal App (Updated with Login, Role Separation, and Animation)
 ///
@@ -13,7 +14,11 @@ import 'constants/app_colors.dart';
 /// - Separate flows and UIs for each role
 /// - Professional UI with animated transitions
 /// - Job posting and viewing functionality
+/// - Clean architecture with repository pattern
 void main() {
+  // Initialize dependency injection
+  serviceLocator.initialize();
+  
   runApp(
     MultiProvider(
       providers: [

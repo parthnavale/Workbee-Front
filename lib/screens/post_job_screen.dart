@@ -653,8 +653,8 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 ),
                 const SizedBox(height: 30),
                 AnimatedScaleButton(
-                  onTap: _isLoading ? null : () async {
-                    await _submitJob();
+                  onTap: _isLoading ? null : () {
+                    _submitJob();
                   },
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
