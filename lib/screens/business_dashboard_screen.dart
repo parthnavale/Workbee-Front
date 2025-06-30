@@ -144,10 +144,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+              color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
               ),
             ),
             child: Row(
@@ -155,7 +155,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primaryWithAlpha(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -215,7 +215,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     );
                   },
                   backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
+                  foregroundColor: AppColors.primaryDark,
                   minimumSize: const Size(double.infinity, 60),
                   child: Column(
                     children: [
@@ -329,10 +329,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -389,10 +389,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -447,10 +447,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -496,10 +496,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -537,10 +537,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -561,7 +561,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(job.status).withOpacity(0.1),
+                  color: AppColors.withAlpha(_getStatusColor(job.status), 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -594,10 +594,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -618,7 +618,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: Colors.orange.withOpacity(0.1),
+                  color: AppColors.orangeWithAlpha(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -670,10 +670,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -694,7 +694,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: _getStatusColor(job.status).withOpacity(0.1),
+                  color: AppColors.withAlpha(_getStatusColor(job.status), 0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
@@ -767,16 +767,16 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Row(
         children: [
           CircleAvatar(
-            backgroundColor: AppColors.primary.withOpacity(0.1),
+            backgroundColor: AppColors.primaryWithAlpha(0.1),
             child: Text(
               app.workerName[0].toUpperCase(),
               style: TextStyle(

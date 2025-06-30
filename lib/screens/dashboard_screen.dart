@@ -7,10 +7,7 @@ import '../constants/user_roles.dart';
 import '../constants/app_colors.dart';
 import '../widgets/app_header.dart';
 import '../widgets/animated_scale_button.dart';
-import '../widgets/fade_page_route.dart';
 import '../widgets/gradient_background.dart';
-import 'poster_home_screen.dart';
-import 'seeker_home_screen.dart';
 import 'post_job_screen.dart';
 import '../utils/navigation_utils.dart';
 
@@ -37,9 +34,9 @@ class DashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.primary, width: 2),
+                border: Border.all(color: AppColors.primaryWithAlpha(0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -126,7 +123,7 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 icon: Icons.add,
-                backgroundColor: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                backgroundColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
                 foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                 borderColor: AppColors.primary,
                 minimumSize: const Size(double.infinity, 50),
@@ -160,7 +157,7 @@ class DashboardScreen extends StatelessWidget {
                   // Navigate to applied jobs
                 },
                 icon: Icons.work,
-                backgroundColor: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                backgroundColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
                 foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                 borderColor: AppColors.primary,
                 minimumSize: const Size(double.infinity, 50),
@@ -180,7 +177,7 @@ class DashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -229,9 +226,9 @@ class DashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
+        border: Border.all(color: AppColors.primaryWithAlpha(0.3)),
       ),
       child: Column(
         children: [

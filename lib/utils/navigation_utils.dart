@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../screens/poster_home_screen.dart';
+import '../screens/business_dashboard_screen.dart';
 import '../screens/seeker_home_screen.dart';
 import '../screens/sign_in_screen.dart';
 import '../screens/post_job_screen.dart';
@@ -19,9 +19,9 @@ class NavigationUtils {
         break;
       case 'ForBusiness':
         if (authProvider.isLoggedIn && authProvider.userRole == UserRole.poster) {
-          // Logged in as business, go to manage jobs
+          // Logged in as business, go directly to business dashboard
           Navigator.of(context).push(FadePageRoute(
-            page: const PosterHomeScreen(),
+            page: const BusinessDashboardScreen(),
           ));
         } else {
           // Not logged in or wrong role, go to sign in with business role

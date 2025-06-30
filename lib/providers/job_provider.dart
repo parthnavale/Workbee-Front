@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 
 class JobProvider with ChangeNotifier {
   List<Job> _jobs = [];
-  List<JobApplication> _myApplications = [];
-  List<Job> _myPostedJobs = [];
+  final List<JobApplication> _myApplications = [];
+  final List<Job> _myPostedJobs = [];
 
   // Getters
   List<Job> get jobs => _jobs;

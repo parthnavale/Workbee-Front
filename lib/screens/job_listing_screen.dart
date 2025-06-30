@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import '../models/job.dart';
 import '../providers/job_provider.dart';
 import '../providers/theme_provider.dart';
 import '../constants/app_colors.dart';

@@ -24,4 +24,44 @@ class AppColors {
   static const Color lightBorderSecondary = Color(0xFFCBD5E1);
   static const Color lightOverlayLight = Color(0x1A000000); // 10% black
   static const Color lightOverlayPrimary = Color(0x1AEAB308); // 10% primary
+
+  // Additional Colors
+  static const Color white = Color(0xFFFFFFFF);
+  static const Color grey = Color(0xFF9E9E9E);
+  static const Color green = Color(0xFF4CAF50);
+  static const Color red = Color(0xFFF44336);
+  static const Color black = Color(0xFF000000);
+
+  // Utility functions to replace deprecated withOpacity
+  static Color withAlpha(Color color, double alpha) {
+    return color.withValues(alpha: alpha);
+  }
+
+  static Color whiteWithAlpha(double alpha) {
+    return Colors.white.withValues(alpha: alpha);
+  }
+
+  static Color greyWithAlpha(double alpha) {
+    return Colors.grey.withValues(alpha: alpha);
+  }
+
+  static Color redWithAlpha(double alpha) {
+    return Colors.red.withValues(alpha: alpha);
+  }
+
+  static Color greenWithAlpha(double alpha) {
+    return Colors.green.withValues(alpha: alpha);
+  }
+
+  static Color primaryWithAlpha(double alpha) {
+    return primary.withValues(alpha: alpha);
+  }
+
+  static Color orangeWithAlpha(double alpha) {
+    return Colors.orange.withValues(alpha: alpha);
+  }
+
+  static Color blackWithAlpha(double alpha) {
+    return Colors.black.withValues(alpha: alpha);
+  }
 } 

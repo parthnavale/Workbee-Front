@@ -1,6 +1,8 @@
 import '../repositories/job_repository.dart';
 import '../repositories/mock_job_repository.dart';
+import '../repositories/api_job_repository.dart';
 import '../services/job_service.dart';
+import '../config/app_config.dart';
 
 /// Service Locator pattern implementation for dependency injection
 /// This provides a centralized way to manage dependencies and makes testing easier
@@ -17,8 +19,12 @@ class ServiceLocator {
 
   /// Initialize the service locator with dependencies
   void initialize() {
-    // Initialize repositories
-    _jobRepository = MockJobRepository();
+    // Initialize repositories based on configuration
+    if (AppConfig.shouldUseApiRepository()) {
+      _jobRepository = ApiJobRepository();
+    } else {
+      _jobRepository = MockJobRepository();
+    }
     
     // Initialize services with repositories
     _jobService = JobService(_jobRepository!);
@@ -43,6 +49,18 @@ class ServiceLocator {
   /// Replace the job repository (useful for testing)
   void replaceJobRepository(JobRepository repository) {
     _jobRepository = repository;
+    _jobService = JobService(_jobRepository!);
+  }
+
+  /// Switch to mock repository (useful for offline development)
+  void useMockRepository() {
+    _jobRepository = MockJobRepository();
+    _jobService = JobService(_jobRepository!);
+  }
+
+  /// Switch to API repository (for production/online mode)
+  void useApiRepository() {
+    _jobRepository = ApiJobRepository();
     _jobService = JobService(_jobRepository!);
   }
 

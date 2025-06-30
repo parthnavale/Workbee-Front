@@ -130,10 +130,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+              color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
               ),
             ),
             child: Row(
@@ -141,7 +141,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                 Container(
                   padding: const EdgeInsets.all(12),
                   decoration: BoxDecoration(
-                    color: AppColors.primary.withOpacity(0.1),
+                    color: AppColors.primaryWithAlpha(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   child: Icon(
@@ -160,14 +160,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                          color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Find your next opportunity',
                         style: TextStyle(
-                          color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
                         ),
                       ),
                     ],
@@ -184,61 +184,32 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+              color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 16),
-          Row(
-            children: [
-              Expanded(
-                child: AnimatedScaleButton(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const JobListingScreen(),
-                      ),
-                    );
-                  },
-                  backgroundColor: AppColors.primary,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 60),
-                  child: Column(
-                    children: [
-                      Icon(Icons.search, size: 24),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Browse Jobs',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
+          AnimatedScaleButton(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const JobListingScreen(),
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: AnimatedScaleButton(
-                  onTap: () {
-                    setState(() {
-                      _selectedIndex = 1;
-                    });
-                  },
-                  backgroundColor: pendingApplications.isNotEmpty ? Colors.orange : Colors.grey,
-                  foregroundColor: Colors.white,
-                  minimumSize: const Size(double.infinity, 60),
-                  child: Column(
-                    children: [
-                      Icon(Icons.work, size: 24),
-                      const SizedBox(height: 4),
-                      Text(
-                        'My Applications',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
+              );
+            },
+            backgroundColor: AppColors.primary,
+            foregroundColor: AppColors.primaryDark,
+            minimumSize: const Size(double.infinity, 60),
+            child: Column(
+              children: [
+                Icon(Icons.search, size: 24),
+                const SizedBox(height: 4),
+                Text(
+                  'Browse Jobs',
+                  style: TextStyle(fontSize: 12),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
           const SizedBox(height: 30),
 
@@ -248,7 +219,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+              color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -309,7 +280,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+              color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -317,10 +288,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -328,7 +299,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                   Icon(
                     Icons.work_off,
                     size: 48,
-                    color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                    color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -336,14 +307,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                      color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Start by browsing available jobs',
                     style: TextStyle(
-                      color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                      color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
                     ),
                   ),
                 ],
@@ -370,17 +341,17 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+              color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
               ),
             ),
             child: Row(
               children: [
                 CircleAvatar(
                   radius: 40,
-                  backgroundColor: AppColors.primary.withOpacity(0.1),
+                  backgroundColor: AppColors.primaryWithAlpha(0.1),
                   child: Text(
                     'JD',
                     style: TextStyle(
@@ -400,21 +371,21 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                          color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'john@example.com',
                         style: TextStyle(
-                          color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         '2 years experience',
                         style: TextStyle(
-                          color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
                         ),
                       ),
                     ],
@@ -431,7 +402,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+              color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 16),
@@ -490,10 +461,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -509,7 +480,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             style: TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+              color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
             ),
           ),
           const SizedBox(height: 4),
@@ -517,7 +488,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title,
             style: TextStyle(
               fontSize: 12,
-              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+              color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
             ),
             textAlign: TextAlign.center,
           ),
@@ -531,10 +502,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -548,7 +519,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                    color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
                   ),
                 ),
               ),
@@ -559,7 +530,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           Text(
             'Applied ${_formatDate(app.appliedDate)}',
             style: TextStyle(
-              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+              color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
             ),
           ),
         ],
@@ -577,10 +548,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: ListTile(
@@ -591,19 +562,19 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
         title: Text(
           title,
           style: TextStyle(
-            color: isDestructive ? Colors.red : (isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+            color: isDestructive ? Colors.red : (isDarkMode ? AppColors.white : AppColors.lightTextPrimary),
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: Text(
           subtitle,
           style: TextStyle(
-            color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+            color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
           ),
         ),
         trailing: Icon(
           Icons.arrow_forward_ios,
-          color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+          color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
           size: 16,
         ),
         onTap: onTap,
@@ -633,7 +604,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: AppColors.withAlpha(color, 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(

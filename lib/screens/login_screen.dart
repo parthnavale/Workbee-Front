@@ -3,7 +3,7 @@ import '../widgets/animated_scale_button.dart';
 import '../widgets/fade_page_route.dart';
 import '../widgets/app_header.dart';
 import '../widgets/gradient_background.dart';
-import 'poster_home_screen.dart';
+import 'business_dashboard_screen.dart';
 import 'seeker_home_screen.dart';
 import 'sign_in_screen.dart';
 import 'package:provider/provider.dart';
@@ -23,8 +23,6 @@ class LoginScreen extends StatefulWidget {
 class _LoginScreenState extends State<LoginScreen> 
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  late Animation<double> _opacity;
-  late Animation<Offset> _slide;
 
   @override
   void initState() {
@@ -32,15 +30,6 @@ class _LoginScreenState extends State<LoginScreen>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 900),
-    );
-    _opacity = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeIn),
-    );
-    _slide = Tween<Offset>(
-      begin: const Offset(0, -0.2), 
-      end: Offset.zero
-    ).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeOut),
     );
     _controller.forward();
   }
@@ -126,9 +115,9 @@ class _LoginScreenState extends State<LoginScreen>
                     final authProvider = Provider.of<AuthProvider>(context, listen: false);
                     
                     if (authProvider.isBusinessOwner()) {
-                      // Already signed in as business, go to job posting
+                      // Already signed in as business, go to business dashboard
                       Navigator.of(context).push(FadePageRoute(
-                        page: const PosterHomeScreen(),
+                        page: const BusinessDashboardScreen(),
                       ));
                     } else {
                       // Not signed in or signed in as worker, go to sign-in with business role
@@ -141,8 +130,8 @@ class _LoginScreenState extends State<LoginScreen>
                   backgroundColor: AppColors.primary,
                   foregroundColor: isDarkMode ? AppColors.primaryDark : Colors.white,
                   minimumSize: const Size(250, 50),
-                  child: const Text("Hire Workers"),
                   borderColor: AppColors.primary,
+                  child: const Text("Hire Workers"),
                 ),
                 const SizedBox(height: 20),
                 AnimatedScaleButton(
@@ -165,8 +154,8 @@ class _LoginScreenState extends State<LoginScreen>
                   backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
                   foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                   minimumSize: const Size(250, 50),
-                  child: const Text("Find Work"),
                   borderColor: isDarkMode ? Colors.white : AppColors.lightBorderPrimary,
+                  child: const Text("Find Work"),
                 ),
                 const SizedBox(height: 60),
                 // Why Choose Us Section

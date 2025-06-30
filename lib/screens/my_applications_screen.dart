@@ -130,12 +130,12 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         decoration: BoxDecoration(
           color: isSelected 
               ? AppColors.primary 
-              : (isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary),
+              : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
                 ? AppColors.primary 
-                : (isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary),
+                : (isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary),
           ),
         ),
         child: Text(
@@ -156,10 +156,10 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -171,7 +171,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.1),
+                  color: AppColors.primaryWithAlpha(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -272,10 +272,10 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (application.status == ApplicationStatus.accepted ? Colors.green : Colors.red).withOpacity(0.1),
+                color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.1) : AppColors.redWithAlpha(0.1)),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: (application.status == ApplicationStatus.accepted ? Colors.green : Colors.red).withOpacity(0.3),
+                  color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.3) : AppColors.redWithAlpha(0.3)),
                 ),
               ),
               child: Column(
@@ -286,7 +286,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: application.status == ApplicationStatus.accepted ? Colors.green : Colors.red,
+                      color: application.status == ApplicationStatus.accepted ? AppColors.green : AppColors.red,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -294,7 +294,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                     application.message!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: application.status == ApplicationStatus.accepted ? Colors.green : Colors.red,
+                      color: application.status == ApplicationStatus.accepted ? AppColors.green : AppColors.red,
                     ),
                   ),
                 ],
@@ -368,7 +368,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: AppColors.withAlpha(color, 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(

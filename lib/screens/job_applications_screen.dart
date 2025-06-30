@@ -132,12 +132,12 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         decoration: BoxDecoration(
           color: isSelected 
               ? AppColors.primary 
-              : (isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary),
+              : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
                 ? AppColors.primary 
-                : (isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary),
+                : (isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary),
           ),
         ),
         child: Text(
@@ -158,10 +158,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -172,7 +172,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundColor: AppColors.primary.withOpacity(0.1),
+                backgroundColor: AppColors.primaryWithAlpha(0.1),
                 child: Text(
                   application.workerName[0].toUpperCase(),
                   style: TextStyle(
@@ -265,7 +265,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                 skill,
                 style: TextStyle(fontSize: 12),
               ),
-              backgroundColor: AppColors.primary.withOpacity(0.1),
+              backgroundColor: AppColors.primaryWithAlpha(0.1),
               labelStyle: TextStyle(color: AppColors.primary),
             )).toList(),
           ),
@@ -345,10 +345,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (application.status == ApplicationStatus.accepted ? Colors.green : Colors.red).withOpacity(0.1),
+                color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.1) : AppColors.redWithAlpha(0.1)),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: (application.status == ApplicationStatus.accepted ? Colors.green : Colors.red).withOpacity(0.3),
+                  color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.3) : AppColors.redWithAlpha(0.3)),
                 ),
               ),
               child: Column(
@@ -401,7 +401,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: AppColors.withAlpha(color, 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(

@@ -147,7 +147,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 decoration: BoxDecoration(
                                   color: _selectedRole == UserRole.poster 
                                       ? AppColors.primary
-                                      : (isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary),
+                                      : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: _selectedRole == UserRole.poster 
@@ -194,7 +194,7 @@ class _SignInScreenState extends State<SignInScreen> {
                                 decoration: BoxDecoration(
                                   color: _selectedRole == UserRole.seeker 
                                       ? AppColors.primary
-                                      : (isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary),
+                                      : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: _selectedRole == UserRole.seeker 
@@ -254,7 +254,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             borderSide: BorderSide(color: AppColors.primary, width: 2),
                           ),
                           filled: true,
-                          fillColor: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                          fillColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
@@ -301,7 +301,7 @@ class _SignInScreenState extends State<SignInScreen> {
                             borderSide: BorderSide(color: AppColors.primary, width: 2),
                           ),
                           filled: true,
-                          fillColor: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                          fillColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {

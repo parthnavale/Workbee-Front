@@ -3,8 +3,7 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/theme_provider.dart';
 import '../constants/user_roles.dart';
-import 'fade_page_route.dart';
-import '../screens/sign_in_screen.dart';
+import '../constants/app_colors.dart';
 
 class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final Function(String) onNavigation;
@@ -130,7 +129,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                             TextButton(
                               onPressed: () => onNavigation('Logout'),
                               style: TextButton.styleFrom(
-                                backgroundColor: Colors.red.withOpacity(0.2),
+                                backgroundColor: AppColors.redWithAlpha(0.2),
                                 foregroundColor: Colors.red,
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 shape: RoundedRectangleBorder(
@@ -159,7 +158,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                             TextButton(
                               onPressed: () => onNavigation('Logout'),
                               style: TextButton.styleFrom(
-                                backgroundColor: Colors.red.withOpacity(0.2),
+                                backgroundColor: AppColors.redWithAlpha(0.2),
                                 foregroundColor: Colors.red,
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 shape: RoundedRectangleBorder(

@@ -100,7 +100,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
         borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
       filled: true,
-      fillColor: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+      fillColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
     );
   }
 
@@ -248,10 +248,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                    color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                      color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                     ),
                   ),
                   child: Column(
@@ -327,10 +327,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: isDarkMode ? Colors.grey : AppColors.lightBorderSecondary,
+                                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
-                                color: isDarkMode ? Colors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
+                                color: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
                               ),
                               child: Row(
                                 children: [
@@ -371,7 +371,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                                     skill,
                                     style: TextStyle(fontSize: 12),
                                   ),
-                                  backgroundColor: AppColors.primary.withOpacity(0.2),
+                                  backgroundColor: AppColors.primaryWithAlpha(0.2),
                                   deleteIcon: Icon(Icons.close, size: 16),
                                   onDeleted: () {
                                     setState(() {
@@ -391,10 +391,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                    color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                      color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                     ),
                   ),
                   child: Column(
@@ -568,10 +568,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? Colors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                    color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDarkMode ? Colors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                      color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
                     ),
                   ),
                   child: Column(
