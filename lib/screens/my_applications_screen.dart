@@ -130,12 +130,12 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         decoration: BoxDecoration(
           color: isSelected 
               ? AppColors.primary 
-              : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
+              : (isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
                 ? AppColors.primary 
-                : (isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary),
+                : (isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary),
           ),
         ),
         child: Text(
@@ -156,10 +156,10 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -171,7 +171,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
               Container(
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: AppColors.primaryWithAlpha(0.1),
+                  color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
@@ -272,10 +272,10 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.1) : AppColors.redWithAlpha(0.1)),
+                color: (application.status == ApplicationStatus.accepted ? AppColors.green.withOpacity(0.1) : AppColors.red.withOpacity(0.1)),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.3) : AppColors.redWithAlpha(0.3)),
+                  color: (application.status == ApplicationStatus.accepted ? AppColors.green.withOpacity(0.3) : AppColors.red.withOpacity(0.3)),
                 ),
               ),
               child: Column(
@@ -363,12 +363,17 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         text = 'Rejected';
         icon = Icons.cancel;
         break;
+      case ApplicationStatus.withdrawn:
+        color = Colors.grey;
+        text = 'Withdrawn';
+        icon = Icons.remove_circle;
+        break;
     }
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
-        color: AppColors.withAlpha(color, 0.1),
+        color: AppColors.withOpacity(color, 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Row(

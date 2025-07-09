@@ -2,11 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../constants/user_roles.dart';
 import '../providers/theme_provider.dart';
+import '../providers/auth_provider.dart';
 import '../constants/app_colors.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
+import '../core/services/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import '../widgets/loading_dialog.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -140,9 +143,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
-  void _submit() {
+  Future<void> _submit() async {
     if (_formKey.currentState!.validate() && _selectedRole != null) {
-      // Additional validation for skills
       if (_selectedRole == UserRole.seeker && _selectedSkills.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -152,15 +154,110 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
         return;
       }
-      
-      // For now, just show a success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Registration successful as ${_selectedRole == UserRole.poster ? 'Business' : 'Worker'}!'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      Navigator.pop(context);
+      try {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        final apiService = ApiService(authProvider: authProvider);
+        final email = _emailController.text.trim();
+        final password = _passwordController.text;
+        final username = email.split('@')[0];
+
+        // --- Delayed spinner for registration ---
+        bool dialogShown = false;
+        late Future<void> dialogFuture;
+        final registerFuture = authProvider.register(username, email, password, _selectedRole!);
+        dialogFuture = Future.delayed(const Duration(milliseconds: 300), () async {
+          dialogShown = true;
+          await LoadingDialog.show(
+            context,
+            message: _selectedRole == UserRole.poster
+                ? 'Registering as Business Owner...'
+                : 'Registering as Worker...'
+          );
+        });
+        final success = await registerFuture;
+        if (dialogShown && mounted) LoadingDialog.hide(context);
+        if (!success) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('User registration failed. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+        final userId = authProvider.userId;
+        if (userId == null) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Failed to get user ID. Please try again.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+          return;
+        }
+        // --- Delayed spinner for profile creation ---
+        dialogShown = false;
+        final profileFuture = _selectedRole == UserRole.poster
+            ? apiService.createBusinessOwner({
+                "user_id": userId,
+                "business_name": _companyController.text,
+                "contact_person": _contactPersonController.text,
+                "contact_phone": _phoneController.text,
+                "contact_email": email,
+                "address": _businessAddressController.text,
+                "website": "",
+                "industry": _businessTypeController.text,
+                "state": _stateController.text,
+                "city": _cityController.text,
+                "pincode": _pinCodeController.text,
+                "year_established": 2024
+              })
+            : apiService.createWorker({
+                "user_id": userId,
+                "name": _nameController.text,
+                "phone": _phoneController.text,
+                "email": email,
+                "skills": _selectedSkills.join(","),
+                "years_of_experience": 1,
+                "address": _addressController.text,
+                "state": _stateController.text,
+                "city": _cityController.text,
+                "pincode": _pinCodeController.text
+              });
+        dialogFuture = Future.delayed(const Duration(milliseconds: 300), () async {
+          dialogShown = true;
+          await LoadingDialog.show(
+            context,
+            message: _selectedRole == UserRole.poster
+                ? 'Creating Business Owner Profile...'
+                : 'Creating Worker Profile...'
+          );
+        });
+        await profileFuture;
+        if (dialogShown && mounted) LoadingDialog.hide(context);
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Registration successful as ${_selectedRole == UserRole.poster ? 'Business' : 'Worker'}!'),
+              backgroundColor: Colors.green,
+            ),
+          );
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Registration failed: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      }
     } else if (_selectedRole == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(

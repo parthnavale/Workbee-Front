@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import '../models/job.dart';
 import '../providers/job_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/auth_provider.dart';
 import '../constants/app_colors.dart';
+import '../constants/user_roles.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
 
@@ -100,7 +102,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
         borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
       filled: true,
-      fillColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+      fillColor: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
     );
   }
 
@@ -175,10 +177,35 @@ class _PostJobScreenState extends State<PostJobScreen> {
     });
 
     try {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      
+      // Check if user is logged in
+      if (!authProvider.isLoggedIn) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please log in to post jobs'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Check if user is a business owner
+      if (authProvider.userRole != UserRole.poster) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Only business owners can post jobs'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final job = Job(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        businessId: 'current_business_id', // In real app, get from auth
-        businessName: 'My Business', // In real app, get from user profile
+        // Debug print
+        businessId: (() { return authProvider.businessOwnerId?.toString() ?? ''; })(),
+        businessName: authProvider.userName ?? 'My Business',
         title: _titleController.text,
         description: _descriptionController.text,
         requiredSkills: _selectedSkills.toList(),
@@ -228,6 +255,22 @@ class _PostJobScreenState extends State<PostJobScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
+    final authProvider = Provider.of<AuthProvider>(context);
+
+    // Block posting if business owner and businessOwnerId is not loaded
+    if (authProvider.userRole == UserRole.poster && authProvider.businessOwnerId == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('Post a Job'),
+          backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
+          foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+          elevation: 0,
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
     
     return Scaffold(
       appBar: AppBar(
@@ -248,10 +291,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                    color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                      color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                     ),
                   ),
                   child: Column(
@@ -327,10 +370,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               padding: const EdgeInsets.all(16),
                               decoration: BoxDecoration(
                                 border: Border.all(
-                                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                                  color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                                 ),
                                 borderRadius: BorderRadius.circular(12),
-                                color: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+                                color: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
                               ),
                               child: Row(
                                 children: [
@@ -371,7 +414,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                                     skill,
                                     style: TextStyle(fontSize: 12),
                                   ),
-                                  backgroundColor: AppColors.primaryWithAlpha(0.2),
+                                  backgroundColor: AppColors.primary.withOpacity(0.2),
                                   deleteIcon: Icon(Icons.close, size: 16),
                                   onDeleted: () {
                                     setState(() {
@@ -391,10 +434,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                    color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                      color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                     ),
                   ),
                   child: Column(
@@ -568,10 +611,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
                 Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                    color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(
-                      color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                      color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                     ),
                   ),
                   child: Column(

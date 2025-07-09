@@ -1,8 +1,8 @@
 import '../repositories/job_repository.dart';
-import '../repositories/mock_job_repository.dart';
 import '../repositories/api_job_repository.dart';
 import '../services/job_service.dart';
-import '../config/app_config.dart';
+import '../services/api_service.dart';
+import '../../providers/auth_provider.dart';
 
 /// Service Locator pattern implementation for dependency injection
 /// This provides a centralized way to manage dependencies and makes testing easier
@@ -16,17 +16,20 @@ class ServiceLocator {
   
   // Services
   JobService? _jobService;
+  ApiService? _apiService;
+  
+  // Auth Provider
+  AuthProvider? _authProvider;
 
   /// Initialize the service locator with dependencies
-  void initialize() {
-    // Initialize repositories based on configuration
-    if (AppConfig.shouldUseApiRepository()) {
-      _jobRepository = ApiJobRepository();
-    } else {
-      _jobRepository = MockJobRepository();
-    }
+  void initialize({AuthProvider? authProvider}) {
+    _authProvider = authProvider;
     
-    // Initialize services with repositories
+    // Create API service with auth provider
+    _apiService = ApiService(authProvider: authProvider);
+    
+    // Always use the API repository with authenticated API service
+    _jobRepository = ApiJobRepository(apiService: _apiService);
     _jobService = JobService(_jobRepository!);
   }
 
@@ -46,28 +49,23 @@ class ServiceLocator {
     return _jobService!;
   }
 
-  /// Replace the job repository (useful for testing)
-  void replaceJobRepository(JobRepository repository) {
-    _jobRepository = repository;
-    _jobService = JobService(_jobRepository!);
+  /// Get the API service
+  ApiService get apiService {
+    if (_apiService == null) {
+      throw StateError('ServiceLocator not initialized. Call initialize() first.');
+    }
+    return _apiService!;
   }
 
-  /// Switch to mock repository (useful for offline development)
-  void useMockRepository() {
-    _jobRepository = MockJobRepository();
-    _jobService = JobService(_jobRepository!);
-  }
-
-  /// Switch to API repository (for production/online mode)
-  void useApiRepository() {
-    _jobRepository = ApiJobRepository();
-    _jobService = JobService(_jobRepository!);
-  }
+  /// Get the auth provider
+  AuthProvider? get authProvider => _authProvider;
 
   /// Reset all dependencies (useful for testing)
   void reset() {
     _jobRepository = null;
     _jobService = null;
+    _apiService = null;
+    _authProvider = null;
   }
 }
 

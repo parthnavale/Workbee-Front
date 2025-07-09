@@ -1,6 +1,6 @@
 {
-    "name": "projecttest1",
-    "short_name": "projecttest1",
+    "name": "Workbee",
+    "short_name": "Workbee",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

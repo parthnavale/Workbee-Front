@@ -8,6 +8,7 @@ import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
 import 'post_job_screen.dart';
 import 'job_applications_screen.dart';
+import '../providers/auth_provider.dart';
 
 class BusinessDashboardScreen extends StatefulWidget {
   const BusinessDashboardScreen({super.key});
@@ -18,6 +19,25 @@ class BusinessDashboardScreen extends StatefulWidget {
 
 class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
   int _selectedIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadBusinessOwnerJobs();
+  }
+
+  Future<void> _loadBusinessOwnerJobs() async {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.businessOwnerId != null) {
+      final jobProvider = Provider.of<JobProvider>(context, listen: false);
+      await jobProvider.fetchBusinessOwnerJobs(authProvider.businessOwnerId.toString());
+      await jobProvider.fetchPendingApplicationsCount(authProvider.businessOwnerId.toString());
+    }
+  }
+
+  Future<void> _refreshData() async {
+    await _loadBusinessOwnerJobs();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -114,13 +134,15 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.push(
+        onPressed: () async {
+          await Navigator.push(
             context,
             MaterialPageRoute(
               builder: (context) => const PostJobScreen(),
             ),
           );
+          // Refresh data after posting a job
+          await _refreshData();
         },
         backgroundColor: AppColors.primary,
         child: const Icon(Icons.add, color: Colors.white),
@@ -716,11 +738,17 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          Text(
-            '${job.applications.length} applications',
-            style: TextStyle(
-              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
-            ),
+          FutureBuilder<int>(
+            future: _getApplicationCount(job.id),
+            builder: (context, snapshot) {
+              final count = snapshot.data ?? 0;
+              return Text(
+                ' $count applications',
+                style: TextStyle(
+                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                ),
+              );
+            },
           ),
           const SizedBox(height: 16),
           Row(
@@ -778,7 +806,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
           CircleAvatar(
             backgroundColor: AppColors.primaryWithAlpha(0.1),
             child: Text(
-              app.workerName[0].toUpperCase(),
+              'W',
               style: TextStyle(
                 color: AppColors.primary,
                 fontWeight: FontWeight.bold,
@@ -791,7 +819,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  app.workerName,
+                  'Worker #${app.workerId}',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
@@ -799,7 +827,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   ),
                 ),
                 Text(
-                  '${app.yearsOfExperience} years experience',
+                  'Expected: ₹${app.expectedSalary.toStringAsFixed(0)}',
                   style: TextStyle(
                     fontSize: 12,
                     color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
@@ -859,5 +887,10 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
     } else {
       return '${date.day}/${date.month}';
     }
+  }
+
+  Future<int> _getApplicationCount(String jobId) async {
+    final jobProvider = Provider.of<JobProvider>(context, listen: false);
+    return await jobProvider.fetchJobApplicationsCount(jobId);
   }
 } 

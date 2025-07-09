@@ -101,16 +101,34 @@ class JobService {
     String businessId,
     {String? message}
   ) async {
-    // Validate job ownership
-    final job = await _repository.getJobById(jobId);
-    if (job == null) {
-      throw ArgumentError('Job not found');
-    }
-    if (job.businessId != businessId) {
-      throw ArgumentError('Only the job owner can respond to applications');
-    }
+    print('[DEBUG] JobService.respondToApplication - called with jobId: $jobId, applicationId: $applicationId, status: $status, businessId: $businessId, message: "$message"');
+    
+    try {
+      // Validate job ownership
+      print('[DEBUG] JobService.respondToApplication - getting job by id: $jobId');
+      final job = await _repository.getJobById(jobId);
+      if (job == null) {
+        print('[DEBUG] JobService.respondToApplication - ERROR: Job not found');
+        throw ArgumentError('Job not found');
+      }
+      print('[DEBUG] JobService.respondToApplication - job found, businessId: ${job.businessId}');
+      
+      if (job.businessId != businessId) {
+        print('[DEBUG] JobService.respondToApplication - ERROR: Job owner mismatch. Expected: $businessId, Found: ${job.businessId}');
+        throw ArgumentError('Only the job owner can respond to applications');
+      }
+      print('[DEBUG] JobService.respondToApplication - job ownership validated');
 
-    await _repository.respondToApplication(jobId, applicationId, status, message: message);
+      print('[DEBUG] JobService.respondToApplication - calling repository.respondToApplication');
+      await _repository.respondToApplication(jobId, applicationId, status, message: message);
+      print('[DEBUG] JobService.respondToApplication - repository.respondToApplication completed successfully');
+      
+      print('[DEBUG] JobService.respondToApplication - completed successfully');
+    } catch (e) {
+      print('[DEBUG] JobService.respondToApplication - ERROR: $e');
+      print('[DEBUG] JobService.respondToApplication - ERROR type: ${e.runtimeType}');
+      rethrow;
+    }
   }
 
   /// Update job status with validation

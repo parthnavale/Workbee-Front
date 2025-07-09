@@ -71,15 +71,15 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
               child: Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                 decoration: BoxDecoration(
-                  color: AppColors.whiteWithAlpha(0.1),
+                  color: AppColors.white.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(
-                    color: AppColors.whiteWithAlpha(0.2),
+                    color: AppColors.white.withOpacity(0.2),
                     width: 1,
                   ),
                   boxShadow: [
                     BoxShadow(
-                      color: AppColors.blackWithAlpha(0.1),
+                      color: AppColors.black.withOpacity(0.1),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -109,7 +109,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                                   widget.job.businessName,
                                   style: TextStyle(
                                     fontSize: 14,
-                                    color: AppColors.whiteWithAlpha(0.7),
+                                    color: AppColors.white.withOpacity(0.7),
                                   ),
                                 ),
                               ],
@@ -122,10 +122,10 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                                 vertical: 4,
                               ),
                               decoration: BoxDecoration(
-                                color: AppColors.greenWithAlpha(0.2),
+                                color: AppColors.green.withOpacity(0.2),
                                 borderRadius: BorderRadius.circular(12),
                                 border: Border.all(
-                                  color: AppColors.greenWithAlpha(0.5),
+                                  color: AppColors.green.withOpacity(0.5),
                                 ),
                               ),
                               child: const Text(
@@ -152,7 +152,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                             child: Text(
                               '${widget.job.city}, ${widget.job.state}',
                               style: TextStyle(
-                                color: AppColors.whiteWithAlpha(0.7),
+                                color: AppColors.white.withOpacity(0.7),
                                 fontSize: 14,
                               ),
                             ),
@@ -171,7 +171,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                           Text(
                             '₹${widget.job.hourlyRate}/hour',
                             style: TextStyle(
-                              color: AppColors.whiteWithAlpha(0.7),
+                              color: AppColors.white.withOpacity(0.7),
                               fontSize: 14,
                             ),
                           ),
@@ -185,7 +185,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                           Text(
                             '${widget.job.estimatedHours} hours',
                             style: TextStyle(
-                              color: AppColors.whiteWithAlpha(0.7),
+                              color: AppColors.white.withOpacity(0.7),
                               fontSize: 14,
                             ),
                           ),
@@ -196,7 +196,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                         Text(
                           'Required Skills:',
                           style: TextStyle(
-                            color: AppColors.whiteWithAlpha(0.7),
+                            color: AppColors.white.withOpacity(0.7),
                             fontSize: 12,
                             fontWeight: FontWeight.bold,
                           ),
@@ -211,7 +211,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.primaryWithAlpha(0.2),
+                              color: AppColors.primary.withOpacity(0.2),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -230,7 +230,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                             child: Text(
                               '+${widget.job.requiredSkills.length - 3} more',
                               style: TextStyle(
-                                color: AppColors.whiteWithAlpha(0.5),
+                                color: AppColors.white.withOpacity(0.5),
                                 fontSize: 10,
                               ),
                             ),
@@ -241,14 +241,14 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                         children: [
                           Icon(
                             Icons.access_time,
-                            color: AppColors.whiteWithAlpha(0.5),
+                            color: AppColors.white.withOpacity(0.5),
                             size: 14,
                           ),
                           const SizedBox(width: 4),
                           Text(
                             'Posted ${_formatDate(widget.job.postedDate)}',
                             style: TextStyle(
-                              color: AppColors.whiteWithAlpha(0.5),
+                              color: AppColors.white.withOpacity(0.5),
                               fontSize: 12,
                             ),
                           ),
@@ -257,7 +257,7 @@ class _AnimatedJobCardState extends State<AnimatedJobCard>
                             Text(
                               '${widget.job.applications.length} applications',
                               style: TextStyle(
-                                color: AppColors.whiteWithAlpha(0.5),
+                                color: AppColors.white.withOpacity(0.5),
                                 fontSize: 12,
                               ),
                             ),

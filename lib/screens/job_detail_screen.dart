@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import '../models/job.dart';
 import '../providers/job_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/auth_provider.dart';
 import '../constants/app_colors.dart';
+import '../constants/user_roles.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
 
@@ -25,17 +27,37 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     });
 
     try {
-      // In a real app, get user data from auth provider
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      
+      // Check if user is logged in
+      if (!authProvider.isLoggedIn) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please log in to apply for jobs'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Check if user is a worker
+      if (authProvider.userRole != UserRole.seeker) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Only workers can apply for jobs'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
       final application = JobApplication(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
         jobId: widget.job.id,
-        workerId: 'current_worker_id',
-        workerName: 'John Doe', // Get from user profile
-        workerEmail: 'john@example.com', // Get from user profile
-        workerPhone: '9876543210', // Get from user profile
-        workerSkills: ['Cashier', 'Customer Service'], // Get from user profile
-        yearsOfExperience: 2, // Get from user profile
-        previousWorkExperience: 'Worked as cashier at ABC store for 2 years', // Get from user profile
+        workerId: authProvider.workerId?.toString() ?? '',
+        coverLetter: 'I am interested in this position and believe I would be a great fit for your team.',
+        expectedSalary: widget.job.hourlyRate * widget.job.estimatedHours,
+        availabilityDate: DateTime.now().add(const Duration(days: 7)),
         appliedDate: DateTime.now(),
       );
 
@@ -92,10 +114,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -106,7 +128,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         Container(
                           padding: const EdgeInsets.all(12),
                           decoration: BoxDecoration(
-                            color: AppColors.primaryWithAlpha(0.1),
+                            color: AppColors.primary.withOpacity(0.1),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Icon(
@@ -186,10 +208,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -229,7 +251,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                     Container(
                       padding: const EdgeInsets.all(12),
                       decoration: BoxDecoration(
-                        color: AppColors.primaryWithAlpha(0.1),
+                        color: AppColors.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Row(
@@ -260,10 +282,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -295,10 +317,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -318,7 +340,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       runSpacing: 8,
                       children: widget.job.requiredSkills.map((skill) => Chip(
                         label: Text(skill),
-                        backgroundColor: AppColors.primaryWithAlpha(0.2),
+                        backgroundColor: AppColors.primary.withOpacity(0.2),
                         labelStyle: TextStyle(color: AppColors.primary),
                       )).toList(),
                     ),
@@ -331,10 +353,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -385,10 +407,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -434,7 +456,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   onTap: _isApplying ? null : () {
                     _applyForJob();
                   },
-                  backgroundColor: AppColors.primary,
+                  backgroundColor: AppColors.primary.withOpacity(0.2),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 50),
                   child: _isApplying
@@ -459,7 +481,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   width: double.infinity,
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
-                    color: AppColors.greenWithAlpha(0.1),
+                    color: AppColors.green.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(12),
                     border: Border.all(color: Colors.green),
                   ),
@@ -500,10 +522,10 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(

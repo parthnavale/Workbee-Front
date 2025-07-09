@@ -28,7 +28,7 @@ class _JobListingScreenState extends State<JobListingScreen> {
       _isLoading = true;
     });
     
-    await Provider.of<JobProvider>(context, listen: false).loadJobs();
+    await Provider.of<JobProvider>(context, listen: false).fetchJobs();
     
     setState(() {
       _isLoading = false;

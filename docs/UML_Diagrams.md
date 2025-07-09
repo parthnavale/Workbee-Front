@@ -573,4 +573,63 @@ flowchart TD
 
 ---
 
+## 2024 Additions: Key Classes and Patterns
+
+```mermaid
+classDiagram
+    class ServiceLocator {
+        +initialize()
+        +jobRepository
+        +jobService
+        +apiService
+        +authProvider
+    }
+    class ApiJobRepository {
+        +getJobs()
+        +getJobsByBusiness()
+        +getJobsByWorker()
+        +postJob()
+        +applyForJob()
+        +respondToApplication()
+        +updateJobStatus()
+    }
+    class JobCommand {
+        <<interface>>
+        +execute()
+    }
+    class PostJobCommand {
+        +execute()
+    }
+    class ApplyForJobCommand {
+        +execute()
+    }
+    class RespondToApplicationCommand {
+        +execute()
+    }
+    class UpdateJobStatusCommand {
+        +execute()
+    }
+    class JobCommandInvoker {
+        +addCommand()
+        +executeAll()
+        +executeCommand()
+        +clearQueue()
+        +queueLength
+    }
+    class BusinessDashboardScreen
+    class SeekerHomeScreen
+
+    ServiceLocator --> ApiJobRepository
+    ApiJobRepository --> JobCommand
+    JobCommand <|-- PostJobCommand
+    JobCommand <|-- ApplyForJobCommand
+    JobCommand <|-- RespondToApplicationCommand
+    JobCommand <|-- UpdateJobStatusCommand
+    JobCommandInvoker --> JobCommand
+    BusinessDashboardScreen ..> ServiceLocator
+    SeekerHomeScreen ..> ServiceLocator
+```
+
+---
+
 *This documentation provides a comprehensive overview of the WorkBee app's architecture, design patterns, and user flows.* 

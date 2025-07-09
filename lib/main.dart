@@ -16,9 +16,6 @@ import 'core/di/service_locator.dart';
 /// - Job posting and viewing functionality
 /// - Clean architecture with repository pattern
 void main() {
-  // Initialize dependency injection
-  serviceLocator.initialize();
-  
   runApp(
     MultiProvider(
       providers: [
@@ -38,11 +35,20 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
-        return MaterialApp(
-          title: 'WorkSwift',
-          theme: _buildTheme(themeProvider.isDarkMode),
-          debugShowCheckedModeBanner: false,
-          home: const HomeScreen(),
+        return Consumer<AuthProvider>(
+          builder: (context, authProvider, child) {
+            // Initialize service locator with auth provider
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              serviceLocator.initialize(authProvider: authProvider);
+            });
+            
+            return MaterialApp(
+              title: 'WorkSwift',
+              theme: _buildTheme(themeProvider.isDarkMode),
+              debugShowCheckedModeBanner: false,
+              home: const HomeScreen(),
+            );
+          },
         );
       },
     );

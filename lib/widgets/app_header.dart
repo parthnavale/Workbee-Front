@@ -129,7 +129,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                             TextButton(
                               onPressed: () => onNavigation('Logout'),
                               style: TextButton.styleFrom(
-                                backgroundColor: AppColors.redWithAlpha(0.2),
+                                backgroundColor: AppColors.red.withOpacity(0.2),
                                 foregroundColor: Colors.red,
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 shape: RoundedRectangleBorder(
@@ -158,7 +158,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
                             TextButton(
                               onPressed: () => onNavigation('Logout'),
                               style: TextButton.styleFrom(
-                                backgroundColor: AppColors.redWithAlpha(0.2),
+                                backgroundColor: AppColors.red.withOpacity(0.2),
                                 foregroundColor: Colors.red,
                                 padding: EdgeInsets.symmetric(horizontal: 16),
                                 shape: RoundedRectangleBorder(

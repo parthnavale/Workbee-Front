@@ -9,6 +9,7 @@ enum ApplicationStatus {
   pending,
   accepted,
   rejected,
+  withdrawn,
 }
 
 class Job {
@@ -159,30 +160,22 @@ class JobApplication {
   final String id;
   final String jobId;
   final String workerId;
-  final String workerName;
-  final String workerEmail;
-  final String workerPhone;
-  final List<String> workerSkills;
-  final int yearsOfExperience;
-  final String previousWorkExperience;
+  final String coverLetter;
+  final double expectedSalary;
+  final DateTime? availabilityDate;
   final ApplicationStatus status;
   final DateTime appliedDate;
-  final DateTime? respondedDate;
   final String? message;
 
   JobApplication({
     required this.id,
     required this.jobId,
     required this.workerId,
-    required this.workerName,
-    required this.workerEmail,
-    required this.workerPhone,
-    required this.workerSkills,
-    required this.yearsOfExperience,
-    required this.previousWorkExperience,
+    required this.coverLetter,
+    required this.expectedSalary,
+    this.availabilityDate,
     this.status = ApplicationStatus.pending,
     required this.appliedDate,
-    this.respondedDate,
     this.message,
   });
 
@@ -190,30 +183,22 @@ class JobApplication {
     String? id,
     String? jobId,
     String? workerId,
-    String? workerName,
-    String? workerEmail,
-    String? workerPhone,
-    List<String>? workerSkills,
-    int? yearsOfExperience,
-    String? previousWorkExperience,
+    String? coverLetter,
+    double? expectedSalary,
+    DateTime? availabilityDate,
     ApplicationStatus? status,
     DateTime? appliedDate,
-    DateTime? respondedDate,
     String? message,
   }) {
     return JobApplication(
       id: id ?? this.id,
       jobId: jobId ?? this.jobId,
       workerId: workerId ?? this.workerId,
-      workerName: workerName ?? this.workerName,
-      workerEmail: workerEmail ?? this.workerEmail,
-      workerPhone: workerPhone ?? this.workerPhone,
-      workerSkills: workerSkills ?? this.workerSkills,
-      yearsOfExperience: yearsOfExperience ?? this.yearsOfExperience,
-      previousWorkExperience: previousWorkExperience ?? this.previousWorkExperience,
+      coverLetter: coverLetter ?? this.coverLetter,
+      expectedSalary: expectedSalary ?? this.expectedSalary,
+      availabilityDate: availabilityDate ?? this.availabilityDate,
       status: status ?? this.status,
       appliedDate: appliedDate ?? this.appliedDate,
-      respondedDate: respondedDate ?? this.respondedDate,
       message: message ?? this.message,
     );
   }
@@ -223,33 +208,26 @@ class JobApplication {
       'id': id,
       'jobId': jobId,
       'workerId': workerId,
-      'workerName': workerName,
-      'workerEmail': workerEmail,
-      'workerPhone': workerPhone,
-      'workerSkills': workerSkills,
-      'yearsOfExperience': yearsOfExperience,
-      'previousWorkExperience': previousWorkExperience,
+      'coverLetter': coverLetter,
+      'expectedSalary': expectedSalary,
+      'availabilityDate': availabilityDate?.toIso8601String(),
       'status': status.toString(),
       'appliedDate': appliedDate.toIso8601String(),
-      'respondedDate': respondedDate?.toIso8601String(),
       'message': message,
     };
   }
 
   factory JobApplication.fromJson(Map<String, dynamic> json) {
     return JobApplication(
-      id: json['id'],
-      jobId: json['jobId'],
-      workerId: json['workerId'],
-      workerName: json['workerName'],
-      workerEmail: json['workerEmail'],
-      workerPhone: json['workerPhone'],
-      workerSkills: List<String>.from(json['workerSkills']),
-      yearsOfExperience: json['yearsOfExperience'],
-      previousWorkExperience: json['previousWorkExperience'],
+      id: json['id'].toString(),
+      jobId: json['job_id']?.toString() ?? json['jobId']?.toString() ?? '',
+      workerId: json['worker_id']?.toString() ?? json['workerId']?.toString() ?? '',
+      coverLetter: json['message'] ?? json['coverLetter'] ?? '',
+      expectedSalary: (json['expectedSalary'] ?? json['expected_salary'] ?? 0.0).toDouble(),
+      availabilityDate: json['availabilityDate'] != null ? DateTime.parse(json['availabilityDate']) : 
+                       json['availability_date'] != null ? DateTime.parse(json['availability_date']) : null,
       status: ApplicationStatus.values.firstWhere((e) => e.toString() == json['status']),
-      appliedDate: DateTime.parse(json['appliedDate']),
-      respondedDate: json['respondedDate'] != null ? DateTime.parse(json['respondedDate']) : null,
+      appliedDate: DateTime.parse(json['applied_date'] ?? json['appliedDate']),
       message: json['message'],
     );
   }

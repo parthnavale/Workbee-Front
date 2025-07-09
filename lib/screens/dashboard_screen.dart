@@ -34,9 +34,9 @@ class DashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: AppColors.primaryWithAlpha(0.3)),
+                border: Border.all(color: AppColors.primary.withOpacity(0.3)),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -123,7 +123,7 @@ class DashboardScreen extends StatelessWidget {
                   ),
                 ),
                 icon: Icons.add,
-                backgroundColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+                backgroundColor: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
                 foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                 borderColor: AppColors.primary,
                 minimumSize: const Size(double.infinity, 50),
@@ -157,7 +157,7 @@ class DashboardScreen extends StatelessWidget {
                   // Navigate to applied jobs
                 },
                 icon: Icons.work,
-                backgroundColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+                backgroundColor: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
                 foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
                 borderColor: AppColors.primary,
                 minimumSize: const Size(double.infinity, 50),
@@ -177,7 +177,7 @@ class DashboardScreen extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(16),
               ),
               child: Column(
@@ -226,9 +226,9 @@ class DashboardScreen extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: AppColors.primaryWithAlpha(0.3)),
+        border: Border.all(color: AppColors.primary.withOpacity(0.3)),
       ),
       child: Column(
         children: [

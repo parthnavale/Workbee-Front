@@ -210,6 +210,27 @@ The app is structured for easy backend integration:
 - **Error handling** framework in place
 - **Loading states** implemented throughout
 
+## Recent Architectural & Feature Updates (2024)
+
+### Service Locator
+- Centralized dependency management in `lib/core/di/service_locator.dart` for API, job, and auth services.
+
+### API Service & Repository
+- API integration via `lib/core/services/api_service.dart` and `lib/core/repositories/api_job_repository.dart`.
+- Endpoints and timeouts are managed in `lib/core/config/app_config.dart`.
+
+### Command Pattern
+- Job operations (post, apply, respond, update status) are encapsulated as commands in `lib/core/commands/job_commands.dart`.
+- Supports command queuing and batch execution.
+
+### Role-Based Dashboards
+- Business owners: `lib/screens/business_dashboard_screen.dart` (overview, applications, jobs, notification badges).
+- Workers: `lib/screens/seeker_home_screen.dart` (overview, applications, profile).
+- Navigation logic: `lib/utils/navigation_utils.dart`.
+
+### Expanded Data Models
+- `lib/models/job.dart` includes contact info, job/application status enums, and supports copyWith/serialization.
+
 ## Future Enhancements
 
 ### Planned Features

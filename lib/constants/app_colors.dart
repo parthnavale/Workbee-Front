@@ -32,36 +32,11 @@ class AppColors {
   static const Color red = Color(0xFFF44336);
   static const Color black = Color(0xFF000000);
 
-  // Utility functions to replace deprecated withOpacity
-  static Color withAlpha(Color color, double alpha) {
-    return color.withValues(alpha: alpha);
-  }
-
-  static Color whiteWithAlpha(double alpha) {
-    return Colors.white.withValues(alpha: alpha);
-  }
-
-  static Color greyWithAlpha(double alpha) {
-    return Colors.grey.withValues(alpha: alpha);
-  }
-
-  static Color redWithAlpha(double alpha) {
-    return Colors.red.withValues(alpha: alpha);
-  }
-
-  static Color greenWithAlpha(double alpha) {
-    return Colors.green.withValues(alpha: alpha);
-  }
-
-  static Color primaryWithAlpha(double alpha) {
-    return primary.withValues(alpha: alpha);
-  }
-
-  static Color orangeWithAlpha(double alpha) {
-    return Colors.orange.withValues(alpha: alpha);
-  }
-
-  static Color blackWithAlpha(double alpha) {
-    return Colors.black.withValues(alpha: alpha);
-  }
+  // Helper methods for colors with alpha/opacity
+  static Color whiteWithAlpha(double alpha) => white.withOpacity(alpha);
+  static Color greyWithAlpha(double alpha) => grey.withOpacity(alpha);
+  static Color primaryWithAlpha(double alpha) => primary.withOpacity(alpha);
+  static Color orangeWithAlpha(double alpha) => Colors.orange.withOpacity(alpha);
+  static Color withAlpha(Color color, double alpha) => color.withOpacity(alpha);
+  static Color withOpacity(Color color, double opacity) => color.withOpacity(opacity);
 } 

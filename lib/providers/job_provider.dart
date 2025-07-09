@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../models/job.dart';
 import 'package:flutter/material.dart';
+import '../core/di/service_locator.dart';
 
 class JobProvider with ChangeNotifier {
   List<Job> _jobs = [];
@@ -22,40 +23,16 @@ class JobProvider with ChangeNotifier {
 
   // Post a new job (Business Owner)
   Future<void> postJob(Job job) async {
-    // In a real app, this would make an API call
-    _jobs.add(job);
-    _myPostedJobs.add(job);
+    await serviceLocator.jobService.postJob(job);
+    await fetchJobs();
     notifyListeners();
-    
-    // Simulate API delay
-    await Future.delayed(Duration(milliseconds: 500));
   }
 
   // Apply for a job (Worker)
   Future<void> applyForJob(JobApplication application) async {
-    // In a real app, this would make an API call
-    _myApplications.add(application);
-    
-    // Add application to the job
-    final jobIndex = _jobs.indexWhere((job) => job.id == application.jobId);
-    if (jobIndex != -1) {
-      _jobs[jobIndex] = _jobs[jobIndex].copyWith(
-        applications: [..._jobs[jobIndex].applications, application],
-      );
-    }
-    
-    // Update my posted jobs if this is one of them
-    final myJobIndex = _myPostedJobs.indexWhere((job) => job.id == application.jobId);
-    if (myJobIndex != -1) {
-      _myPostedJobs[myJobIndex] = _myPostedJobs[myJobIndex].copyWith(
-        applications: [..._myPostedJobs[myJobIndex].applications, application],
-      );
-    }
-    
+    await serviceLocator.jobService.applyForJob(application);
+    await fetchJobs();
     notifyListeners();
-    
-    // Simulate API delay
-    await Future.delayed(Duration(milliseconds: 500));
   }
 
   // Accept/Reject application (Business Owner)
@@ -65,72 +42,36 @@ class JobProvider with ChangeNotifier {
     ApplicationStatus status,
     {String? message}
   ) async {
-    // Update application status
-    final jobIndex = _jobs.indexWhere((job) => job.id == jobId);
-    if (jobIndex != -1) {
-      final updatedApplications = _jobs[jobIndex].applications.map((app) {
-        if (app.id == applicationId) {
-          return app.copyWith(
-            status: status,
-            respondedDate: DateTime.now(),
-            message: message,
-          );
-        }
-        return app;
-      }).toList();
-      
-      _jobs[jobIndex] = _jobs[jobIndex].copyWith(applications: updatedApplications);
-    }
-
-    // Update my posted jobs
-    final myJobIndex = _myPostedJobs.indexWhere((job) => job.id == jobId);
-    if (myJobIndex != -1) {
-      final updatedApplications = _myPostedJobs[myJobIndex].applications.map((app) {
-        if (app.id == applicationId) {
-          return app.copyWith(
-            status: status,
-            respondedDate: DateTime.now(),
-            message: message,
-          );
-        }
-        return app;
-      }).toList();
-      
-      _myPostedJobs[myJobIndex] = _myPostedJobs[myJobIndex].copyWith(applications: updatedApplications);
-    }
-
-    // Update my applications if I'm the worker
-    final myAppIndex = _myApplications.indexWhere((app) => app.id == applicationId);
-    if (myAppIndex != -1) {
-      _myApplications[myAppIndex] = _myApplications[myAppIndex].copyWith(
-        status: status,
-        respondedDate: DateTime.now(),
-        message: message,
-      );
-    }
-
-    notifyListeners();
     
-    // Simulate API delay
-    await Future.delayed(Duration(milliseconds: 500));
+    try {
+      // Get the business owner ID from the auth provider
+      final authProvider = serviceLocator.authProvider;
+      if (authProvider == null) {
+        throw Exception('Auth provider not found. Please log in again.');
+      }
+      
+      final businessOwnerId = authProvider.businessOwnerId;
+      
+      if (businessOwnerId == null) {
+        throw Exception('Business owner ID not found. Please log in again.');
+      }
+      
+      await serviceLocator.jobService.respondToApplication(jobId, applicationId, status, businessOwnerId.toString(), message: message);
+      
+      await fetchJobs();
+      
+      notifyListeners();
+      
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // Update job status (Business Owner)
   Future<void> updateJobStatus(String jobId, JobStatus status) async {
-    final jobIndex = _jobs.indexWhere((job) => job.id == jobId);
-    if (jobIndex != -1) {
-      _jobs[jobIndex] = _jobs[jobIndex].copyWith(status: status);
-    }
-
-    final myJobIndex = _myPostedJobs.indexWhere((job) => job.id == jobId);
-    if (myJobIndex != -1) {
-      _myPostedJobs[myJobIndex] = _myPostedJobs[myJobIndex].copyWith(status: status);
-    }
-
+    await serviceLocator.jobService.updateJobStatus(jobId, status, '');
+    await fetchJobs();
     notifyListeners();
-    
-    // Simulate API delay
-    await Future.delayed(Duration(milliseconds: 500));
   }
 
   // Get job by ID
@@ -157,58 +98,81 @@ class JobProvider with ChangeNotifier {
   }
 
   // Get pending applications count for a business owner
+  int _pendingApplicationsCount = 0;
+  
   int getPendingApplicationsCount() {
-    return _myPostedJobs.fold(0, (count, job) {
-      return count + job.applications.where((app) => app.status == ApplicationStatus.pending).length;
-    });
+    return _pendingApplicationsCount;
   }
 
-  // Load jobs from API (simulated)
-  Future<void> loadJobs() async {
-    // In a real app, this would fetch from API
-    // For now, we'll add some sample jobs
-    if (_jobs.isEmpty) {
-      _jobs = [
-        Job(
-          id: '1',
-          businessId: 'business1',
-          businessName: 'ABC Retail Store',
-          title: 'Cashier',
-          description: 'Looking for an experienced cashier for our retail store. Must be good with customers and have basic math skills.',
-          requiredSkills: ['Cashier', 'Customer Service'],
-          location: 'Mumbai',
-          address: '123 Main Street',
-          state: 'Maharashtra',
-          city: 'Mumbai',
-          pinCode: '400001',
-          hourlyRate: 150.0,
-          estimatedHours: 8,
-          postedDate: DateTime.now().subtract(Duration(days: 2)),
-          contactPerson: 'John Doe',
-          contactPhone: '9876543210',
-          contactEmail: 'john@abcretail.com',
-        ),
-        Job(
-          id: '2',
-          businessId: 'business2',
-          businessName: 'XYZ Supermarket',
-          title: 'Store Associate',
-          description: 'Need a store associate to help with inventory management and customer service.',
-          requiredSkills: ['Store Associate', 'Inventory Management', 'Customer Service'],
-          location: 'Delhi',
-          address: '456 Park Avenue',
-          state: 'Delhi',
-          city: 'New Delhi',
-          pinCode: '110001',
-          hourlyRate: 180.0,
-          estimatedHours: 6,
-          postedDate: DateTime.now().subtract(Duration(days: 1)),
-          contactPerson: 'Jane Smith',
-          contactPhone: '9876543211',
-          contactEmail: 'jane@xyzsupermarket.com',
-        ),
-      ];
+  // Fetch pending applications count for a business owner
+  Future<void> fetchPendingApplicationsCount(String businessOwnerId) async {
+    try {
+      int totalPending = 0;
+      for (final job in _myPostedJobs) {
+        // Use applications that are already loaded in the job
+        totalPending += job.applications.where((app) => app.status == ApplicationStatus.pending).length;
+      }
+      _pendingApplicationsCount = totalPending;
       notifyListeners();
+    } catch (e) {
+      _pendingApplicationsCount = 0;
+    }
+  }
+
+  // Fetch jobs from API
+  Future<void> fetchJobs() async {
+    _jobs = await serviceLocator.jobService.getOpenJobs();
+    notifyListeners();
+  }
+
+  // Fetch business owner's posted jobs
+  Future<void> fetchBusinessOwnerJobs(String businessOwnerId) async {
+    _myPostedJobs.clear();
+    final jobs = await serviceLocator.jobService.getBusinessJobs(businessOwnerId);
+    
+    // Batch load applications for each job in parallel
+    final List<Future<Job>> jobFutures = jobs.map((job) async {
+      try {
+        final applications = await serviceLocator.jobService.getApplicationsForJob(job.id, businessOwnerId);
+        return job.copyWith(applications: applications);
+      } catch (e) {
+        // If there's an error loading applications, add the job without applications
+        return job;
+      }
+    }).toList();
+    final updatedJobs = await Future.wait(jobFutures);
+    
+    // Only update and notify if data actually changed
+    bool changed = _myPostedJobs.length != updatedJobs.length || !_myPostedJobs.asMap().entries.every((entry) => entry.value == updatedJobs[entry.key]);
+    if (changed) {
+      _myPostedJobs
+        ..clear()
+        ..addAll(updatedJobs);
+      notifyListeners();
+    }
+  }
+
+  // Fetch worker's applications
+  Future<void> fetchWorkerApplications(String workerId) async {
+    _myApplications.clear();
+    final applications = await serviceLocator.jobService.getWorkerApplications(workerId);
+    _myApplications.addAll(applications);
+    notifyListeners();
+  }
+
+  // Fetch applications for a specific job
+  Future<List<JobApplication>> getApplicationsForJob(String jobId, String businessId) async {
+    final applications = await serviceLocator.jobService.getApplicationsForJob(jobId, businessId);
+    return applications;
+  }
+
+  // Fetch application count for a specific job
+  Future<int> fetchJobApplicationsCount(String jobId) async {
+    try {
+      final applications = await serviceLocator.jobService.getApplicationsForJob(jobId, '');
+      return applications.length;
+    } catch (e) {
+      return 0;
     }
   }
 

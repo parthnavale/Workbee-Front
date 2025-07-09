@@ -24,8 +24,9 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<List<Job>> getJobsByBusiness(String businessId) async {
     try {
-      final allJobs = await getJobs();
-      return allJobs.where((job) => job.businessId == businessId).toList();
+      // Use backend filtering instead of fetching all jobs
+      final apiJobs = await _apiService.getJobsByBusiness(businessId);
+      return apiJobs.map((jobData) => _mapApiJobToFlutterJob(jobData)).toList();
     } catch (e) {
       return [];
     }
@@ -71,11 +72,8 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<void> updateJob(Job job) async {
     try {
-      // Since the API doesn't have an update endpoint, we'll simulate it
-      // In a real implementation, you'd add a PUT endpoint to the API
       final jobData = _mapFlutterJobToApiJob(job);
-      // For now, we'll just post it again (this would need API changes)
-      await _apiService.createJob(jobData);
+      await _apiService.updateJob(int.parse(job.id), jobData);
     } catch (e) {
       rethrow;
     }
@@ -84,8 +82,7 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<void> deleteJob(String jobId) async {
     try {
-      // The API doesn't have a delete endpoint for jobs yet
-      // This would need to be added to the FastAPI backend
+      await _apiService.deleteJob(int.parse(jobId));
     } catch (e) {
       rethrow;
     }
@@ -94,8 +91,12 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<void> applyForJob(JobApplication application) async {
     try {
-      // This would need a specific API endpoint for job applications
-      // For now, we'll simulate it
+      final applicationData = {
+        'job_id': int.tryParse(application.jobId) ?? 1,
+        'worker_id': int.tryParse(application.workerId) ?? 1,
+        'message': application.coverLetter, // Use coverLetter as message
+      };
+      await _apiService.createApplication(applicationData);
     } catch (e) {
       rethrow;
     }
@@ -108,8 +109,15 @@ class ApiJobRepository implements JobRepository {
     ApplicationStatus status,
     {String? message}
   ) async {
+    
     try {
-      // This would need a specific API endpoint for responding to applications
+      final applicationData = {
+        'status': status.toString().split('.').last,
+        'message': message ?? '',
+      };
+      
+      await _apiService.updateApplication(int.parse(applicationId), applicationData);
+      
     } catch (e) {
       rethrow;
     }
@@ -118,7 +126,10 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<void> updateJobStatus(String jobId, JobStatus status) async {
     try {
-      // This would need a specific API endpoint for updating job status
+      final jobData = {
+        'status': status.toString().split('.').last,
+      };
+      await _apiService.updateJob(int.parse(jobId), jobData);
     } catch (e) {
       rethrow;
     }
@@ -127,9 +138,9 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<List<JobApplication>> getApplicationsForJob(String jobId) async {
     try {
-      // This would need a specific API endpoint for getting applications
-      // For now, return empty list
-      return [];
+      // Use backend filtering instead of fetching all applications
+      final applications = await _apiService.getApplicationsByJob(jobId);
+      return applications.map((appData) => _mapApiApplicationToFlutterApplication(appData)).toList();
     } catch (e) {
       return [];
     }
@@ -138,9 +149,9 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<List<JobApplication>> getApplicationsByWorker(String workerId) async {
     try {
-      // This would need a specific API endpoint for getting worker applications
-      // For now, return empty list
-      return [];
+      // Use backend filtering instead of fetching all applications
+      final applications = await _apiService.getApplicationsByWorker(workerId);
+      return applications.map((appData) => _mapApiApplicationToFlutterApplication(appData)).toList();
     } catch (e) {
       return [];
     }
@@ -178,7 +189,7 @@ class ApiJobRepository implements JobRepository {
       'business_owner_id': int.tryParse(job.businessId) ?? 1,
       'title': job.title,
       'description': job.description,
-      'required_skills': job.requiredSkills,
+      'required_skills': job.requiredSkills.join(','),
       'location': job.location,
       'address': job.address,
       'state': job.state,
@@ -243,6 +254,42 @@ class ApiJobRepository implements JobRepository {
       }
     }
     return JobStatus.open;
+  }
+
+  /// Map API application data to Flutter JobApplication model
+  JobApplication _mapApiApplicationToFlutterApplication(Map<String, dynamic> apiApplication) {
+    return JobApplication(
+      id: apiApplication['id'].toString(),
+      jobId: apiApplication['job_id'].toString(),
+      workerId: apiApplication['worker_id'].toString(),
+      coverLetter: apiApplication['message'] ?? '', // API returns 'message' as cover letter
+      expectedSalary: (apiApplication['expected_salary'] ?? 0.0).toDouble(),
+      availabilityDate: apiApplication['availability_date'] != null 
+          ? _parseDateTime(apiApplication['availability_date']) 
+          : null,
+      status: _parseApplicationStatus(apiApplication['status']),
+      appliedDate: _parseDateTime(apiApplication['applied_date']),
+      message: null, // Response messages are not stored in the API yet
+    );
+  }
+
+  /// Parse application status from API response
+  ApplicationStatus _parseApplicationStatus(dynamic status) {
+    if (status is String) {
+      switch (status.toLowerCase()) {
+        case 'pending':
+          return ApplicationStatus.pending;
+        case 'accepted':
+          return ApplicationStatus.accepted;
+        case 'rejected':
+          return ApplicationStatus.rejected;
+        case 'withdrawn':
+          return ApplicationStatus.withdrawn;
+        default:
+          return ApplicationStatus.pending;
+      }
+    }
+    return ApplicationStatus.pending;
   }
 
   void dispose() {

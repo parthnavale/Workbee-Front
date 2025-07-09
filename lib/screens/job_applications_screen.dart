@@ -6,6 +6,7 @@ import '../providers/theme_provider.dart';
 import '../constants/app_colors.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
+import '../providers/auth_provider.dart';
 
 class JobApplicationsScreen extends StatefulWidget {
   final Job job;
@@ -18,16 +19,32 @@ class JobApplicationsScreen extends StatefulWidget {
 
 class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
   String _selectedFilter = 'All';
+  List<JobApplication> _applications = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchApplications();
+  }
+
+  Future<void> _fetchApplications() async {
+    setState(() { _isLoading = true; });
+    final jobProvider = Provider.of<JobProvider>(context, listen: false);
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final apps = await jobProvider.getApplicationsForJob(widget.job.id, authProvider.businessOwnerId.toString());
+    setState(() {
+      _applications = apps;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    final jobProvider = Provider.of<JobProvider>(context);
+    final filteredApplications = _getFilteredApplications(_applications);
     
-    final applications = widget.job.applications;
-    final filteredApplications = _getFilteredApplications(applications);
-
     return Scaffold(
       appBar: AppBar(
         title: Text('Applications - ${widget.job.title}'),
@@ -74,43 +91,53 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             
             // Applications List
             Expanded(
-              child: applications.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.people_outline,
-                            size: 64,
-                            color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+              child: _isLoading
+                  ? const Center(child: CircularProgressIndicator())
+                  : filteredApplications.isEmpty
+                      ? Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Icon(
+                                Icons.people_outline,
+                                size: 64,
+                                color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'No applications yet (${_applications.length} total)',
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                  color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                                ),
+                              ),
+                              const SizedBox(height: 8),
+                              Text(
+                                'Applications will appear here when workers apply',
+                                style: TextStyle(
+                                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                                ),
+                              ),
+                              const SizedBox(height: 16),
+                              Text(
+                                'Debug: Total: ${_applications.length}, Filtered: ${filteredApplications.length}, Selected Filter: $_selectedFilter, Loading: $_isLoading',
+                                style: TextStyle(
+                                  color: Colors.red,
+                                  fontSize: 12,
+                                ),
+                              ),
+                            ],
                           ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No applications yet',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Applications will appear here when workers apply',
-                            style: TextStyle(
-                              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: filteredApplications.length,
-                      itemBuilder: (context, index) {
-                        final application = filteredApplications[index];
-                        return _buildApplicationCard(application, isDarkMode, jobProvider);
-                      },
-                    ),
+                        )
+                      : ListView.builder(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          itemCount: filteredApplications.length,
+                          itemBuilder: (context, index) {
+                            final application = filteredApplications[index];
+                            return _buildApplicationCard(application, isDarkMode, Provider.of<JobProvider>(context));
+                          },
+                        ),
             ),
           ],
         ),
@@ -132,12 +159,12 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         decoration: BoxDecoration(
           color: isSelected 
               ? AppColors.primary 
-              : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
+              : (isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
             color: isSelected 
                 ? AppColors.primary 
-                : (isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary),
+                : (isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary),
           ),
         ),
         child: Text(
@@ -158,10 +185,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -172,9 +199,9 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             children: [
               CircleAvatar(
                 radius: 24,
-                backgroundColor: AppColors.primaryWithAlpha(0.1),
+                backgroundColor: AppColors.primary.withOpacity(0.1),
                 child: Text(
-                  application.workerName[0].toUpperCase(),
+                  'W',
                   style: TextStyle(
                     color: AppColors.primary,
                     fontWeight: FontWeight.bold,
@@ -188,7 +215,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      application.workerName,
+                      'Worker #${application.workerId}',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -196,7 +223,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                       ),
                     ),
                     Text(
-                      application.workerEmail,
+                      'Expected Salary: ₹${application.expectedSalary.toStringAsFixed(0)}',
                       style: TextStyle(
                         color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
                       ),
@@ -209,72 +236,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
           ),
           const SizedBox(height: 16),
           
-          // Contact Info
-          Row(
-            children: [
-              Icon(
-                Icons.phone,
-                color: AppColors.primary,
-                size: 16,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                application.workerPhone,
-                style: TextStyle(
-                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 8),
-          
-          // Experience
-          Row(
-            children: [
-              Icon(
-                Icons.work,
-                color: AppColors.primary,
-                size: 16,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                '${application.yearsOfExperience} years of experience',
-                style: TextStyle(
-                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          
-          // Skills
-          Text(
-            'Skills:',
-            style: TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.bold,
-              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
-            ),
-          ),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 4,
-            runSpacing: 4,
-            children: application.workerSkills.map((skill) => Chip(
-              label: Text(
-                skill,
-                style: TextStyle(fontSize: 12),
-              ),
-              backgroundColor: AppColors.primaryWithAlpha(0.1),
-              labelStyle: TextStyle(color: AppColors.primary),
-            )).toList(),
-          ),
-          const SizedBox(height: 16),
-          
-          // Previous Work Experience
-          if (application.previousWorkExperience.isNotEmpty) ...[
+          // Cover Letter
+          if (application.coverLetter.isNotEmpty) ...[
             Text(
-              'Previous Work Experience:',
+              'Cover Letter:',
               style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.bold,
@@ -283,7 +248,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             ),
             const SizedBox(height: 8),
             Text(
-              application.previousWorkExperience,
+              application.coverLetter,
               style: TextStyle(
                 color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
                 height: 1.4,
@@ -291,6 +256,47 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             ),
             const SizedBox(height: 16),
           ],
+          
+          // Availability
+          if (application.availabilityDate != null) ...[
+            Row(
+              children: [
+                Icon(
+                  Icons.calendar_today,
+                  color: AppColors.primary,
+                  size: 16,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  'Available from ${_formatDate(application.availabilityDate!)}',
+                  style: TextStyle(
+                    color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+          ],
+          const SizedBox(height: 16),
+          
+          // Expected Salary
+          Row(
+            children: [
+              Icon(
+                Icons.attach_money,
+                color: AppColors.primary,
+                size: 16,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                'Expected Salary: ₹${application.expectedSalary.toStringAsFixed(0)}',
+                style: TextStyle(
+                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
           
           // Applied Date
           Row(
@@ -345,10 +351,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.1) : AppColors.redWithAlpha(0.1)),
+                color: (application.status == ApplicationStatus.accepted ? AppColors.green.withOpacity(0.1) : AppColors.red.withOpacity(0.1)),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: (application.status == ApplicationStatus.accepted ? AppColors.greenWithAlpha(0.3) : AppColors.redWithAlpha(0.3)),
+                  color: (application.status == ApplicationStatus.accepted ? AppColors.green.withOpacity(0.3) : AppColors.red.withOpacity(0.3)),
                 ),
               ),
               child: Column(
@@ -396,12 +402,16 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
         color = Colors.red;
         text = 'Rejected';
         break;
+      case ApplicationStatus.withdrawn:
+        color = Colors.grey;
+        text = 'Withdrawn';
+        break;
     }
     
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.withAlpha(color, 0.1),
+        color: AppColors.withOpacity(color, 0.1),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Text(
@@ -432,7 +442,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             mainAxisSize: MainAxisSize.min,
             children: [
               Text(
-                'Are you sure you want to ${status == ApplicationStatus.accepted ? 'accept' : 'reject'} ${application.workerName}\'s application?',
+                'Are you sure you want to ${status == ApplicationStatus.accepted ? 'accept' : 'reject'} this application?',
                 style: TextStyle(
                   color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
                 ),
@@ -503,6 +513,8 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
             backgroundColor: status == ApplicationStatus.accepted ? Colors.green : Colors.red,
           ),
         );
+        // Refresh the applications list
+        await _fetchApplications();
       }
     } catch (e) {
       if (mounted) {
@@ -517,16 +529,21 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
   }
 
   List<JobApplication> _getFilteredApplications(List<JobApplication> applications) {
+    List<JobApplication> result;
     switch (_selectedFilter) {
       case 'Pending':
-        return applications.where((app) => app.status == ApplicationStatus.pending).toList();
+        result = applications.where((app) => app.status == ApplicationStatus.pending).toList();
+        break;
       case 'Accepted':
-        return applications.where((app) => app.status == ApplicationStatus.accepted).toList();
+        result = applications.where((app) => app.status == ApplicationStatus.accepted).toList();
+        break;
       case 'Rejected':
-        return applications.where((app) => app.status == ApplicationStatus.rejected).toList();
+        result = applications.where((app) => app.status == ApplicationStatus.rejected).toList();
+        break;
       default:
-        return applications;
+        result = applications;
     }
+    return result;
   }
 
   String _formatDate(DateTime date) {

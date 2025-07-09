@@ -167,6 +167,11 @@ User Input → Validation → State Update → UI Refresh → API Call (Future)
 - Persistent data storage (ready for backend)
 - Error handling and loading states
 
+## 2024 Updates: Role-Based Dashboards & Command Operations
+- Business owners and workers have distinct dashboard screens with tabbed navigation and notification badges.
+- Job operations (posting, applying, responding, updating status) are handled via command pattern for better workflow management.
+- Navigation is centralized and role-aware.
+
 ## Key Interactions
 
 ### Business Owner Interactions

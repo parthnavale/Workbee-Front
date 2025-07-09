@@ -9,6 +9,7 @@ import '../constants/app_colors.dart';
 import 'dashboard_screen.dart';
 import 'sign_up_screen.dart';
 import '../widgets/gradient_background.dart';
+import '../widgets/loading_dialog.dart';
 
 class SignInScreen extends StatefulWidget {
   final UserRole? preSelectedRole;
@@ -25,6 +26,7 @@ class _SignInScreenState extends State<SignInScreen> {
   final _passwordController = TextEditingController();
   bool _isPasswordVisible = false;
   UserRole? _selectedRole; // Track selected role
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -39,7 +41,7 @@ class _SignInScreenState extends State<SignInScreen> {
     super.dispose();
   }
 
-  void _signIn() {
+  Future<void> _signIn() async {
     if (_formKey.currentState!.validate()) {
       if (_selectedRole == null) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -50,30 +52,48 @@ class _SignInScreenState extends State<SignInScreen> {
         );
         return;
       }
-
-      // Get auth provider
+      setState(() => _isLoading = true);
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
-      // Login the user based on selected role
-      if (_selectedRole == UserRole.poster) {
-        authProvider.loginAsBusinessOwner(_emailController.text.split('@')[0]);
-      } else {
-        authProvider.loginAsWorker(_emailController.text.split('@')[0]);
+      final email = _emailController.text.trim();
+      final password = _passwordController.text;
+      final role = _selectedRole!;
+      try {
+        final success = await authProvider.login(email, password, role);
+        if (success) {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Welcome back! You are logged in as ${role == UserRole.poster ? 'Business' : 'Worker'}'),
+                backgroundColor: Colors.green,
+              ),
+            );
+            Navigator.of(context, rootNavigator: true).pushAndRemoveUntil(
+              FadePageRoute(page: const DashboardScreen()),
+              (route) => false,
+            );
+          }
+        } else {
+          if (mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(
+                content: Text('Invalid credentials or user not registered.'),
+                backgroundColor: Colors.red,
+              ),
+            );
+          }
+        }
+      } catch (e) {
+        if (mounted) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('An error occurred: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
+      } finally {
+        if (mounted) setState(() => _isLoading = false);
       }
-      
-      // Show success message
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Welcome back! You are logged in as ${_selectedRole == UserRole.poster ? 'Business' : 'Worker'}'),
-          backgroundColor: Colors.green,
-        ),
-      );
-      
-      // Navigate to dashboard
-      Navigator.of(context).pushAndRemoveUntil(
-        FadePageRoute(page: const DashboardScreen()),
-        (route) => false, // Remove all previous routes
-      );
     }
   }
 
@@ -103,11 +123,6 @@ class _SignInScreenState extends State<SignInScreen> {
                     crossAxisAlignment: CrossAxisAlignment.stretch,
                     children: [
                       // Logo/Title
-                      Icon(
-                        Icons.flutter_dash,
-                        color: AppColors.primary,
-                        size: 80,
-                      ),
                       const SizedBox(height: 20),
                       Text(
                         'Welcome Back',
@@ -316,18 +331,26 @@ class _SignInScreenState extends State<SignInScreen> {
                       const SizedBox(height: 30),
                       
                       // Sign In Button
-                      AnimatedScaleButton(
-                        onTap: _signIn,
-                        backgroundColor: AppColors.primary,
-                        foregroundColor: AppColors.primaryDark,
-                        minimumSize: const Size(double.infinity, 50),
-                        child: const Text(
-                          'Sign In',
-                          style: TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
+                      ElevatedButton(
+                        onPressed: _isLoading ? null : _signIn,
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: AppColors.primary,
+                          foregroundColor: Colors.white,
+                          minimumSize: const Size(200, 50),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
                           ),
                         ),
+                        child: _isLoading
+                            ? const SizedBox(
+                                width: 24,
+                                height: 24,
+                                child: CircularProgressIndicator(
+                                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                  strokeWidth: 2.5,
+                                ),
+                              )
+                            : const Text('Sign In', style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                       ),
                       const SizedBox(height: 20),
                       

@@ -397,4 +397,20 @@ class AdminService {
 
 ---
 
+## 🆕 Notable Architectural Enhancements (2024)
+
+### Service Locator for Dependency Injection
+A robust service locator pattern is implemented in `lib/core/di/service_locator.dart` to manage dependencies such as API services, job services, and authentication providers. This enables modularity and easier testing.
+
+### API-Backed Repository Pattern
+The repository layer (`lib/core/repositories/api_job_repository.dart`) now connects directly to a FastAPI backend, supporting full CRUD for jobs and applications, and role-based data fetching. Endpoints and configuration are centralized in `lib/core/config/app_config.dart`.
+
+### Command Pattern for Job Operations
+Job-related actions (post, apply, respond, update status) are encapsulated as commands in `lib/core/commands/job_commands.dart`, with a command invoker for queuing and batch execution. This supports undo/redo and complex workflows.
+
+### Role-Based UI Flows
+Distinct dashboard screens and navigation logic for business owners and workers are implemented in `lib/screens/business_dashboard_screen.dart` and `lib/screens/seeker_home_screen.dart`, with centralized navigation in `lib/utils/navigation_utils.dart`.
+
+---
+
 *This architecture provides a solid foundation for building a scalable, maintainable, and extensible Flutter application.* 
