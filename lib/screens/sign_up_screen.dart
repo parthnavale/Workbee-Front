@@ -10,6 +10,7 @@ import '../core/services/api_service.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../widgets/loading_dialog.dart';
+import 'package:geolocator/geolocator.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -55,7 +56,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
   final _stateController = TextEditingController();
   final _cityController = TextEditingController();
 
-  bool _isPasswordVisible = false;
+  bool _isPinVisible = false;
+  bool _isConfirmPinVisible = false;
   String? _selectedGender;
 
   // Predefined skills list for retail/service jobs
@@ -84,6 +86,30 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   // Selected skills
   final Set<String> _selectedSkills = <String>{};
+
+  // Add a list of industries at the top of the State class
+  final List<String> _industries = [
+    'Retail',
+    'Hospitality',
+    'Healthcare',
+    'Education',
+    'Manufacturing',
+    'Construction',
+    'IT/Software',
+    'Finance',
+    'Logistics',
+    'Automotive',
+    'Telecom',
+    'Agriculture',
+    'Real Estate',
+    'Other',
+  ];
+  String? _selectedIndustry;
+
+  double? _latitude;
+  double? _longitude;
+  String _locationStatus = 'Location not set';
+  bool _isGettingLocation = false;
 
   @override
   void dispose() {
@@ -143,12 +169,71 @@ class _SignUpScreenState extends State<SignUpScreen> {
     }
   }
 
+  Future<void> _getCurrentLocation() async {
+    setState(() {
+      _isGettingLocation = true;
+      _locationStatus = 'Getting location...';
+    });
+    try {
+      // Check if location services are enabled
+      bool serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        setState(() {
+          _locationStatus = 'Location services are disabled.';
+          _isGettingLocation = false;
+        });
+        return;
+      }
+      // Check and request permission
+      LocationPermission permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          setState(() {
+            _locationStatus = 'Location permission denied';
+            _isGettingLocation = false;
+          });
+          return;
+        }
+      }
+      if (permission == LocationPermission.deniedForever) {
+        setState(() {
+          _locationStatus = 'Location permission permanently denied';
+          _isGettingLocation = false;
+        });
+        return;
+      }
+      // Permissions granted, get the position
+      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      setState(() {
+        _latitude = position.latitude;
+        _longitude = position.longitude;
+        _locationStatus = 'Location set: ( [33m [1m [0m [33m [1m [0m_latitude, _longitude)';
+        _isGettingLocation = false;
+      });
+    } catch (e) {
+      setState(() {
+        _locationStatus = 'Failed to get location: $e';
+        _isGettingLocation = false;
+      });
+    }
+  }
+
   Future<void> _submit() async {
     if (_formKey.currentState!.validate() && _selectedRole != null) {
       if (_selectedRole == UserRole.seeker && _selectedSkills.isEmpty) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please select at least one skill.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+      if (_selectedRole == UserRole.seeker && (_latitude == null || _longitude == null)) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Please set your location.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -210,7 +295,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 "contact_email": email,
                 "address": _businessAddressController.text,
                 "website": "",
-                "industry": _businessTypeController.text,
+                "industry": _selectedIndustry ?? '',
                 "state": _stateController.text,
                 "city": _cityController.text,
                 "pincode": _pinCodeController.text,
@@ -226,7 +311,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 "address": _addressController.text,
                 "state": _stateController.text,
                 "city": _cityController.text,
-                "pincode": _pinCodeController.text
+                "pincode": _pinCodeController.text,
+                "latitude": _latitude,
+                "longitude": _longitude,
               });
         dialogFuture = Future.delayed(const Duration(milliseconds: 300), () async {
           dialogShown = true;
@@ -281,12 +368,12 @@ class _SignUpScreenState extends State<SignUpScreen> {
       prefixIcon: Icon(prefixIcon, color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary),
       suffixIcon: isPassword ? IconButton(
         icon: Icon(
-          _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+          _isPinVisible ? Icons.visibility : Icons.visibility_off,
           color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
         ),
         onPressed: () {
           setState(() {
-            _isPasswordVisible = !_isPasswordVisible;
+            _isPinVisible = !_isPinVisible;
           });
         },
       ) : null,
@@ -515,45 +602,78 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           },
                         ),
                         const SizedBox(height: 20),
-                        // Password
+                        // Replace Password Field with PIN Field
                         TextFormField(
                           controller: _passwordController,
-                          obscureText: !_isPasswordVisible,
+                          obscureText: !_isPinVisible,
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
                           style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
                           decoration: _buildInputDecoration(
-                            labelText: 'Password',
-                            prefixIcon: Icons.lock,
+                            labelText: 'PIN',
+                            prefixIcon: Icons.pin,
                             isPassword: true,
                             isDarkMode: isDarkMode,
+                          ).copyWith(
+                            counterText: '',
+                            suffixIcon: IconButton(
+                              icon: Icon(_isPinVisible ? Icons.visibility : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  _isPinVisible = !_isPinVisible;
+                                });
+                              },
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
+                              return 'Please enter your PIN';
                             }
-                            if (value.length < 6) {
-                              return 'Password must be at least 6 characters';
+                            if (value.length != 6) {
+                              return 'PIN must be 6 digits';
+                            }
+                            if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+                              return 'PIN must contain only digits';
                             }
                             return null;
                           },
                         ),
                         const SizedBox(height: 20),
-                        // Confirm Password
+                        // Replace Confirm Password Field with Confirm PIN Field
                         TextFormField(
                           controller: _confirmPasswordController,
-                          obscureText: !_isPasswordVisible,
+                          obscureText: !_isConfirmPinVisible,
+                          keyboardType: TextInputType.number,
+                          maxLength: 6,
                           style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
                           decoration: _buildInputDecoration(
-                            labelText: 'Confirm Password',
-                            prefixIcon: Icons.lock_outline,
+                            labelText: 'Confirm PIN',
+                            prefixIcon: Icons.pin,
                             isPassword: true,
                             isDarkMode: isDarkMode,
+                          ).copyWith(
+                            counterText: '',
+                            suffixIcon: IconButton(
+                              icon: Icon(_isConfirmPinVisible ? Icons.visibility : Icons.visibility_off),
+                              onPressed: () {
+                                setState(() {
+                                  _isConfirmPinVisible = !_isConfirmPinVisible;
+                                });
+                              },
+                            ),
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please confirm your password';
+                              return 'Please confirm your PIN';
                             }
                             if (value != _passwordController.text) {
-                              return 'Passwords do not match';
+                              return 'PINs do not match';
+                            }
+                            if (value.length != 6) {
+                              return 'PIN must be 6 digits';
+                            }
+                            if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+                              return 'PIN must contain only digits';
                             }
                             return null;
                           },
@@ -578,9 +698,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         ),
                         const SizedBox(height: 20),
                         // Business Type/Industry
-                        TextFormField(
-                          controller: _businessTypeController,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                        DropdownButtonFormField<String>(
+                          value: _selectedIndustry,
+                          onChanged: (value) {
+                            setState(() {
+                              _selectedIndustry = value;
+                              _businessTypeController.text = value ?? '';
+                            });
+                          },
+                          items: _industries.map((industry) => DropdownMenuItem<String>(
+                            value: industry,
+                            child: Text(industry),
+                          )).toList(),
                           decoration: _buildInputDecoration(
                             labelText: 'Business Type/Industry',
                             prefixIcon: Icons.category,
@@ -588,7 +717,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
-                              return 'Please enter business type';
+                              return 'Please select business type';
                             }
                             return null;
                           },
@@ -1171,20 +1300,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               // Password
                               TextFormField(
                                 controller: _passwordController,
-                                obscureText: !_isPasswordVisible,
+                                obscureText: true,
+                                keyboardType: TextInputType.number,
+                                maxLength: 6,
                                 style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
                                 decoration: _buildInputDecoration(
-                                  labelText: 'Password',
-                                  prefixIcon: Icons.lock,
+                                  labelText: 'PIN',
+                                  prefixIcon: Icons.pin,
                                   isPassword: true,
                                   isDarkMode: isDarkMode,
-                                ),
+                                ).copyWith(counterText: ''),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please enter your password';
+                                    return 'Please enter your PIN';
                                   }
-                                  if (value.length < 6) {
-                                    return 'Password must be at least 6 characters';
+                                  if (value.length != 6) {
+                                    return 'PIN must be 6 digits';
+                                  }
+                                  if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+                                    return 'PIN must contain only digits';
                                   }
                                   return null;
                                 },
@@ -1193,20 +1327,28 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               // Confirm Password
                               TextFormField(
                                 controller: _confirmPasswordController,
-                                obscureText: !_isPasswordVisible,
+                                obscureText: true,
+                                keyboardType: TextInputType.number,
+                                maxLength: 6,
                                 style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
                                 decoration: _buildInputDecoration(
-                                  labelText: 'Confirm Password',
-                                  prefixIcon: Icons.lock_outline,
+                                  labelText: 'Confirm PIN',
+                                  prefixIcon: Icons.pin,
                                   isPassword: true,
                                   isDarkMode: isDarkMode,
-                                ),
+                                ).copyWith(counterText: ''),
                                 validator: (value) {
                                   if (value == null || value.isEmpty) {
-                                    return 'Please confirm your password';
+                                    return 'Please confirm your PIN';
                                   }
                                   if (value != _passwordController.text) {
-                                    return 'Passwords do not match';
+                                    return 'PINs do not match';
+                                  }
+                                  if (value.length != 6) {
+                                    return 'PIN must be 6 digits';
+                                  }
+                                  if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+                                    return 'PIN must contain only digits';
                                   }
                                   return null;
                                 },
@@ -1215,6 +1357,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           ),
                         ),
                         const SizedBox(height: 20),
+                      ],
+                      if (_selectedRole == UserRole.seeker) ...[
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(_locationStatus,
+                                  style: TextStyle(
+                                    color: _latitude != null ? Colors.green : Colors.red,
+                                    fontSize: 14,
+                                  )),
+                            ),
+                            const SizedBox(width: 10),
+                            ElevatedButton.icon(
+                              onPressed: _isGettingLocation ? null : _getCurrentLocation,
+                              icon: const Icon(Icons.my_location),
+                              label: _isGettingLocation ? const Text('Getting...') : const Text('Set Location'),
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: AppColors.primary,
+                                foregroundColor: Colors.white,
+                                minimumSize: const Size(120, 40),
+                              ),
+                            ),
+                          ],
+                        ),
                       ],
                       AnimatedScaleButton(
                         onTap: _submit,

@@ -30,9 +30,19 @@ class JobProvider with ChangeNotifier {
 
   // Apply for a job (Worker)
   Future<void> applyForJob(JobApplication application) async {
-    await serviceLocator.jobService.applyForJob(application);
-    await fetchJobs();
-    notifyListeners();
+    try {
+      await serviceLocator.jobService.applyForJob(application);
+      await fetchJobs();
+      // Refresh worker applications so hasAppliedForJob is up to date
+      final authProvider = serviceLocator.authProvider;
+      final workerId = authProvider?.workerId?.toString();
+      if (workerId != null && workerId.isNotEmpty) {
+        await fetchWorkerApplications(workerId);
+      }
+      notifyListeners();
+    } catch (e) {
+      rethrow;
+    }
   }
 
   // Accept/Reject application (Business Owner)
@@ -42,26 +52,19 @@ class JobProvider with ChangeNotifier {
     ApplicationStatus status,
     {String? message}
   ) async {
-    
     try {
       // Get the business owner ID from the auth provider
       final authProvider = serviceLocator.authProvider;
       if (authProvider == null) {
         throw Exception('Auth provider not found. Please log in again.');
       }
-      
       final businessOwnerId = authProvider.businessOwnerId;
-      
       if (businessOwnerId == null) {
         throw Exception('Business owner ID not found. Please log in again.');
       }
-      
       await serviceLocator.jobService.respondToApplication(jobId, applicationId, status, businessOwnerId.toString(), message: message);
-      
       await fetchJobs();
-      
       notifyListeners();
-      
     } catch (e) {
       rethrow;
     }
@@ -94,7 +97,12 @@ class JobProvider with ChangeNotifier {
 
   // Check if I've already applied for a job
   bool hasAppliedForJob(String jobId) {
-    return _myApplications.any((app) => app.jobId == jobId);
+    for (final app in _myApplications) {
+      if (app.jobId == jobId) {
+        return true;
+      }
+    }
+    return false;
   }
 
   // Get pending applications count for a business owner

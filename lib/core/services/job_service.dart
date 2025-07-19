@@ -83,13 +83,7 @@ class JobService {
       throw ArgumentError('Job is not open for applications');
     }
 
-    // Check if already applied
-    final existingApplications = await _repository.getApplicationsForJob(application.jobId);
-    final hasApplied = existingApplications.any((app) => app.workerId == application.workerId);
-    if (hasApplied) {
-      throw ArgumentError('You have already applied for this job');
-    }
-
+    // Remove duplicate check here; let backend handle it
     await _repository.applyForJob(application);
   }
 
@@ -101,32 +95,9 @@ class JobService {
     String businessId,
     {String? message}
   ) async {
-    print('[DEBUG] JobService.respondToApplication - called with jobId: $jobId, applicationId: $applicationId, status: $status, businessId: $businessId, message: "$message"');
-    
     try {
-      // Validate job ownership
-      print('[DEBUG] JobService.respondToApplication - getting job by id: $jobId');
-      final job = await _repository.getJobById(jobId);
-      if (job == null) {
-        print('[DEBUG] JobService.respondToApplication - ERROR: Job not found');
-        throw ArgumentError('Job not found');
-      }
-      print('[DEBUG] JobService.respondToApplication - job found, businessId: ${job.businessId}');
-      
-      if (job.businessId != businessId) {
-        print('[DEBUG] JobService.respondToApplication - ERROR: Job owner mismatch. Expected: $businessId, Found: ${job.businessId}');
-        throw ArgumentError('Only the job owner can respond to applications');
-      }
-      print('[DEBUG] JobService.respondToApplication - job ownership validated');
-
-      print('[DEBUG] JobService.respondToApplication - calling repository.respondToApplication');
       await _repository.respondToApplication(jobId, applicationId, status, message: message);
-      print('[DEBUG] JobService.respondToApplication - repository.respondToApplication completed successfully');
-      
-      print('[DEBUG] JobService.respondToApplication - completed successfully');
     } catch (e) {
-      print('[DEBUG] JobService.respondToApplication - ERROR: $e');
-      print('[DEBUG] JobService.respondToApplication - ERROR type: ${e.runtimeType}');
       rethrow;
     }
   }

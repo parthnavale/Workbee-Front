@@ -3,9 +3,13 @@ import 'package:provider/provider.dart';
 import 'providers/auth_provider.dart';
 import 'providers/job_provider.dart';
 import 'providers/theme_provider.dart';
+import 'providers/notification_provider.dart';
 import 'screens/home_screen.dart';
+import 'screens/dashboard_screen.dart';
+import 'screens/login_screen.dart';
 import 'constants/app_colors.dart';
 import 'core/di/service_locator.dart';
+import 'widgets/websocket_connection_widget.dart';
 
 /// Flutter Job Portal App (Updated with Login, Role Separation, and Animation)
 ///
@@ -15,13 +19,17 @@ import 'core/di/service_locator.dart';
 /// - Professional UI with animated transitions
 /// - Job posting and viewing functionality
 /// - Clean architecture with repository pattern
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  final authProvider = AuthProvider();
+  await authProvider.loadTokenAndRestoreSession();
   runApp(
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(create: (_) => AuthProvider()),
+        ChangeNotifierProvider(create: (_) => authProvider),
         ChangeNotifierProvider(create: (_) => JobProvider()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => NotificationProvider()),
       ],
       child: const MyApp(),
     ),
@@ -46,7 +54,11 @@ class MyApp extends StatelessWidget {
               title: 'WorkSwift',
               theme: _buildTheme(themeProvider.isDarkMode),
               debugShowCheckedModeBanner: false,
-              home: const HomeScreen(),
+              home: WebSocketConnectionWidget(
+                child: authProvider.isLoggedIn
+                    ? DashboardScreen()
+                    : LoginScreen(),
+              ),
             );
           },
         );

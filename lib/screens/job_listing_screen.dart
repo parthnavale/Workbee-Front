@@ -48,7 +48,7 @@ class _JobListingScreenState extends State<JobListingScreen> {
         elevation: 0,
         actions: [
           IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: _loadJobs,
           ),
         ],

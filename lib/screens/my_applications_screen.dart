@@ -20,7 +20,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    final jobProvider = Provider.of<JobProvider>(context);
+    final jobProvider = Provider.of<JobProvider>(context, listen: false);
     
     final applications = jobProvider.myApplications;
     final filteredApplications = _getFilteredApplications(applications);
@@ -310,7 +310,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () {
-                      // TODO: Implement contact business functionality
+                      // Contact business functionality will be implemented later
                     },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary,
@@ -324,7 +324,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () {
-                      // TODO: Implement view job details functionality
+                      // View job details functionality will be implemented later
                     },
                     style: OutlinedButton.styleFrom(
                       foregroundColor: AppColors.primary,

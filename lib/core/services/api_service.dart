@@ -29,8 +29,9 @@ class ApiService {
   /// Generic GET request
   Future<dynamic> get(String endpoint) async {
     try {
+      final url = AppConfig.getApiUrl(endpoint);
       final response = await _client.get(
-        Uri.parse(AppConfig.getApiUrl(endpoint)),
+        Uri.parse(url),
         headers: _buildHeaders(),
       ).timeout(AppConfig.getConnectionTimeout());
       if (response.statusCode == 200) {
@@ -178,7 +179,8 @@ class ApiService {
   /// Get a worker by ID
   Future<Map<String, dynamic>?> getWorkerById(int workerId) async {
     try {
-      final response = await get('${AppConfig.workersEndpoint}/$workerId');
+      // Avoid double slash
+      final response = await get('${AppConfig.workersEndpoint}$workerId');
       if (response is Map<String, dynamic>) {
         return response;
       }
@@ -190,7 +192,11 @@ class ApiService {
 
   /// Create a new job application
   Future<void> createApplication(Map<String, dynamic> applicationData) async {
-    await post(AppConfig.applicationsEndpoint, applicationData);
+    try {
+      await post(AppConfig.applicationsEndpoint, applicationData);
+    } catch (e) {
+      rethrow;
+    }
   }
 
   /// Get an application by ID
@@ -294,7 +300,7 @@ class ApiService {
 
   /// Update a worker
   Future<void> updateWorker(int workerId, Map<String, dynamic> workerData) async {
-    await put('${AppConfig.workersEndpoint}/$workerId', workerData);
+    await put('${AppConfig.workersEndpoint}$workerId', workerData);
   }
 
   /// Delete a worker
@@ -304,7 +310,7 @@ class ApiService {
 
   /// Update an application
   Future<void> updateApplication(int applicationId, Map<String, dynamic> applicationData) async {
-    await put('${AppConfig.applicationsEndpoint}/$applicationId', applicationData);
+    await put('${AppConfig.applicationsEndpoint}$applicationId', applicationData);
   }
 
   /// Delete an application

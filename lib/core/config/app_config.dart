@@ -12,7 +12,7 @@ class AppConfig {
   static const String jobsEndpoint = '/jobs/';
   static const String businessOwnersEndpoint = '/business-owners/';
   static const String workersEndpoint = '/workers/';
-  static const String applicationsEndpoint = '/applications';
+  static const String applicationsEndpoint = '/applications/';
   static const String usersEndpoint = '/users/';
   static const String authEndpoint = '/users/';
   

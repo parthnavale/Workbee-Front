@@ -21,6 +21,19 @@ class JobDetailScreen extends StatefulWidget {
 class _JobDetailScreenState extends State<JobDetailScreen> {
   bool _isApplying = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Fetch worker applications when screen loads to ensure hasAppliedForJob is accurate
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      if (authProvider.userRole == UserRole.seeker && authProvider.workerId != null) {
+        final jobProvider = Provider.of<JobProvider>(context, listen: false);
+        jobProvider.fetchWorkerApplications(authProvider.workerId!.toString());
+      }
+    });
+  }
+
   Future<void> _applyForJob() async {
     setState(() {
       _isApplying = true;
@@ -70,16 +83,33 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        Navigator.pop(context);
+        // Do not pop the screen here; let the UI update to show 'Already Applied'
       }
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Error applying for job: $e'),
-            backgroundColor: Colors.red,
-          ),
-        );
+        final errorMsg = e.toString();
+        if (errorMsg.contains('You have already applied for this job')) {
+          // Refresh applications to update UI
+          final authProvider = Provider.of<AuthProvider>(context, listen: false);
+          final jobProvider = Provider.of<JobProvider>(context, listen: false);
+          final workerId = authProvider.workerId?.toString();
+          if (workerId != null && workerId.isNotEmpty) {
+            await jobProvider.fetchWorkerApplications(workerId);
+          }
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text('You have already applied for this job.'),
+              backgroundColor: Colors.orange,
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text('Error applying for job: $e'),
+              backgroundColor: Colors.red,
+            ),
+          );
+        }
       }
     } finally {
       if (mounted) {

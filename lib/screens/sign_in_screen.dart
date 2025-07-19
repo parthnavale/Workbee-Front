@@ -283,26 +283,17 @@ class _SignInScreenState extends State<SignInScreen> {
                       ),
                       const SizedBox(height: 20),
                       
-                      // Password Field
+                      // Replace Password Field with PIN Field
                       TextFormField(
                         controller: _passwordController,
-                        obscureText: !_isPasswordVisible,
+                        obscureText: true,
+                        keyboardType: TextInputType.number,
+                        maxLength: 6,
                         style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
                         decoration: InputDecoration(
-                          labelText: 'Password',
+                          labelText: 'PIN',
                           labelStyle: TextStyle(color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary),
-                          prefixIcon: Icon(Icons.lock, color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary),
-                          suffixIcon: IconButton(
-                            icon: Icon(
-                              _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
-                            ),
-                            onPressed: () {
-                              setState(() {
-                                _isPasswordVisible = !_isPasswordVisible;
-                              });
-                            },
-                          ),
+                          prefixIcon: Icon(Icons.pin, color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary),
                           border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(12),
                             borderSide: BorderSide(color: isDarkMode ? Colors.grey : AppColors.lightBorderSecondary),
@@ -317,13 +308,17 @@ class _SignInScreenState extends State<SignInScreen> {
                           ),
                           filled: true,
                           fillColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+                          counterText: '',
                         ),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter your password';
+                            return 'Please enter your PIN';
                           }
-                          if (value.length < 6) {
-                            return 'Password must be at least 6 characters';
+                          if (value.length != 6) {
+                            return 'PIN must be 6 digits';
+                          }
+                          if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+                            return 'PIN must contain only digits';
                           }
                           return null;
                         },

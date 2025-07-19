@@ -119,14 +119,6 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                                   color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
                                 ),
                               ),
-                              const SizedBox(height: 16),
-                              Text(
-                                'Debug: Total: ${_applications.length}, Filtered: ${filteredApplications.length}, Selected Filter: $_selectedFilter, Loading: $_isLoading',
-                                style: TextStyle(
-                                  color: Colors.red,
-                                  fontSize: 12,
-                                ),
-                              ),
                             ],
                           ),
                         )
@@ -135,7 +127,7 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
                           itemCount: filteredApplications.length,
                           itemBuilder: (context, index) {
                             final application = filteredApplications[index];
-                            return _buildApplicationCard(application, isDarkMode, Provider.of<JobProvider>(context));
+                            return _buildApplicationCard(application, isDarkMode, Provider.of<JobProvider>(context, listen: false));
                           },
                         ),
             ),

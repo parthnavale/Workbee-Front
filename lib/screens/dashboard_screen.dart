@@ -3,16 +3,54 @@ import 'package:provider/provider.dart';
 import '../providers/auth_provider.dart';
 import '../providers/job_provider.dart';
 import '../providers/theme_provider.dart';
+import '../providers/notification_provider.dart';
 import '../constants/user_roles.dart';
 import '../constants/app_colors.dart';
 import '../widgets/app_header.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
-import 'post_job_screen.dart';
-import '../utils/navigation_utils.dart';
 
-class DashboardScreen extends StatelessWidget {
+import '../utils/navigation_utils.dart';
+import 'dart:async';
+import 'my_applications_screen.dart';
+import 'notifications_screen.dart';
+
+class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
+
+  @override
+  State<DashboardScreen> createState() => _DashboardScreenState();
+}
+
+class _DashboardScreenState extends State<DashboardScreen> {
+  Timer? _notificationTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    // Fetch notifications for both workers and business owners
+    authProvider.fetchNotifications();
+    _notificationTimer = Timer.periodic(const Duration(seconds: 30), (_) {
+      authProvider.fetchNotifications();
+    });
+  }
+
+  @override
+  void dispose() {
+    _notificationTimer?.cancel();
+    super.dispose();
+  }
+
+  void _showNotifications(BuildContext context, AuthProvider authProvider) {
+    // Navigate to the new notifications screen
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const NotificationsScreen(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -20,10 +58,55 @@ class DashboardScreen extends StatelessWidget {
     final jobProvider = Provider.of<JobProvider>(context);
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
+    final isWorker = authProvider.userRole == UserRole.seeker;
+    final isBusiness = authProvider.userRole == UserRole.poster;
+    final notificationProvider = Provider.of<NotificationProvider>(context);
+    
+    // Connect to notifications WebSocket for both workers and business owners
+    if (isWorker && authProvider.workerId != null) {
+      notificationProvider.connect(authProvider.workerId!);
+    } else if (isBusiness && authProvider.businessOwnerId != null) {
+      notificationProvider.connect(authProvider.businessOwnerId!);
+    }
     
     return Scaffold(
       appBar: AppHeader(
         onNavigation: (action) => NavigationUtils.handleNavigation(action, context),
+        actions: [
+          if (isWorker || isBusiness)
+            Stack(
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.notifications),
+                  onPressed: () => _showNotifications(context, authProvider),
+                ),
+                if (notificationProvider.unreadCount > 0)
+                  Positioned(
+                    right: 8,
+                    top: 8,
+                    child: Container(
+                      padding: const EdgeInsets.all(2),
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      constraints: const BoxConstraints(
+                        minWidth: 16,
+                        minHeight: 16,
+                      ),
+                      child: Text(
+                        notificationProvider.unreadCount.toString(),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 10,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+        ],
       ),
       body: GradientBackground(
         padding: const EdgeInsets.all(24.0),
@@ -116,12 +199,7 @@ class DashboardScreen extends StatelessWidget {
               ),
               const SizedBox(height: 15),
               AnimatedScaleButton(
-                onTap: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const PostJobScreen(),
-                  ),
-                ),
+                onTap: () => NavigationUtils.navigateToAddJob(context),
                 icon: Icons.add,
                 backgroundColor: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
                 foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
@@ -154,7 +232,10 @@ class DashboardScreen extends StatelessWidget {
               const SizedBox(height: 15),
               AnimatedScaleButton(
                 onTap: () {
-                  // Navigate to applied jobs
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => const MyApplicationsScreen()),
+                  );
                 },
                 icon: Icons.work,
                 backgroundColor: isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary,
@@ -196,18 +277,20 @@ class DashboardScreen extends StatelessWidget {
                     children: [
                       Expanded(
                         child: _buildStatCard(
-                          'Total Jobs',
-                          '${jobProvider.jobs.length}',
-                          Icons.work,
+                          authProvider.userRole == UserRole.poster ? 'Total Jobs' : 'Applications',
+                          authProvider.userRole == UserRole.poster 
+                              ? '${jobProvider.jobs.length}' 
+                              : '${jobProvider.myApplications.length}',
+                          authProvider.userRole == UserRole.poster ? Icons.work : Icons.description,
                           isDarkMode,
                         ),
                       ),
                       const SizedBox(width: 15),
                       Expanded(
                         child: _buildStatCard(
-                          'Active',
-                          '${jobProvider.jobs.length}',
-                          Icons.check_circle,
+                          'Notifications',
+                          '${notificationProvider.unreadCount}',
+                          Icons.notifications,
                           isDarkMode,
                         ),
                       ),

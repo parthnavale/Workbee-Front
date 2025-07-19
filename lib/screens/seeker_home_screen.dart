@@ -8,6 +8,10 @@ import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
 import 'job_listing_screen.dart';
 import 'my_applications_screen.dart';
+import 'edit_profile_screen.dart';
+import 'settings_screen.dart';
+import 'help_support_screen.dart';
+import '../providers/auth_provider.dart';
 
 class SeekerHomeScreen extends StatefulWidget {
   const SeekerHomeScreen({super.key});
@@ -80,8 +84,6 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           children: [
             // Overview Tab
             _buildOverviewTab(isDarkMode, jobProvider, pendingApplications, acceptedApplications),
-            // My Applications Tab
-            _buildApplicationsTab(isDarkMode, jobProvider),
             // Profile Tab
             _buildProfileTab(isDarkMode),
           ],
@@ -101,10 +103,6 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Overview',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work),
-            label: 'My Applications',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person),
@@ -332,6 +330,21 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
   }
 
   Widget _buildProfileTab(bool isDarkMode) {
+    final authProvider = Provider.of<AuthProvider>(context);
+    final workerName = authProvider.workerName;
+    final workerEmail = authProvider.workerEmail ?? '';
+    final workerYears = authProvider.workerYearsOfExperience;
+
+    // If workerName is null, fetch the profile and show a loader
+    if (workerName == null) {
+      // Trigger fetchWorkerProfile if not already loading
+      Future.microtask(() {
+        final authProvider = Provider.of<AuthProvider>(context, listen: false);
+        authProvider.fetchWorkerProfile();
+      });
+      return const Center(child: CircularProgressIndicator());
+    }
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -353,7 +366,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                   radius: 40,
                   backgroundColor: AppColors.primary.withOpacity(0.1),
                   child: Text(
-                    'JD',
+                    workerName.isNotEmpty ? workerName[0].toUpperCase() : 'W',
                     style: TextStyle(
                       color: AppColors.primary,
                       fontWeight: FontWeight.bold,
@@ -367,7 +380,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'John Doe',
+                        workerName,
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
@@ -376,14 +389,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'john@example.com',
+                        workerEmail,
                         style: TextStyle(
                           color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        '2 years experience',
+                        workerYears != null ? '$workerYears years experience' : '',
                         style: TextStyle(
                           color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
                         ),
@@ -411,7 +424,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title: 'Edit Profile',
             subtitle: 'Update your personal information',
             onTap: () {
-              // TODO: Navigate to edit profile screen
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()));
             },
             isDarkMode: isDarkMode,
           ),
@@ -421,7 +434,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title: 'Settings',
             subtitle: 'Manage app preferences',
             onTap: () {
-              // TODO: Navigate to settings screen
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
             },
             isDarkMode: isDarkMode,
           ),
@@ -431,7 +444,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title: 'Help & Support',
             subtitle: 'Get help and contact support',
             onTap: () {
-              // TODO: Navigate to help screen
+              Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpSupportScreen()));
             },
             isDarkMode: isDarkMode,
           ),
@@ -440,8 +453,12 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             icon: Icons.logout,
             title: 'Logout',
             subtitle: 'Sign out of your account',
-            onTap: () {
-              // TODO: Implement logout
+            onTap: () async {
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              await authProvider.logout();
+              if (mounted) {
+                Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+              }
             },
             isDarkMode: isDarkMode,
             isDestructive: true,

@@ -203,8 +203,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
 
       final job = Job(
         id: DateTime.now().millisecondsSinceEpoch.toString(),
-        // Debug print
-        businessId: (() { return authProvider.businessOwnerId?.toString() ?? ''; })(),
+        businessId: authProvider.businessOwnerId?.toString() ?? '',
         businessName: authProvider.userName ?? 'My Business',
         title: _titleController.text,
         description: _descriptionController.text,

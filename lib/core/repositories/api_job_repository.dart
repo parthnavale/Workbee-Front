@@ -2,6 +2,7 @@ import 'job_repository.dart';
 import '../services/api_service.dart';
 import '../../models/job.dart';
 import 'dart:convert';
+import '../config/app_config.dart';
 
 /// API implementation of JobRepository that connects to the FastAPI backend
 class ApiJobRepository implements JobRepository {
@@ -109,15 +110,12 @@ class ApiJobRepository implements JobRepository {
     ApplicationStatus status,
     {String? message}
   ) async {
-    
     try {
       final applicationData = {
         'status': status.toString().split('.').last,
         'message': message ?? '',
       };
-      
       await _apiService.updateApplication(int.parse(applicationId), applicationData);
-      
     } catch (e) {
       rethrow;
     }
