@@ -17,9 +17,10 @@ jobs:
         run: rm -rf "$HOME/.flutter"
 
       - name: Set up Flutter
-        uses: bluefireteam/flutter-gh-actions@v6
+        uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.22.1'
+          channel: stable
+          flutter-version: 3.22.1
 
       - name: Check Flutter and Dart version
         run: |
