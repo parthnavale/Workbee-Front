@@ -3,8 +3,15 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:label="Workbee"
-        android:name="${applicationName}"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        android:requestLegacyExternalStorage="true">
+
+        <!-- Google Maps API Key -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyAGfGJQM4zjj6ekzGa5D0U9q3HxaOsPqwY"/>
+
+        <!-- Other activities and services remain unchanged -->
         <activity
             android:name=".MainActivity"
             android:exported="true"

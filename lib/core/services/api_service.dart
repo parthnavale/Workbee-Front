@@ -193,8 +193,22 @@ class ApiService {
   /// Create a new job application
   Future<void> createApplication(Map<String, dynamic> applicationData) async {
     try {
-      await post(AppConfig.applicationsEndpoint, applicationData);
+      final url = AppConfig.getApiUrl(AppConfig.applicationsEndpoint);
+      print('[DEBUG] Job Application Request URL: $url');
+      print('[DEBUG] Job Application Request Body: $applicationData');
+      final response = await _client.post(
+        Uri.parse(url),
+        headers: _buildHeaders(),
+        body: json.encode(applicationData),
+      ).timeout(AppConfig.getConnectionTimeout());
+      print('[DEBUG] Job Application Response Status: ${response.statusCode}');
+      print('[DEBUG] Job Application Response Headers: ${response.headers}');
+      print('[DEBUG] Job Application Response Body: ${response.body}');
+      if (response.statusCode != 201 && response.statusCode != 200) {
+        throw _handleHttpError(response);
+      }
     } catch (e) {
+      print('[ERROR] Exception in createApplication: $e');
       rethrow;
     }
   }

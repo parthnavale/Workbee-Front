@@ -14,6 +14,7 @@ import '../utils/navigation_utils.dart';
 import 'dart:async';
 import 'my_applications_screen.dart';
 import 'notifications_screen.dart';
+import 'package:overlay_support/overlay_support.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -24,6 +25,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   Timer? _notificationTimer;
+  bool _connectedToNotifications = false;
 
   @override
   void initState() {
@@ -33,6 +35,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
     authProvider.fetchNotifications();
     _notificationTimer = Timer.periodic(const Duration(seconds: 30), (_) {
       authProvider.fetchNotifications();
+    });
+
+    // Connect to notifications after first build
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final authProvider = Provider.of<AuthProvider>(context, listen: false);
+      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+      final isWorker = authProvider.userRole == UserRole.seeker;
+      final isBusiness = authProvider.userRole == UserRole.poster;
+      if (isWorker && authProvider.workerId != null) {
+        notificationProvider.connect(authProvider.workerId!);
+      } else if (isBusiness && authProvider.businessOwnerId != null) {
+        notificationProvider.connect(authProvider.businessOwnerId!);
+      }
     });
   }
 
@@ -61,13 +76,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     final isWorker = authProvider.userRole == UserRole.seeker;
     final isBusiness = authProvider.userRole == UserRole.poster;
     final notificationProvider = Provider.of<NotificationProvider>(context);
-    
-    // Connect to notifications WebSocket for both workers and business owners
-    if (isWorker && authProvider.workerId != null) {
-      notificationProvider.connect(authProvider.workerId!);
-    } else if (isBusiness && authProvider.businessOwnerId != null) {
-      notificationProvider.connect(authProvider.businessOwnerId!);
-    }
     
     return Scaffold(
       appBar: AppHeader(
@@ -107,6 +115,19 @@ class _DashboardScreenState extends State<DashboardScreen> {
               ],
             ),
         ],
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          showSimpleNotification(
+            Text("Test notification", style: TextStyle(fontWeight: FontWeight.bold)),
+            background: Colors.green,
+            autoDismiss: true,
+            slideDismiss: true,
+            duration: Duration(seconds: 4),
+            leading: Icon(Icons.notifications, color: Colors.white),
+          );
+        },
+        child: Icon(Icons.notifications),
       ),
       body: GradientBackground(
         padding: const EdgeInsets.all(24.0),

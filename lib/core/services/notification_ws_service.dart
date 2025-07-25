@@ -20,7 +20,9 @@ class NotificationWebSocketService {
   bool get isConnecting => _isConnecting;
 
   void connect(int workerId) {
+    print('[NotificationWS] Attempting to connect for workerId: $workerId');
     if (_isConnecting || (_channel != null && _currentWorkerId == workerId)) {
+      print('[NotificationWS] Already connecting or connected for workerId: $workerId');
       return;
     }
 
@@ -40,6 +42,7 @@ class NotificationWebSocketService {
 
     try {
       final url = 'wss://myworkbee.duckdns.org/ws/notifications/$workerId';
+      print('[NotificationWS] Connecting to: ' + url);
       
       _channel = WebSocketChannel.connect(Uri.parse(url));
       
@@ -48,23 +51,28 @@ class NotificationWebSocketService {
         // Listen for messages
         _channel!.stream.listen(
           (message) {
+            print('[NotificationWS] Received message: ' + message.toString());
             if (_messageController != null) {
               _messageController!.add(message.toString());
             }
           },
           onError: (error) {
+            print('[NotificationWS] Connection error: ' + error.toString());
             _handleConnectionError();
           },
           onDone: () {
+            print('[NotificationWS] Connection closed');
             _handleConnectionClosed();
           },
         );
         
         _isConnecting = false;
         _updateConnectionStatus(true);
+        print('[NotificationWS] Connection established for workerId: $workerId');
       });
       
     } catch (e) {
+      print('[NotificationWS] Exception during connect: ' + e.toString());
       _isConnecting = false;
       _updateConnectionStatus(false);
       _handleConnectionError();

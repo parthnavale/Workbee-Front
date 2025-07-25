@@ -12,6 +12,7 @@ import 'edit_profile_screen.dart';
 import 'settings_screen.dart';
 import 'help_support_screen.dart';
 import '../providers/auth_provider.dart';
+import 'nearby_jobs_map_screen.dart';
 
 class SeekerHomeScreen extends StatefulWidget {
   const SeekerHomeScreen({super.key});
@@ -191,7 +192,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const JobListingScreen(),
+                        builder: (context) => const NearbyJobsMapScreen(),
                       ),
                     );
                   },

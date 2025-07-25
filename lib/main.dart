@@ -10,6 +10,12 @@ import 'screens/login_screen.dart';
 import 'constants/app_colors.dart';
 import 'core/di/service_locator.dart';
 import 'widgets/websocket_connection_widget.dart';
+import 'package:overlay_support/overlay_support.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:http/http.dart' as http;
+import 'package:location/location.dart';
 
 /// Flutter Job Portal App (Updated with Login, Role Separation, and Animation)
 ///
@@ -21,23 +27,117 @@ import 'widgets/websocket_connection_widget.dart';
 /// - Clean architecture with repository pattern
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
   final authProvider = AuthProvider();
   await authProvider.loadTokenAndRestoreSession();
   runApp(
-    MultiProvider(
-      providers: [
-        ChangeNotifierProvider(create: (_) => authProvider),
-        ChangeNotifierProvider(create: (_) => JobProvider()),
-        ChangeNotifierProvider(create: (_) => ThemeProvider()),
-        ChangeNotifierProvider(create: (_) => NotificationProvider()),
-      ],
-      child: const MyApp(),
+    OverlaySupport.global(
+      child: MultiProvider(
+        providers: [
+          ChangeNotifierProvider(create: (_) => authProvider),
+          ChangeNotifierProvider(create: (_) => JobProvider()),
+          ChangeNotifierProvider(create: (_) => ThemeProvider()),
+          ChangeNotifierProvider(create: (_) => NotificationProvider()),
+        ],
+        child: const MyApp(),
+      ),
     ),
   );
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+
+  @override
+  void initState() {
+    super.initState();
+    _requireLocationService();
+    _initFCM();
+    _initLocalNotifications();
+  }
+
+  Future<void> _requireLocationService() async {
+    Location location = Location();
+    bool serviceEnabled = await location.serviceEnabled();
+    if (!serviceEnabled) serviceEnabled = await location.requestService();
+    if (!serviceEnabled && mounted) {
+      await showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => AlertDialog(
+          title: const Text('Location Required'),
+          content: const Text('Location services must be enabled to use this app.'),
+          actions: [
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                await _requireLocationService();
+              },
+              child: const Text('Try Again'),
+            ),
+          ],
+        ),
+      );
+    }
+  }
+
+  void _initLocalNotifications() {
+    const AndroidInitializationSettings initializationSettingsAndroid =
+        AndroidInitializationSettings('@mipmap/ic_launcher');
+    final InitializationSettings initializationSettings =
+        InitializationSettings(android: initializationSettingsAndroid);
+    flutterLocalNotificationsPlugin.initialize(initializationSettings);
+  }
+
+  Future<void> _showLocalNotification(RemoteMessage message) async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'default_channel',
+      'Default',
+      importance: Importance.max,
+      priority: Priority.high,
+      showWhen: true,
+    );
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+      0,
+      message.notification?.title ?? 'New Notification',
+      message.notification?.body ?? '',
+      platformChannelSpecifics,
+    );
+  }
+
+  Future<void> _initFCM() async {
+    await FirebaseMessaging.instance.requestPermission();
+    String? token = await FirebaseMessaging.instance.getToken();
+    print('FCM Token: \x1B[32m$token\x1B[0m'); // Print in green for visibility
+    // Send FCM token to backend if user is worker and logged in
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    if (authProvider.isWorker() && authProvider.workerId != null && token != null) {
+      try {
+        final url = Uri.parse('https://myworkbee.duckdns.org/workers/${authProvider.workerId}/fcm-token');
+        await http.put(url, body: token, headers: {'Content-Type': 'text/plain'});
+        print('FCM token sent to backend for worker ${authProvider.workerId}');
+      } catch (e) {
+        print('Failed to send FCM token to backend: $e');
+      }
+    }
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print('Received FCM message in foreground: \x1B[33m"+(message.notification?.title ?? '')+" - "+(message.notification?.body ?? '')+"\x1B[0m');
+      _showLocalNotification(message);
+      // Add to notification provider (inbox)
+      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+      notificationProvider.addNotificationFromFCM(message);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

@@ -11,6 +11,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../widgets/loading_dialog.dart';
 import 'package:geolocator/geolocator.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignUpScreen extends StatefulWidget {
   const SignUpScreen({super.key});
@@ -286,22 +287,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
         }
         // --- Delayed spinner for profile creation ---
         dialogShown = false;
-        final profileFuture = _selectedRole == UserRole.poster
-            ? apiService.createBusinessOwner({
-                "user_id": userId,
-                "business_name": _companyController.text,
-                "contact_person": _contactPersonController.text,
-                "contact_phone": _phoneController.text,
-                "contact_email": email,
-                "address": _businessAddressController.text,
-                "website": "",
-                "industry": _selectedIndustry ?? '',
-                "state": _stateController.text,
-                "city": _cityController.text,
-                "pincode": _pinCodeController.text,
-                "year_established": 2024
-              })
-            : apiService.createWorker({
+        Map<String, dynamic> workerData = {
                 "user_id": userId,
                 "name": _nameController.text,
                 "phone": _phoneController.text,
@@ -314,7 +300,38 @@ class _SignUpScreenState extends State<SignUpScreen> {
                 "pincode": _pinCodeController.text,
                 "latitude": _latitude,
                 "longitude": _longitude,
-              });
+        };
+        if (_selectedRole == UserRole.seeker) {
+          // Obtain FCM token and add to workerData
+          String? fcmToken = await FirebaseMessaging.instance.getToken();
+          if (fcmToken != null) {
+            workerData["fcm_token"] = fcmToken;
+          }
+        }
+        Map<String, dynamic> businessOwnerData = {
+          "user_id": userId,
+          "business_name": _companyController.text,
+          "contact_person": _contactPersonController.text,
+          "contact_phone": _phoneController.text,
+          "contact_email": email,
+          "address": _businessAddressController.text,
+          "website": "",
+          "industry": _selectedIndustry ?? '',
+          "state": _stateController.text,
+          "city": _cityController.text,
+          "pincode": _pinCodeController.text,
+          "year_established": 2024
+        };
+        if (_selectedRole == UserRole.poster) {
+          // Obtain FCM token and add to businessOwnerData
+          String? fcmToken = await FirebaseMessaging.instance.getToken();
+          if (fcmToken != null) {
+            businessOwnerData["fcm_token"] = fcmToken;
+          }
+        }
+        final profileFuture = _selectedRole == UserRole.poster
+            ? apiService.createBusinessOwner(businessOwnerData)
+            : apiService.createWorker(workerData);
         dialogFuture = Future.delayed(const Duration(milliseconds: 300), () async {
           dialogShown = true;
           await LoadingDialog.show(

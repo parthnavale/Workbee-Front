@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "840724257738",
+    "project_id": "workoraa-12fa8",
+    "storage_bucket": "workoraa-12fa8.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:840724257738:android:c0f00a4e4e283469450d33",
+        "android_client_info": {
+          "package_name": "com.example.projecttest1"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAVQaNN4iar7vO4_Sq_av4tsnxLdVLHb60"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

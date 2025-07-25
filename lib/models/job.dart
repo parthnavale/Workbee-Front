@@ -30,9 +30,11 @@ class Job {
   final DateTime? startDate;
   final JobStatus status;
   final List<JobApplication> applications;
-  final String contactPerson;
-  final String contactPhone;
-  final String contactEmail;
+  final String? contactPerson;
+  final String? contactPhone;
+  final String? contactEmail;
+  final double? latitude;
+  final double? longitude;
 
   Job({
     required this.id,
@@ -52,9 +54,11 @@ class Job {
     this.startDate,
     this.status = JobStatus.open,
     this.applications = const [],
-    required this.contactPerson,
-    required this.contactPhone,
-    required this.contactEmail,
+    this.contactPerson,
+    this.contactPhone,
+    this.contactEmail,
+    this.latitude,
+    this.longitude,
   });
 
   Job copyWith({
@@ -78,6 +82,8 @@ class Job {
     String? contactPerson,
     String? contactPhone,
     String? contactEmail,
+    double? latitude,
+    double? longitude,
   }) {
     return Job(
       id: id ?? this.id,
@@ -100,6 +106,8 @@ class Job {
       contactPerson: contactPerson ?? this.contactPerson,
       contactPhone: contactPhone ?? this.contactPhone,
       contactEmail: contactEmail ?? this.contactEmail,
+      latitude: latitude ?? this.latitude,
+      longitude: longitude ?? this.longitude,
     );
   }
 
@@ -125,33 +133,42 @@ class Job {
       'contactPerson': contactPerson,
       'contactPhone': contactPhone,
       'contactEmail': contactEmail,
+      'latitude': latitude,
+      'longitude': longitude,
     };
   }
 
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
-      id: json['id'],
-      businessId: json['businessId'],
-      businessName: json['businessName'],
-      title: json['title'],
-      description: json['description'],
-      requiredSkills: List<String>.from(json['requiredSkills']),
-      location: json['location'],
-      address: json['address'],
-      state: json['state'],
-      city: json['city'],
-      pinCode: json['pinCode'],
-      hourlyRate: json['hourlyRate'].toDouble(),
-      estimatedHours: json['estimatedHours'],
-      postedDate: DateTime.parse(json['postedDate']),
-      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : null,
-      status: JobStatus.values.firstWhere((e) => e.toString() == json['status']),
-      applications: (json['applications'] as List)
-          .map((app) => JobApplication.fromJson(app))
-          .toList(),
-      contactPerson: json['contactPerson'],
-      contactPhone: json['contactPhone'],
-      contactEmail: json['contactEmail'],
+      id: json['id'].toString(),
+      businessId: (json['business_owner_id'] ?? json['businessId'] ?? '').toString(),
+      businessName: (json['businessName'] ?? '').toString(),
+      title: (json['title'] ?? '').toString(),
+      description: (json['description'] ?? '').toString(),
+      requiredSkills: json['requiredSkills'] != null
+          ? List<String>.from(json['requiredSkills'])
+          : (json['required_skills'] != null ? (json['required_skills'] as String).split(',').map((s) => s.trim()).toList() : []),
+      location: (json['location'] ?? '').toString(),
+      address: (json['address'] ?? '').toString(),
+      state: (json['state'] ?? '').toString(),
+      city: (json['city'] ?? '').toString(),
+      pinCode: (json['pinCode'] ?? json['pincode'] ?? '').toString(),
+      hourlyRate: (json['hourlyRate'] ?? json['hourly_rate'] ?? 0).toDouble(),
+      estimatedHours: (json['estimatedHours'] ?? json['estimated_hours'] ?? 0) is int
+          ? (json['estimatedHours'] ?? json['estimated_hours'] ?? 0)
+          : int.tryParse((json['estimatedHours'] ?? json['estimated_hours'] ?? '0').toString()) ?? 0,
+      postedDate: DateTime.parse(json['postedDate'] ?? json['posted_date']),
+      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : (json['start_date'] != null ? DateTime.parse(json['start_date']) : null),
+      status: JobStatus.values.firstWhere(
+        (e) => e.toString() == (json['status'] ?? 'JobStatus.open'),
+        orElse: () => JobStatus.open,
+      ),
+      applications: (json['applications'] as List?)?.map((app) => JobApplication.fromJson(app)).toList() ?? [],
+      contactPerson: (json['contactPerson'] ?? '').toString(),
+      contactPhone: (json['contactPhone'] ?? '').toString(),
+      contactEmail: (json['contactEmail'] ?? '').toString(),
+      latitude: (json['latitude'] as num?)?.toDouble(),
+      longitude: (json['longitude'] as num?)?.toDouble(),
     );
   }
 }

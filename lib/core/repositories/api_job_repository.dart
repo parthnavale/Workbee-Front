@@ -64,7 +64,10 @@ class ApiJobRepository implements JobRepository {
   Future<void> postJob(Job job) async {
     try {
       final jobData = _mapFlutterJobToApiJob(job);
+      print('[DEBUG] Posting job payload:');
+      print(jobData);
       await _apiService.createJob(jobData);
+      print('[DEBUG] Job post completed.');
     } catch (e) {
       rethrow;
     }
@@ -199,6 +202,8 @@ class ApiJobRepository implements JobRepository {
       'contact_person': job.contactPerson,
       'contact_phone': job.contactPhone,
       'contact_email': job.contactEmail,
+      'latitude': job.latitude,
+      'longitude': job.longitude,
     };
   }
 

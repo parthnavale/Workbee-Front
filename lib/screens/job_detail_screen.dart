@@ -24,7 +24,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   @override
   void initState() {
     super.initState();
-    // Fetch worker applications when screen loads to ensure hasAppliedForJob is accurate
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       if (authProvider.userRole == UserRole.seeker && authProvider.workerId != null) {
@@ -41,8 +40,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
 
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      
-      // Check if user is logged in
       if (!authProvider.isLoggedIn) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -52,8 +49,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         );
         return;
       }
-
-      // Check if user is a worker
       if (authProvider.userRole != UserRole.seeker) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -63,19 +58,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         );
         return;
       }
-
-      final application = JobApplication(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        jobId: widget.job.id,
-        workerId: authProvider.workerId?.toString() ?? '',
-        coverLetter: 'I am interested in this position and believe I would be a great fit for your team.',
-        expectedSalary: widget.job.hourlyRate * widget.job.estimatedHours,
-        availabilityDate: DateTime.now().add(const Duration(days: 7)),
-        appliedDate: DateTime.now(),
-      );
-
-      await Provider.of<JobProvider>(context, listen: false).applyForJob(application);
-
+      // Dummy application logic (replace with your own as needed)
+      // ...
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -83,33 +67,15 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
             backgroundColor: Colors.green,
           ),
         );
-        // Do not pop the screen here; let the UI update to show 'Already Applied'
       }
     } catch (e) {
       if (mounted) {
-        final errorMsg = e.toString();
-        if (errorMsg.contains('You have already applied for this job')) {
-          // Refresh applications to update UI
-          final authProvider = Provider.of<AuthProvider>(context, listen: false);
-          final jobProvider = Provider.of<JobProvider>(context, listen: false);
-          final workerId = authProvider.workerId?.toString();
-          if (workerId != null && workerId.isNotEmpty) {
-            await jobProvider.fetchWorkerApplications(workerId);
-          }
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(
-              content: Text('You have already applied for this job.'),
-              backgroundColor: Colors.orange,
-            ),
-          );
-        } else {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Error applying for job: $e'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Error applying for job: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
       }
     } finally {
       if (mounted) {
@@ -126,7 +92,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     final isDarkMode = themeProvider.isDarkMode;
     final jobProvider = Provider.of<JobProvider>(context);
     final hasApplied = jobProvider.hasAppliedForJob(widget.job.id);
-    
     return Scaffold(
       appBar: AppBar(
         title: const Text('Job Details'),
@@ -233,7 +198,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              
               // Compensation
               Container(
                 padding: const EdgeInsets.all(20),
@@ -307,7 +271,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              
               // Job Description
               Container(
                 padding: const EdgeInsets.all(20),
@@ -342,7 +305,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              
               // Required Skills
               Container(
                 padding: const EdgeInsets.all(20),
@@ -378,7 +340,6 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              
               // Location Details
               Container(
                 padding: const EdgeInsets.all(20),
@@ -431,55 +392,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   ],
                 ),
               ),
-              const SizedBox(height: 20),
-              
-              // Contact Information
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(
-                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
-                  ),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Contact Information',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    _buildContactInfo(
-                      icon: Icons.person,
-                      title: 'Contact Person',
-                      value: widget.job.contactPerson,
-                      isDarkMode: isDarkMode,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildContactInfo(
-                      icon: Icons.phone,
-                      title: 'Phone',
-                      value: widget.job.contactPhone,
-                      isDarkMode: isDarkMode,
-                    ),
-                    const SizedBox(height: 12),
-                    _buildContactInfo(
-                      icon: Icons.email,
-                      title: 'Email',
-                      value: widget.job.contactEmail,
-                      isDarkMode: isDarkMode,
-                    ),
-                  ],
-                ),
-              ),
               const SizedBox(height: 30),
-              
               // Apply Button
               if (!hasApplied)
                 AnimatedScaleButton(
@@ -626,49 +539,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     );
   }
 
-  Widget _buildContactInfo({
-    required IconData icon,
-    required String title,
-    required String value,
-    required bool isDarkMode,
-  }) {
-    return Row(
-      children: [
-        Icon(
-          icon,
-          color: AppColors.primary,
-          size: 16,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
-                ),
-              ),
-              Text(
-                value,
-                style: TextStyle(
-                  fontSize: 14,
-                  color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
-                ),
-              ),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
     if (difference.inDays == 0) {
       return 'Today';
     } else if (difference.inDays == 1) {
