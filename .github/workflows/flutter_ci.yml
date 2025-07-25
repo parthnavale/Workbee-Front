@@ -17,7 +17,7 @@ jobs:
         run: rm -rf "$HOME/.flutter"
 
       - name: Set up Flutter
-        uses: bluefireteam/flutter-gh-actions@v7
+        uses: bluefireteam/flutter-gh-actions@v6
         with:
           flutter-version: '3.22.1'
 
