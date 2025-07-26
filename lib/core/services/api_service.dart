@@ -255,7 +255,7 @@ class ApiService {
 
   /// Get applications by job ID from the API
   Future<List<Map<String, dynamic>>> getApplicationsByJob(String jobId) async {
-    final endpoint = '${AppConfig.applicationsEndpoint}?job_id=$jobId';
+    final endpoint = '${AppConfig.applicationsEndpoint}/job/$jobId';
     final response = await get(endpoint);
 
     if (response is List) {

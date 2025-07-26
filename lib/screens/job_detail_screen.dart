@@ -9,6 +9,7 @@ import '../constants/user_roles.dart';
 import '../widgets/animated_scale_button.dart';
 import '../widgets/gradient_background.dart';
 
+
 class JobDetailScreen extends StatefulWidget {
   final Job job;
 
@@ -59,8 +60,31 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
         );
         return;
       }
-      // Dummy application logic (replace with your own as needed)
-      // ...
+      
+      if (authProvider.workerId == null) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(
+            content: Text('Worker ID not found. Please log in again.'),
+            backgroundColor: Colors.red,
+          ),
+        );
+        return;
+      }
+
+      // Create the job application
+      final jobProvider = Provider.of<JobProvider>(context, listen: false);
+      final application = JobApplication(
+        id: '', // Will be set by the backend
+        jobId: widget.job.id,
+        workerId: authProvider.workerId.toString(),
+        coverLetter: 'I am interested in this position and would like to apply.',
+        expectedSalary: widget.job.hourlyRate * widget.job.estimatedHours,
+        appliedDate: DateTime.now(),
+      );
+
+      // Submit the application
+      await jobProvider.applyForJob(application);
+      
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
