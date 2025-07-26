@@ -33,7 +33,7 @@ jobs:
           echo "Analysis completed with warnings (non-blocking)"
 
       - name: Check formatting
-        run: flutter format --set-exit-if-changed .
+        run: dart format --set-exit-if-changed .
 
       - name: Run unit and widget tests with coverage
         run: flutter test --coverage
