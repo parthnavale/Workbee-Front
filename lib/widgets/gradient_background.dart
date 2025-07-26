@@ -22,22 +22,27 @@ class GradientBackground extends StatelessWidget {
     return Consumer<ThemeProvider>(
       builder: (context, themeProvider, child) {
         final isDark = themeProvider.isDarkMode;
-        
+
         return Container(
           width: double.infinity,
           height: double.infinity,
           decoration: BoxDecoration(
             gradient: LinearGradient(
-              colors: isDark 
-                ? [AppColors.backgroundPrimary, AppColors.backgroundSecondary]
-                : [AppColors.lightBackgroundPrimary, AppColors.lightBackgroundSecondary],
+              colors: isDark
+                  ? [AppColors.backgroundPrimary, AppColors.backgroundSecondary]
+                  : [
+                      AppColors.lightBackgroundPrimary,
+                      AppColors.lightBackgroundSecondary,
+                    ],
               begin: begin!,
               end: end!,
             ),
           ),
-          child: padding != null ? Padding(padding: padding!, child: this.child) : this.child,
+          child: padding != null
+              ? Padding(padding: padding!, child: this.child)
+              : this.child,
         );
       },
     );
   }
-} 
+}

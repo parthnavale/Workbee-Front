@@ -85,16 +85,25 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       await api.updateWorker(workerId, data);
       if (mounted) {
         // Re-fetch the worker profile so the card updates
-        await Provider.of<AuthProvider>(context, listen: false).fetchWorkerProfile();
+        await Provider.of<AuthProvider>(
+          context,
+          listen: false,
+        ).fetchWorkerProfile();
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Profile updated successfully!'),
+            backgroundColor: Colors.green,
+          ),
         );
         Navigator.pop(context);
       }
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Failed to update profile: $e'), backgroundColor: Colors.red),
+          SnackBar(
+            content: Text('Failed to update profile: $e'),
+            backgroundColor: Colors.red,
+          ),
         );
       }
     } finally {
@@ -133,7 +142,8 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     TextFormField(
                       controller: _nameController,
                       decoration: const InputDecoration(labelText: 'Name'),
-                      validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
@@ -144,17 +154,22 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     TextFormField(
                       controller: _emailController,
                       decoration: const InputDecoration(labelText: 'Email'),
-                      validator: (v) => v == null || v.isEmpty ? 'Required' : null,
+                      validator: (v) =>
+                          v == null || v.isEmpty ? 'Required' : null,
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _skillsController,
-                      decoration: const InputDecoration(labelText: 'Skills (comma separated)'),
+                      decoration: const InputDecoration(
+                        labelText: 'Skills (comma separated)',
+                      ),
                     ),
                     const SizedBox(height: 12),
                     TextFormField(
                       controller: _yearsController,
-                      decoration: const InputDecoration(labelText: 'Years of Experience'),
+                      decoration: const InputDecoration(
+                        labelText: 'Years of Experience',
+                      ),
                       keyboardType: TextInputType.number,
                     ),
                     const SizedBox(height: 12),
@@ -181,7 +196,11 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
                     ElevatedButton(
                       onPressed: _saving ? null : _saveProfile,
                       child: _saving
-                          ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                          ? const SizedBox(
+                              height: 20,
+                              width: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
                           : const Text('Save'),
                     ),
                   ],
@@ -190,4 +209,4 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
             ),
     );
   }
-} 
+}

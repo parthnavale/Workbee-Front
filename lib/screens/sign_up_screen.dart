@@ -205,11 +205,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
         return;
       }
       // Permissions granted, get the position
-      Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
       setState(() {
         _latitude = position.latitude;
         _longitude = position.longitude;
-        _locationStatus = 'Location set: ( [33m [1m [0m [33m [1m [0m_latitude, _longitude)';
+        _locationStatus =
+            'Location set: ( [33m [1m [0m [33m [1m [0m_latitude, _longitude)';
         _isGettingLocation = false;
       });
     } catch (e) {
@@ -231,7 +234,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
         );
         return;
       }
-      if (_selectedRole == UserRole.seeker && (_latitude == null || _longitude == null)) {
+      if (_selectedRole == UserRole.seeker &&
+          (_latitude == null || _longitude == null)) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('Please set your location.'),
@@ -250,16 +254,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
         // --- Delayed spinner for registration ---
         bool dialogShown = false;
         late Future<void> dialogFuture;
-        final registerFuture = authProvider.register(username, email, password, _selectedRole!);
-        dialogFuture = Future.delayed(const Duration(milliseconds: 300), () async {
-          dialogShown = true;
-          await LoadingDialog.show(
-            context,
-            message: _selectedRole == UserRole.poster
-                ? 'Registering as Business Owner...'
-                : 'Registering as Worker...'
-          );
-        });
+        final registerFuture = authProvider.register(
+          username,
+          email,
+          password,
+          _selectedRole!,
+        );
+        dialogFuture = Future.delayed(
+          const Duration(milliseconds: 300),
+          () async {
+            dialogShown = true;
+            await LoadingDialog.show(
+              context,
+              message: _selectedRole == UserRole.poster
+                  ? 'Registering as Business Owner...'
+                  : 'Registering as Worker...',
+            );
+          },
+        );
         final success = await registerFuture;
         if (dialogShown && mounted) LoadingDialog.hide(context);
         if (!success) {
@@ -288,18 +300,18 @@ class _SignUpScreenState extends State<SignUpScreen> {
         // --- Delayed spinner for profile creation ---
         dialogShown = false;
         Map<String, dynamic> workerData = {
-                "user_id": userId,
-                "name": _nameController.text,
-                "phone": _phoneController.text,
-                "email": email,
-                "skills": _selectedSkills.join(","),
-                "years_of_experience": 1,
-                "address": _addressController.text,
-                "state": _stateController.text,
-                "city": _cityController.text,
-                "pincode": _pinCodeController.text,
-                "latitude": _latitude,
-                "longitude": _longitude,
+          "user_id": userId,
+          "name": _nameController.text,
+          "phone": _phoneController.text,
+          "email": email,
+          "skills": _selectedSkills.join(","),
+          "years_of_experience": 1,
+          "address": _addressController.text,
+          "state": _stateController.text,
+          "city": _cityController.text,
+          "pincode": _pinCodeController.text,
+          "latitude": _latitude,
+          "longitude": _longitude,
         };
         if (_selectedRole == UserRole.seeker) {
           // Obtain FCM token and add to workerData
@@ -320,7 +332,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
           "state": _stateController.text,
           "city": _cityController.text,
           "pincode": _pinCodeController.text,
-          "year_established": 2024
+          "year_established": 2024,
         };
         if (_selectedRole == UserRole.poster) {
           // Obtain FCM token and add to businessOwnerData
@@ -332,21 +344,26 @@ class _SignUpScreenState extends State<SignUpScreen> {
         final profileFuture = _selectedRole == UserRole.poster
             ? apiService.createBusinessOwner(businessOwnerData)
             : apiService.createWorker(workerData);
-        dialogFuture = Future.delayed(const Duration(milliseconds: 300), () async {
-          dialogShown = true;
-          await LoadingDialog.show(
-            context,
-            message: _selectedRole == UserRole.poster
-                ? 'Creating Business Owner Profile...'
-                : 'Creating Worker Profile...'
-          );
-        });
+        dialogFuture = Future.delayed(
+          const Duration(milliseconds: 300),
+          () async {
+            dialogShown = true;
+            await LoadingDialog.show(
+              context,
+              message: _selectedRole == UserRole.poster
+                  ? 'Creating Business Owner Profile...'
+                  : 'Creating Worker Profile...',
+            );
+          },
+        );
         await profileFuture;
         if (dialogShown && mounted) LoadingDialog.hide(context);
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
-              content: Text('Registration successful as ${_selectedRole == UserRole.poster ? 'Business' : 'Worker'}!'),
+              content: Text(
+                'Registration successful as ${_selectedRole == UserRole.poster ? 'Business' : 'Worker'}!',
+              ),
               backgroundColor: Colors.green,
             ),
           );
@@ -381,33 +398,46 @@ class _SignUpScreenState extends State<SignUpScreen> {
   }) {
     return InputDecoration(
       labelText: labelText,
-      labelStyle: TextStyle(color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary),
-      prefixIcon: Icon(prefixIcon, color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary),
-      suffixIcon: isPassword ? IconButton(
-        icon: Icon(
-          _isPinVisible ? Icons.visibility : Icons.visibility_off,
-          color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
-        ),
-        onPressed: () {
-          setState(() {
-            _isPinVisible = !_isPinVisible;
-          });
-        },
-      ) : null,
+      labelStyle: TextStyle(
+        color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+      ),
+      prefixIcon: Icon(
+        prefixIcon,
+        color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+      ),
+      suffixIcon: isPassword
+          ? IconButton(
+              icon: Icon(
+                _isPinVisible ? Icons.visibility : Icons.visibility_off,
+                color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+              ),
+              onPressed: () {
+                setState(() {
+                  _isPinVisible = !_isPinVisible;
+                });
+              },
+            )
+          : null,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: isDarkMode ? Colors.grey : AppColors.lightBorderSecondary),
+        borderSide: BorderSide(
+          color: isDarkMode ? Colors.grey : AppColors.lightBorderSecondary,
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: isDarkMode ? Colors.grey : AppColors.lightBorderSecondary),
+        borderSide: BorderSide(
+          color: isDarkMode ? Colors.grey : AppColors.lightBorderSecondary,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
         borderSide: BorderSide(color: AppColors.primary, width: 2),
       ),
       filled: true,
-      fillColor: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+      fillColor: isDarkMode
+          ? AppColors.whiteWithAlpha(0.1)
+          : AppColors.lightBackgroundSecondary,
     );
   }
 
@@ -415,12 +445,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Sign Up'),
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-        foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
+        foregroundColor: isDarkMode
+            ? AppColors.textPrimary
+            : AppColors.lightTextPrimary,
         elevation: 0,
       ),
       body: GradientBackground(
@@ -441,7 +475,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                          color: isDarkMode
+                              ? Colors.white
+                              : AppColors.lightTextPrimary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -460,12 +496,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 decoration: BoxDecoration(
                                   color: _selectedRole == UserRole.poster
                                       ? AppColors.primary
-                                      : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
+                                      : (isDarkMode
+                                            ? AppColors.whiteWithAlpha(0.1)
+                                            : AppColors
+                                                  .lightBackgroundSecondary),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: _selectedRole == UserRole.poster
                                         ? AppColors.primary
-                                        : (isDarkMode ? Colors.grey : AppColors.lightBorderSecondary),
+                                        : (isDarkMode
+                                              ? Colors.grey
+                                              : AppColors.lightBorderSecondary),
                                     width: 2,
                                   ),
                                 ),
@@ -486,7 +527,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         fontWeight: FontWeight.bold,
                                         color: _selectedRole == UserRole.poster
                                             ? AppColors.primaryDark
-                                            : (isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                            : (isDarkMode
+                                                  ? Colors.white
+                                                  : AppColors.lightTextPrimary),
                                       ),
                                     ),
                                   ],
@@ -507,12 +550,17 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 decoration: BoxDecoration(
                                   color: _selectedRole == UserRole.seeker
                                       ? AppColors.primary
-                                      : (isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary),
+                                      : (isDarkMode
+                                            ? AppColors.whiteWithAlpha(0.1)
+                                            : AppColors
+                                                  .lightBackgroundSecondary),
                                   borderRadius: BorderRadius.circular(12),
                                   border: Border.all(
                                     color: _selectedRole == UserRole.seeker
                                         ? AppColors.primary
-                                        : (isDarkMode ? Colors.grey : AppColors.lightBorderSecondary),
+                                        : (isDarkMode
+                                              ? Colors.grey
+                                              : AppColors.lightBorderSecondary),
                                     width: 2,
                                   ),
                                 ),
@@ -533,7 +581,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                         fontWeight: FontWeight.bold,
                                         color: _selectedRole == UserRole.seeker
                                             ? AppColors.primaryDark
-                                            : (isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                            : (isDarkMode
+                                                  ? Colors.white
+                                                  : AppColors.lightTextPrimary),
                                       ),
                                     ),
                                   ],
@@ -549,7 +599,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // Business Name
                         TextFormField(
                           controller: _companyController,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Business Name',
                             prefixIcon: Icons.business,
@@ -566,7 +620,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // Contact Person Name
                         TextFormField(
                           controller: _contactPersonController,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Contact Person Name',
                             prefixIcon: Icons.person,
@@ -584,7 +642,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         TextFormField(
                           controller: _emailController,
                           keyboardType: TextInputType.emailAddress,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Contact Person Email Address',
                             prefixIcon: Icons.email,
@@ -594,7 +656,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                             if (value == null || value.isEmpty) {
                               return 'Please enter contact person email';
                             }
-                            if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                            if (!RegExp(
+                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                            ).hasMatch(value)) {
                               return 'Please enter a valid email';
                             }
                             return null;
@@ -605,7 +669,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         TextFormField(
                           controller: _phoneController,
                           keyboardType: TextInputType.phone,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Phone Number',
                             prefixIcon: Icons.phone,
@@ -625,23 +693,32 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           obscureText: !_isPinVisible,
                           keyboardType: TextInputType.number,
                           maxLength: 6,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
-                          decoration: _buildInputDecoration(
-                            labelText: 'PIN',
-                            prefixIcon: Icons.pin,
-                            isPassword: true,
-                            isDarkMode: isDarkMode,
-                          ).copyWith(
-                            counterText: '',
-                            suffixIcon: IconButton(
-                              icon: Icon(_isPinVisible ? Icons.visibility : Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  _isPinVisible = !_isPinVisible;
-                                });
-                              },
-                            ),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
                           ),
+                          decoration:
+                              _buildInputDecoration(
+                                labelText: 'PIN',
+                                prefixIcon: Icons.pin,
+                                isPassword: true,
+                                isDarkMode: isDarkMode,
+                              ).copyWith(
+                                counterText: '',
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isPinVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isPinVisible = !_isPinVisible;
+                                    });
+                                  },
+                                ),
+                              ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please enter your PIN';
@@ -662,23 +739,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                           obscureText: !_isConfirmPinVisible,
                           keyboardType: TextInputType.number,
                           maxLength: 6,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
-                          decoration: _buildInputDecoration(
-                            labelText: 'Confirm PIN',
-                            prefixIcon: Icons.pin,
-                            isPassword: true,
-                            isDarkMode: isDarkMode,
-                          ).copyWith(
-                            counterText: '',
-                            suffixIcon: IconButton(
-                              icon: Icon(_isConfirmPinVisible ? Icons.visibility : Icons.visibility_off),
-                              onPressed: () {
-                                setState(() {
-                                  _isConfirmPinVisible = !_isConfirmPinVisible;
-                                });
-                              },
-                            ),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
                           ),
+                          decoration:
+                              _buildInputDecoration(
+                                labelText: 'Confirm PIN',
+                                prefixIcon: Icons.pin,
+                                isPassword: true,
+                                isDarkMode: isDarkMode,
+                              ).copyWith(
+                                counterText: '',
+                                suffixIcon: IconButton(
+                                  icon: Icon(
+                                    _isConfirmPinVisible
+                                        ? Icons.visibility
+                                        : Icons.visibility_off,
+                                  ),
+                                  onPressed: () {
+                                    setState(() {
+                                      _isConfirmPinVisible =
+                                          !_isConfirmPinVisible;
+                                    });
+                                  },
+                                ),
+                              ),
                           validator: (value) {
                             if (value == null || value.isEmpty) {
                               return 'Please confirm your PIN';
@@ -700,7 +787,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         TextFormField(
                           controller: _businessAddressController,
                           maxLines: 3,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Business Address',
                             prefixIcon: Icons.location_on,
@@ -723,10 +814,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               _businessTypeController.text = value ?? '';
                             });
                           },
-                          items: _industries.map((industry) => DropdownMenuItem<String>(
-                            value: industry,
-                            child: Text(industry),
-                          )).toList(),
+                          items: _industries
+                              .map(
+                                (industry) => DropdownMenuItem<String>(
+                                  value: industry,
+                                  child: Text(industry),
+                                ),
+                              )
+                              .toList(),
                           decoration: _buildInputDecoration(
                             labelText: 'Business Type/Industry',
                             prefixIcon: Icons.category,
@@ -743,7 +838,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // GST Number
                         TextFormField(
                           controller: _gstNumberController,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'GST Number',
                             prefixIcon: Icons.receipt,
@@ -760,7 +859,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         // Business Registration Number
                         TextFormField(
                           controller: _businessRegNumberController,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Business Registration Number',
                             prefixIcon: Icons.assignment,
@@ -778,7 +881,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         TextFormField(
                           controller: _employeeCountController,
                           keyboardType: TextInputType.number,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Number of Employees',
                             prefixIcon: Icons.people,
@@ -799,7 +906,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         TextFormField(
                           controller: _businessDescriptionController,
                           maxLines: 4,
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                           decoration: _buildInputDecoration(
                             labelText: 'Business Description',
                             prefixIcon: Icons.description,
@@ -818,10 +929,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                            color: isDarkMode
+                                ? AppColors.whiteWithAlpha(0.05)
+                                : AppColors.lightBackgroundSecondary,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                              color: isDarkMode
+                                  ? AppColors.greyWithAlpha(0.3)
+                                  : AppColors.lightBorderSecondary,
                             ),
                           ),
                           child: Column(
@@ -840,7 +955,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : AppColors.lightTextPrimary,
                                     ),
                                   ),
                                 ],
@@ -849,7 +966,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               // Worker Name
                               TextFormField(
                                 controller: _nameController,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Full Name',
                                   prefixIcon: Icons.person,
@@ -867,7 +988,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _emailController,
                                 keyboardType: TextInputType.emailAddress,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Email Address',
                                   prefixIcon: Icons.email,
@@ -877,7 +1002,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   if (value == null || value.isEmpty) {
                                     return 'Please enter your email';
                                   }
-                                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value)) {
+                                  if (!RegExp(
+                                    r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                  ).hasMatch(value)) {
                                     return 'Please enter a valid email';
                                   }
                                   return null;
@@ -888,7 +1015,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _phoneController,
                                 keyboardType: TextInputType.phone,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Phone Number',
                                   prefixIcon: Icons.phone,
@@ -909,17 +1040,24 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 onTap: () async {
                                   final DateTime? picked = await showDatePicker(
                                     context: context,
-                                    initialDate: DateTime.now().subtract(const Duration(days: 6570)), // 18 years ago
+                                    initialDate: DateTime.now().subtract(
+                                      const Duration(days: 6570),
+                                    ), // 18 years ago
                                     firstDate: DateTime(1900),
                                     lastDate: DateTime.now(),
                                   );
                                   if (picked != null) {
                                     setState(() {
-                                      _dobController.text = "${picked.day}/${picked.month}/${picked.year}";
+                                      _dobController.text =
+                                          "${picked.day}/${picked.month}/${picked.year}";
                                     });
                                   }
                                 },
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Date of Birth',
                                   prefixIcon: Icons.date_range,
@@ -938,7 +1076,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 controller: _aadharController,
                                 keyboardType: TextInputType.number,
                                 maxLength: 12,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Aadhar Card Number',
                                   prefixIcon: Icons.credit_card,
@@ -966,12 +1108,16 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     _selectedGender = value;
                                   });
                                 },
-                                items: ['Male', 'Female', 'Other'].map<DropdownMenuItem<String>>((String value) {
-                                  return DropdownMenuItem<String>(
-                                    value: value,
-                                    child: Text(value),
-                                  );
-                                }).toList(),
+                                items: ['Male', 'Female', 'Other']
+                                    .map<DropdownMenuItem<String>>((
+                                      String value,
+                                    ) {
+                                      return DropdownMenuItem<String>(
+                                        value: value,
+                                        child: Text(value),
+                                      );
+                                    })
+                                    .toList(),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Gender',
                                   prefixIcon: Icons.person,
@@ -992,10 +1138,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                            color: isDarkMode
+                                ? AppColors.whiteWithAlpha(0.05)
+                                : AppColors.lightBackgroundSecondary,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                              color: isDarkMode
+                                  ? AppColors.greyWithAlpha(0.3)
+                                  : AppColors.lightBorderSecondary,
                             ),
                           ),
                           child: Column(
@@ -1014,7 +1164,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : AppColors.lightTextPrimary,
                                     ),
                                   ),
                                 ],
@@ -1024,7 +1176,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _addressController,
                                 maxLines: 3,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Address',
                                   prefixIcon: Icons.home,
@@ -1043,7 +1199,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 controller: _pinCodeController,
                                 keyboardType: TextInputType.number,
                                 maxLength: 6,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Pin Code',
                                   prefixIcon: Icons.pin_drop,
@@ -1075,7 +1235,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _stateController,
                                 readOnly: true,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'State/Union Territory',
                                   prefixIcon: Icons.location_city,
@@ -1087,7 +1251,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _cityController,
                                 readOnly: true,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'City/District',
                                   prefixIcon: Icons.location_city,
@@ -1102,10 +1270,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                            color: isDarkMode
+                                ? AppColors.whiteWithAlpha(0.05)
+                                : AppColors.lightBackgroundSecondary,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                              color: isDarkMode
+                                  ? AppColors.greyWithAlpha(0.3)
+                                  : AppColors.lightBorderSecondary,
                             ),
                           ),
                           child: Column(
@@ -1124,7 +1296,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : AppColors.lightTextPrimary,
                                     ),
                                   ),
                                 ],
@@ -1137,7 +1311,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                   Text(
                                     'Skills *',
                                     style: TextStyle(
-                                      color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                                      color: isDarkMode
+                                          ? Colors.grey
+                                          : AppColors.lightTextSecondary,
                                       fontSize: 16,
                                     ),
                                   ),
@@ -1150,34 +1326,49 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       padding: const EdgeInsets.all(16),
                                       decoration: BoxDecoration(
                                         border: Border.all(
-                                          color: isDarkMode ? Colors.grey : AppColors.lightBorderSecondary,
+                                          color: isDarkMode
+                                              ? Colors.grey
+                                              : AppColors.lightBorderSecondary,
                                         ),
                                         borderRadius: BorderRadius.circular(12),
-                                        color: isDarkMode ? AppColors.whiteWithAlpha(0.1) : AppColors.lightBackgroundSecondary,
+                                        color: isDarkMode
+                                            ? AppColors.whiteWithAlpha(0.1)
+                                            : AppColors
+                                                  .lightBackgroundSecondary,
                                       ),
                                       child: Row(
                                         children: [
                                           Icon(
                                             Icons.build,
-                                            color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                                            color: isDarkMode
+                                                ? Colors.grey
+                                                : AppColors.lightTextSecondary,
                                             size: 20,
                                           ),
                                           const SizedBox(width: 12),
                                           Expanded(
                                             child: Text(
-                                              _selectedSkills.isEmpty 
-                                                ? 'Select your skills'
-                                                : '${_selectedSkills.length} skill(s) selected',
+                                              _selectedSkills.isEmpty
+                                                  ? 'Select your skills'
+                                                  : '${_selectedSkills.length} skill(s) selected',
                                               style: TextStyle(
-                                                color: _selectedSkills.isEmpty 
-                                                  ? (isDarkMode ? Colors.grey : AppColors.lightTextSecondary)
-                                                  : (isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                                color: _selectedSkills.isEmpty
+                                                    ? (isDarkMode
+                                                          ? Colors.grey
+                                                          : AppColors
+                                                                .lightTextSecondary)
+                                                    : (isDarkMode
+                                                          ? Colors.white
+                                                          : AppColors
+                                                                .lightTextPrimary),
                                               ),
                                             ),
                                           ),
                                           Icon(
                                             Icons.arrow_drop_down,
-                                            color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                                            color: isDarkMode
+                                                ? Colors.grey
+                                                : AppColors.lightTextSecondary,
                                           ),
                                         ],
                                       ),
@@ -1189,19 +1380,33 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                       child: Wrap(
                                         spacing: 4,
                                         runSpacing: 4,
-                                        children: _selectedSkills.map((skill) => Chip(
-                                          label: Text(
-                                            skill,
-                                            style: TextStyle(fontSize: 12),
-                                          ),
-                                          backgroundColor: AppColors.primaryWithAlpha(0.2),
-                                          deleteIcon: Icon(Icons.close, size: 16),
-                                          onDeleted: () {
-                                            setState(() {
-                                              _selectedSkills.remove(skill);
-                                            });
-                                          },
-                                        )).toList(),
+                                        children: _selectedSkills
+                                            .map(
+                                              (skill) => Chip(
+                                                label: Text(
+                                                  skill,
+                                                  style: TextStyle(
+                                                    fontSize: 12,
+                                                  ),
+                                                ),
+                                                backgroundColor:
+                                                    AppColors.primaryWithAlpha(
+                                                      0.2,
+                                                    ),
+                                                deleteIcon: Icon(
+                                                  Icons.close,
+                                                  size: 16,
+                                                ),
+                                                onDeleted: () {
+                                                  setState(() {
+                                                    _selectedSkills.remove(
+                                                      skill,
+                                                    );
+                                                  });
+                                                },
+                                              ),
+                                            )
+                                            .toList(),
                                       ),
                                     ),
                                   if (_selectedSkills.isEmpty)
@@ -1222,7 +1427,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _educationController,
                                 maxLines: 2,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Education Details',
                                   prefixIcon: Icons.school,
@@ -1240,7 +1449,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _yearsOfEducationController,
                                 keyboardType: TextInputType.number,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Years of Experience',
                                   prefixIcon: Icons.timeline,
@@ -1265,7 +1478,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                               TextFormField(
                                 controller: _descriptionController,
                                 maxLines: 4,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Previous Work Experience',
                                   prefixIcon: Icons.work_history,
@@ -1286,10 +1503,14 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Container(
                           padding: const EdgeInsets.all(16),
                           decoration: BoxDecoration(
-                            color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                            color: isDarkMode
+                                ? AppColors.whiteWithAlpha(0.05)
+                                : AppColors.lightBackgroundSecondary,
                             borderRadius: BorderRadius.circular(12),
                             border: Border.all(
-                              color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                              color: isDarkMode
+                                  ? AppColors.greyWithAlpha(0.3)
+                                  : AppColors.lightBorderSecondary,
                             ),
                           ),
                           child: Column(
@@ -1308,7 +1529,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                     style: TextStyle(
                                       fontSize: 16,
                                       fontWeight: FontWeight.bold,
-                                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                                      color: isDarkMode
+                                          ? Colors.white
+                                          : AppColors.lightTextPrimary,
                                     ),
                                   ),
                                 ],
@@ -1320,7 +1543,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 obscureText: true,
                                 keyboardType: TextInputType.number,
                                 maxLength: 6,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'PIN',
                                   prefixIcon: Icons.pin,
@@ -1347,7 +1574,11 @@ class _SignUpScreenState extends State<SignUpScreen> {
                                 obscureText: true,
                                 keyboardType: TextInputType.number,
                                 maxLength: 6,
-                                style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                                style: TextStyle(
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
+                                ),
                                 decoration: _buildInputDecoration(
                                   labelText: 'Confirm PIN',
                                   prefixIcon: Icons.pin,
@@ -1380,17 +1611,25 @@ class _SignUpScreenState extends State<SignUpScreen> {
                         Row(
                           children: [
                             Expanded(
-                              child: Text(_locationStatus,
-                                  style: TextStyle(
-                                    color: _latitude != null ? Colors.green : Colors.red,
-                                    fontSize: 14,
-                                  )),
+                              child: Text(
+                                _locationStatus,
+                                style: TextStyle(
+                                  color: _latitude != null
+                                      ? Colors.green
+                                      : Colors.red,
+                                  fontSize: 14,
+                                ),
+                              ),
                             ),
                             const SizedBox(width: 10),
                             ElevatedButton.icon(
-                              onPressed: _isGettingLocation ? null : _getCurrentLocation,
+                              onPressed: _isGettingLocation
+                                  ? null
+                                  : _getCurrentLocation,
                               icon: const Icon(Icons.my_location),
-                              label: _isGettingLocation ? const Text('Getting...') : const Text('Set Location'),
+                              label: _isGettingLocation
+                                  ? const Text('Getting...')
+                                  : const Text('Set Location'),
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: AppColors.primary,
                                 foregroundColor: Colors.white,
@@ -1444,7 +1683,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   title: Text(
                     skill,
                     style: TextStyle(
-                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : AppColors.lightTextPrimary,
                     ),
                   ),
                   value: _selectedSkills.contains(skill),
@@ -1466,12 +1707,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               onPressed: () {
                 Navigator.of(context).pop();
               },
-              child: Text(
-                'Done',
-                style: TextStyle(
-                  color: AppColors.primary,
-                ),
-              ),
+              child: Text('Done', style: TextStyle(color: AppColors.primary)),
             ),
           ],
         );

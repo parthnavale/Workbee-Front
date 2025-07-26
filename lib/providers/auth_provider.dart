@@ -30,20 +30,20 @@ class AuthProvider with ChangeNotifier {
   String? get workerName => _workerName;
   String? get workerEmail => _workerEmail;
   int? get workerYearsOfExperience => _workerYearsOfExperience;
-  int get unreadNotificationCount => _notifications.where((n) => n['is_read'] == false).length;
+  int get unreadNotificationCount =>
+      _notifications.where((n) => n['is_read'] == false).length;
   List<Map<String, dynamic>> get notifications => _notifications;
 
   Future<bool> login(String email, String password, UserRole role) async {
     try {
       final url = Uri.parse(AppConfig.getApiUrl("/users/login"));
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({
-          "email": email,
-          "password": password,
-        }),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "application/json"},
+            body: json.encode({"email": email, "password": password}),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -138,19 +138,26 @@ class AuthProvider with ChangeNotifier {
     }
   }
 
-  Future<bool> register(String username, String email, String password, UserRole role) async {
+  Future<bool> register(
+    String username,
+    String email,
+    String password,
+    UserRole role,
+  ) async {
     try {
       final url = Uri.parse(AppConfig.getApiUrl("/users/register"));
-      final response = await http.post(
-        url,
-        headers: {"Content-Type": "application/json"},
-        body: json.encode({
-          "username": username,
-          "email": email,
-          "password": password,
-          "role": role == UserRole.poster ? "poster" : "seeker"
-        }),
-      ).timeout(const Duration(seconds: 30));
+      final response = await http
+          .post(
+            url,
+            headers: {"Content-Type": "application/json"},
+            body: json.encode({
+              "username": username,
+              "email": email,
+              "password": password,
+              "role": role == UserRole.poster ? "poster" : "seeker",
+            }),
+          )
+          .timeout(const Duration(seconds: 30));
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -212,13 +219,18 @@ class AuthProvider with ChangeNotifier {
   Future<void> fetchUserProfileFromToken(String token) async {
     try {
       final url = Uri.parse(AppConfig.getApiUrl('/users/me'));
-      final response = await http.get(url, headers: {"Authorization": "Bearer $token"});
+      final response = await http.get(
+        url,
+        headers: {"Authorization": "Bearer $token"},
+      );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         _isLoggedIn = true;
         _userName = data["username"];
         _userId = data["id"];
-        _userRole = data["role"] == "poster" ? UserRole.poster : UserRole.seeker;
+        _userRole = data["role"] == "poster"
+            ? UserRole.poster
+            : UserRole.seeker;
         if (_userRole == UserRole.poster) {
           await fetchBusinessOwnerProfile();
         } else if (_userRole == UserRole.seeker) {
@@ -247,7 +259,10 @@ class AuthProvider with ChangeNotifier {
     if (_workerId == null) return;
     try {
       final url = Uri.parse(AppConfig.getApiUrl('/notifications/$_workerId'));
-      final response = await http.get(url, headers: {"Content-Type": "application/json"});
+      final response = await http.get(
+        url,
+        headers: {"Content-Type": "application/json"},
+      );
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data is List) {
@@ -263,7 +278,11 @@ class AuthProvider with ChangeNotifier {
   Future<void> markNotificationsRead(List<int> notificationIds) async {
     try {
       final url = Uri.parse(AppConfig.getApiUrl('/notifications/mark_read'));
-      final response = await http.post(url, headers: {"Content-Type": "application/json"}, body: json.encode({"notification_ids": notificationIds}));
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: json.encode({"notification_ids": notificationIds}),
+      );
       if (response.statusCode == 200) {
         for (final n in _notifications) {
           if (notificationIds.contains(n['id'])) n['is_read'] = true;
@@ -272,4 +291,4 @@ class AuthProvider with ChangeNotifier {
       }
     } catch (e) {}
   }
-} 
+}

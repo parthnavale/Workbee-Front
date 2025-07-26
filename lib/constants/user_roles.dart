@@ -1,1 +1,1 @@
-enum UserRole { seeker, poster } 
+enum UserRole { seeker, poster }

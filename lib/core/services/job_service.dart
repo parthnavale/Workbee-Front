@@ -89,21 +89,30 @@ class JobService {
 
   /// Respond to an application with validation
   Future<void> respondToApplication(
-    String jobId, 
-    String applicationId, 
+    String jobId,
+    String applicationId,
     ApplicationStatus status,
-    String businessId,
-    {String? message}
-  ) async {
+    String businessId, {
+    String? message,
+  }) async {
     try {
-      await _repository.respondToApplication(jobId, applicationId, status, message: message);
+      await _repository.respondToApplication(
+        jobId,
+        applicationId,
+        status,
+        message: message,
+      );
     } catch (e) {
       rethrow;
     }
   }
 
   /// Update job status with validation
-  Future<void> updateJobStatus(String jobId, JobStatus status, String businessId) async {
+  Future<void> updateJobStatus(
+    String jobId,
+    JobStatus status,
+    String businessId,
+  ) async {
     final job = await _repository.getJobById(jobId);
     if (job == null) {
       throw ArgumentError('Job not found');
@@ -116,7 +125,10 @@ class JobService {
   }
 
   /// Get applications for a job with validation
-  Future<List<JobApplication>> getApplicationsForJob(String jobId, String businessId) async {
+  Future<List<JobApplication>> getApplicationsForJob(
+    String jobId,
+    String businessId,
+  ) async {
     final job = await _repository.getJobById(jobId);
     if (job == null) {
       throw ArgumentError('Job not found');
@@ -137,12 +149,14 @@ class JobService {
   Future<int> getPendingApplicationsCount(String businessId) async {
     final jobs = await _repository.getJobsByBusiness(businessId);
     int count = 0;
-    
+
     for (final job in jobs) {
-      final pendingApps = job.applications.where((app) => app.status == ApplicationStatus.pending);
+      final pendingApps = job.applications.where(
+        (app) => app.status == ApplicationStatus.pending,
+      );
       count += pendingApps.length;
     }
-    
+
     return count;
   }
 
@@ -153,7 +167,10 @@ class JobService {
   }
 
   /// Get worker's application for a specific job
-  Future<JobApplication?> getWorkerApplicationForJob(String jobId, String workerId) async {
+  Future<JobApplication?> getWorkerApplicationForJob(
+    String jobId,
+    String workerId,
+  ) async {
     final applications = await _repository.getApplicationsForJob(jobId);
     try {
       return applications.firstWhere((app) => app.workerId == workerId);
@@ -161,4 +178,4 @@ class JobService {
       return null;
     }
   }
-} 
+}

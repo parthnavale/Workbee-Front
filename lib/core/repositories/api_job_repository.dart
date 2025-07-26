@@ -8,8 +8,8 @@ import '../config/app_config.dart';
 class ApiJobRepository implements JobRepository {
   final ApiService _apiService;
 
-  ApiJobRepository({ApiService? apiService}) 
-      : _apiService = apiService ?? ApiService();
+  ApiJobRepository({ApiService? apiService})
+    : _apiService = apiService ?? ApiService();
 
   @override
   Future<List<Job>> getJobs() async {
@@ -39,9 +39,11 @@ class ApiJobRepository implements JobRepository {
       // This would need a specific API endpoint for worker applications
       // For now, we'll return jobs that the worker has applied to
       final allJobs = await getJobs();
-      return allJobs.where((job) => 
-        job.applications.any((app) => app.workerId == workerId)
-      ).toList();
+      return allJobs
+          .where(
+            (job) => job.applications.any((app) => app.workerId == workerId),
+          )
+          .toList();
     } catch (e) {
       return [];
     }
@@ -108,17 +110,20 @@ class ApiJobRepository implements JobRepository {
 
   @override
   Future<void> respondToApplication(
-    String jobId, 
-    String applicationId, 
-    ApplicationStatus status,
-    {String? message}
-  ) async {
+    String jobId,
+    String applicationId,
+    ApplicationStatus status, {
+    String? message,
+  }) async {
     try {
       final applicationData = {
         'status': status.toString().split('.').last,
         'message': message ?? '',
       };
-      await _apiService.updateApplication(int.parse(applicationId), applicationData);
+      await _apiService.updateApplication(
+        int.parse(applicationId),
+        applicationData,
+      );
     } catch (e) {
       rethrow;
     }
@@ -127,9 +132,7 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<void> updateJobStatus(String jobId, JobStatus status) async {
     try {
-      final jobData = {
-        'status': status.toString().split('.').last,
-      };
+      final jobData = {'status': status.toString().split('.').last};
       await _apiService.updateJob(int.parse(jobId), jobData);
     } catch (e) {
       rethrow;
@@ -141,7 +144,9 @@ class ApiJobRepository implements JobRepository {
     try {
       // Use backend filtering instead of fetching all applications
       final applications = await _apiService.getApplicationsByJob(jobId);
-      return applications.map((appData) => _mapApiApplicationToFlutterApplication(appData)).toList();
+      return applications
+          .map((appData) => _mapApiApplicationToFlutterApplication(appData))
+          .toList();
     } catch (e) {
       return [];
     }
@@ -152,7 +157,9 @@ class ApiJobRepository implements JobRepository {
     try {
       // Use backend filtering instead of fetching all applications
       final applications = await _apiService.getApplicationsByWorker(workerId);
-      return applications.map((appData) => _mapApiApplicationToFlutterApplication(appData)).toList();
+      return applications
+          .map((appData) => _mapApiApplicationToFlutterApplication(appData))
+          .toList();
     } catch (e) {
       return [];
     }
@@ -175,7 +182,9 @@ class ApiJobRepository implements JobRepository {
       hourlyRate: (apiJob['hourly_rate'] ?? 150.0).toDouble(),
       estimatedHours: apiJob['estimated_hours'] ?? 8,
       postedDate: _parseDateTime(apiJob['posted_date']),
-      startDate: apiJob['start_date'] != null ? _parseDateTime(apiJob['start_date']) : null,
+      startDate: apiJob['start_date'] != null
+          ? _parseDateTime(apiJob['start_date'])
+          : null,
       status: _parseJobStatus(apiJob['status']),
       applications: [], // Will be populated when API supports it
       contactPerson: apiJob['contact_person'] ?? 'Contact Person',
@@ -260,15 +269,19 @@ class ApiJobRepository implements JobRepository {
   }
 
   /// Map API application data to Flutter JobApplication model
-  JobApplication _mapApiApplicationToFlutterApplication(Map<String, dynamic> apiApplication) {
+  JobApplication _mapApiApplicationToFlutterApplication(
+    Map<String, dynamic> apiApplication,
+  ) {
     return JobApplication(
       id: apiApplication['id'].toString(),
       jobId: apiApplication['job_id'].toString(),
       workerId: apiApplication['worker_id'].toString(),
-      coverLetter: apiApplication['message'] ?? '', // API returns 'message' as cover letter
+      coverLetter:
+          apiApplication['message'] ??
+          '', // API returns 'message' as cover letter
       expectedSalary: (apiApplication['expected_salary'] ?? 0.0).toDouble(),
-      availabilityDate: apiApplication['availability_date'] != null 
-          ? _parseDateTime(apiApplication['availability_date']) 
+      availabilityDate: apiApplication['availability_date'] != null
+          ? _parseDateTime(apiApplication['availability_date'])
           : null,
       status: _parseApplicationStatus(apiApplication['status']),
       appliedDate: _parseDateTime(apiApplication['applied_date']),
@@ -298,4 +311,4 @@ class ApiJobRepository implements JobRepository {
   void dispose() {
     _apiService.dispose();
   }
-} 
+}

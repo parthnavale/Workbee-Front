@@ -10,14 +10,14 @@ class AnimatedScaleButton extends StatefulWidget {
   final Color? borderColor;
   final double? borderWidth;
   final BorderSide? side;
-  
+
   const AnimatedScaleButton({
-    super.key, 
-    required this.child, 
-    this.onTap, 
-    this.backgroundColor, 
-    this.foregroundColor, 
-    this.minimumSize, 
+    super.key,
+    required this.child,
+    this.onTap,
+    this.backgroundColor,
+    this.foregroundColor,
+    this.minimumSize,
     this.icon,
     this.borderColor,
     this.borderWidth,
@@ -28,7 +28,7 @@ class AnimatedScaleButton extends StatefulWidget {
   State<AnimatedScaleButton> createState() => _AnimatedScaleButtonState();
 }
 
-class _AnimatedScaleButtonState extends State<AnimatedScaleButton> 
+class _AnimatedScaleButtonState extends State<AnimatedScaleButton>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scale;
@@ -61,20 +61,22 @@ class _AnimatedScaleButtonState extends State<AnimatedScaleButton>
         scale: _scale,
         child: ElevatedButton.icon(
           onPressed: widget.onTap,
-          icon: widget.icon != null 
-              ? Icon(widget.icon) 
+          icon: widget.icon != null
+              ? Icon(widget.icon)
               : const SizedBox.shrink(),
           label: widget.child,
           style: ElevatedButton.styleFrom(
             backgroundColor: widget.backgroundColor,
             foregroundColor: widget.foregroundColor,
             minimumSize: widget.minimumSize,
-            side: widget.side ?? (widget.borderColor != null 
-                ? BorderSide(
-                    color: widget.borderColor!,
-                    width: widget.borderWidth ?? 2.0,
-                  )
-                : null),
+            side:
+                widget.side ??
+                (widget.borderColor != null
+                    ? BorderSide(
+                        color: widget.borderColor!,
+                        width: widget.borderWidth ?? 2.0,
+                      )
+                    : null),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(12.0),
             ),
@@ -83,4 +85,4 @@ class _AnimatedScaleButtonState extends State<AnimatedScaleButton>
       ),
     );
   }
-} 
+}

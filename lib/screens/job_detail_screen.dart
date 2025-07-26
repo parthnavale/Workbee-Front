@@ -26,7 +26,8 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      if (authProvider.userRole == UserRole.seeker && authProvider.workerId != null) {
+      if (authProvider.userRole == UserRole.seeker &&
+          authProvider.workerId != null) {
         final jobProvider = Provider.of<JobProvider>(context, listen: false);
         jobProvider.fetchWorkerApplications(authProvider.workerId!.toString());
       }
@@ -95,8 +96,12 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Job Details'),
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-        foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
+        foregroundColor: isDarkMode
+            ? AppColors.textPrimary
+            : AppColors.lightTextPrimary,
         elevation: 0,
       ),
       body: GradientBackground(
@@ -109,10 +114,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode
+                      ? AppColors.white.withOpacity(0.05)
+                      : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode
+                        ? AppColors.grey.withOpacity(0.3)
+                        : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -142,7 +151,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                 style: TextStyle(
                                   fontSize: 20,
                                   fontWeight: FontWeight.bold,
-                                  color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                                  color: isDarkMode
+                                      ? Colors.white
+                                      : AppColors.lightTextPrimary,
                                 ),
                               ),
                               const SizedBox(height: 4),
@@ -150,7 +161,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                                 widget.job.businessName,
                                 style: TextStyle(
                                   fontSize: 16,
-                                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                                  color: isDarkMode
+                                      ? Colors.grey
+                                      : AppColors.lightTextSecondary,
                                 ),
                               ),
                             ],
@@ -171,7 +184,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           child: Text(
                             '${widget.job.city}, ${widget.job.state}',
                             style: TextStyle(
-                              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                              color: isDarkMode
+                                  ? Colors.grey
+                                  : AppColors.lightTextSecondary,
                             ),
                           ),
                         ),
@@ -189,7 +204,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                         Text(
                           'Posted ${_formatDate(widget.job.postedDate)}',
                           style: TextStyle(
-                            color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                            color: isDarkMode
+                                ? Colors.grey
+                                : AppColors.lightTextSecondary,
                           ),
                         ),
                       ],
@@ -202,10 +219,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode
+                      ? AppColors.white.withOpacity(0.05)
+                      : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode
+                        ? AppColors.grey.withOpacity(0.3)
+                        : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -216,7 +237,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                        color: isDarkMode
+                            ? Colors.white
+                            : AppColors.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -275,10 +298,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode
+                      ? AppColors.white.withOpacity(0.05)
+                      : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode
+                        ? AppColors.grey.withOpacity(0.3)
+                        : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -289,7 +316,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                        color: isDarkMode
+                            ? Colors.white
+                            : AppColors.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -297,7 +326,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       widget.job.description,
                       style: TextStyle(
                         fontSize: 16,
-                        color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                        color: isDarkMode
+                            ? Colors.grey
+                            : AppColors.lightTextSecondary,
                         height: 1.5,
                       ),
                     ),
@@ -309,10 +340,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode
+                      ? AppColors.white.withOpacity(0.05)
+                      : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode
+                        ? AppColors.grey.withOpacity(0.3)
+                        : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -323,18 +358,26 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                        color: isDarkMode
+                            ? Colors.white
+                            : AppColors.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
                     Wrap(
                       spacing: 8,
                       runSpacing: 8,
-                      children: widget.job.requiredSkills.map((skill) => Chip(
-                        label: Text(skill),
-                        backgroundColor: AppColors.primary.withOpacity(0.2),
-                        labelStyle: TextStyle(color: AppColors.primary),
-                      )).toList(),
+                      children: widget.job.requiredSkills
+                          .map(
+                            (skill) => Chip(
+                              label: Text(skill),
+                              backgroundColor: AppColors.primary.withOpacity(
+                                0.2,
+                              ),
+                              labelStyle: TextStyle(color: AppColors.primary),
+                            ),
+                          )
+                          .toList(),
                     ),
                   ],
                 ),
@@ -344,10 +387,14 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                  color: isDarkMode
+                      ? AppColors.white.withOpacity(0.05)
+                      : AppColors.lightBackgroundSecondary,
                   borderRadius: BorderRadius.circular(12),
                   border: Border.all(
-                    color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                    color: isDarkMode
+                        ? AppColors.grey.withOpacity(0.3)
+                        : AppColors.lightBorderSecondary,
                   ),
                 ),
                 child: Column(
@@ -358,7 +405,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                        color: isDarkMode
+                            ? Colors.white
+                            : AppColors.lightTextPrimary,
                       ),
                     ),
                     const SizedBox(height: 16),
@@ -396,9 +445,11 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
               // Apply Button
               if (!hasApplied)
                 AnimatedScaleButton(
-                  onTap: _isApplying ? null : () {
-                    _applyForJob();
-                  },
+                  onTap: _isApplying
+                      ? null
+                      : () {
+                          _applyForJob();
+                        },
                   backgroundColor: AppColors.primary.withOpacity(0.2),
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 50),
@@ -408,7 +459,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                           width: 20,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                            valueColor: AlwaysStoppedAnimation<Color>(
+                              Colors.white,
+                            ),
                           ),
                         )
                       : const Text(
@@ -431,11 +484,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Icon(
-                        Icons.check_circle,
-                        color: Colors.green,
-                        size: 20,
-                      ),
+                      Icon(Icons.check_circle, color: Colors.green, size: 20),
                       const SizedBox(width: 8),
                       Text(
                         'Already Applied',
@@ -465,19 +514,19 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.white.withOpacity(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.grey.withOpacity(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: AppColors.primary,
-            size: 24,
-          ),
+          Icon(icon, color: AppColors.primary, size: 24),
           const SizedBox(height: 8),
           Text(
             title,
@@ -508,11 +557,7 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
   }) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: AppColors.primary,
-          size: 16,
-        ),
+        Icon(icon, color: AppColors.primary, size: 16),
         const SizedBox(width: 12),
         Expanded(
           child: Column(
@@ -522,7 +567,9 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
                 title,
                 style: TextStyle(
                   fontSize: 12,
-                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                  color: isDarkMode
+                      ? Colors.grey
+                      : AppColors.lightTextSecondary,
                 ),
               ),
               Text(
@@ -553,4 +600,3 @@ class _JobDetailScreenState extends State<JobDetailScreen> {
     }
   }
 }
-

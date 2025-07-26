@@ -53,7 +53,8 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   @override
   void initState() {
@@ -73,7 +74,9 @@ class _MyAppState extends State<MyApp> {
         barrierDismissible: false,
         builder: (context) => AlertDialog(
           title: const Text('Location Required'),
-          content: const Text('Location services must be enabled to use this app.'),
+          content: const Text(
+            'Location services must be enabled to use this app.',
+          ),
           actions: [
             TextButton(
               onPressed: () async {
@@ -99,14 +102,15 @@ class _MyAppState extends State<MyApp> {
   Future<void> _showLocalNotification(RemoteMessage message) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'default_channel',
-      'Default',
-      importance: Importance.max,
-      priority: Priority.high,
-      showWhen: true,
+          'default_channel',
+          'Default',
+          importance: Importance.max,
+          priority: Priority.high,
+          showWhen: true,
+        );
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
     );
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
     await flutterLocalNotificationsPlugin.show(
       0,
       message.notification?.title ?? 'New Notification',
@@ -121,20 +125,35 @@ class _MyAppState extends State<MyApp> {
     print('FCM Token: \x1B[32m$token\x1B[0m'); // Print in green for visibility
     // Send FCM token to backend if user is worker and logged in
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.isWorker() && authProvider.workerId != null && token != null) {
+    if (authProvider.isWorker() &&
+        authProvider.workerId != null &&
+        token != null) {
       try {
-        final url = Uri.parse('https://myworkbee.duckdns.org/workers/${authProvider.workerId}/fcm-token');
-        await http.put(url, body: token, headers: {'Content-Type': 'text/plain'});
+        final url = Uri.parse(
+          'https://myworkbee.duckdns.org/workers/${authProvider.workerId}/fcm-token',
+        );
+        await http.put(
+          url,
+          body: token,
+          headers: {'Content-Type': 'text/plain'},
+        );
         print('FCM token sent to backend for worker ${authProvider.workerId}');
       } catch (e) {
         print('Failed to send FCM token to backend: $e');
       }
     }
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Received FCM message in foreground: \x1B[33m"+(message.notification?.title ?? '')+" - "+(message.notification?.body ?? '')+"\x1B[0m');
+      print(
+        'Received FCM message in foreground: \x1B[33m"+(message.notification?.title ?? '
+        ')+" - "+(message.notification?.body ?? '
+        ')+"\x1B[0m',
+      );
       _showLocalNotification(message);
       // Add to notification provider (inbox)
-      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+      final notificationProvider = Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      );
       notificationProvider.addNotificationFromFCM(message);
     });
   }
@@ -149,7 +168,7 @@ class _MyAppState extends State<MyApp> {
             WidgetsBinding.instance.addPostFrameCallback((_) {
               serviceLocator.initialize(authProvider: authProvider);
             });
-            
+
             return MaterialApp(
               title: 'WorkSwift',
               theme: _buildTheme(themeProvider.isDarkMode),
@@ -245,4 +264,4 @@ class _MyAppState extends State<MyApp> {
       );
     }
   }
-} 
+}

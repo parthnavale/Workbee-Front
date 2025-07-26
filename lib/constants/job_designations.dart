@@ -13,4 +13,4 @@ class JobDesignations {
     'Pharmacy Assistant',
     'Home Decor Salesperson',
   ];
-} 
+}

@@ -6,8 +6,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 class NotificationProvider with ChangeNotifier {
-  final NotificationWebSocketService _wsService = NotificationWebSocketService();
-  
+  final NotificationWebSocketService _wsService =
+      NotificationWebSocketService();
 
   List<Map<String, dynamic>> _notifications = [];
   bool _isConnected = false;
@@ -19,7 +19,8 @@ class NotificationProvider with ChangeNotifier {
   bool get isConnected => _isConnected;
   bool get isConnecting => _isConnecting;
   String? get lastError => _lastError;
-  int get unreadCount => _notifications.where((n) => n['is_read'] == false).length;
+  int get unreadCount =>
+      _notifications.where((n) => n['is_read'] == false).length;
 
   NotificationProvider() {
     _initializeWebSocket();
@@ -27,7 +28,7 @@ class NotificationProvider with ChangeNotifier {
 
   void _initializeWebSocket() {
     _wsService.initialize();
-    
+
     // Listen to connection status changes
     _wsService.connectionStatusStream.listen((isConnected) {
       _isConnected = isConnected;
@@ -66,7 +67,10 @@ class NotificationProvider with ChangeNotifier {
         } catch (e) {}
         try {
           showSimpleNotification(
-            Text(data['message'] ?? 'New notification', style: const TextStyle(fontWeight: FontWeight.bold)),
+            Text(
+              data['message'] ?? 'New notification',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
             background: Colors.green,
             autoDismiss: true,
             slideDismiss: true,
@@ -123,11 +127,11 @@ class NotificationProvider with ChangeNotifier {
 
   void connect(int workerId) {
     if (_isConnecting) return;
-    
+
     _isConnecting = true;
     _lastError = null;
     notifyListeners();
-    
+
     _wsService.connect(workerId);
   }
 
@@ -175,10 +179,9 @@ class NotificationProvider with ChangeNotifier {
     notifyListeners();
   }
 
-
   @override
   void dispose() {
     _wsService.dispose();
     super.dispose();
   }
-} 
+}

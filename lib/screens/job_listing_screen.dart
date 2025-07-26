@@ -27,9 +27,9 @@ class _JobListingScreenState extends State<JobListingScreen> {
     setState(() {
       _isLoading = true;
     });
-    
+
     await Provider.of<JobProvider>(context, listen: false).fetchJobs();
-    
+
     setState(() {
       _isLoading = false;
     });
@@ -39,31 +39,28 @@ class _JobListingScreenState extends State<JobListingScreen> {
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Available Jobs'),
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-        foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
+        foregroundColor: isDarkMode
+            ? AppColors.textPrimary
+            : AppColors.lightTextPrimary,
         elevation: 0,
         actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _loadJobs,
-          ),
+          IconButton(icon: const Icon(Icons.refresh), onPressed: _loadJobs),
         ],
       ),
       body: GradientBackground(
         child: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(
-                  color: AppColors.primary,
-                ),
-              )
+            ? Center(child: CircularProgressIndicator(color: AppColors.primary))
             : Consumer<JobProvider>(
                 builder: (context, jobProvider, child) {
                   final openJobs = jobProvider.openJobs;
-                  
+
                   if (openJobs.isEmpty) {
                     return Center(
                       child: Column(
@@ -72,7 +69,9 @@ class _JobListingScreenState extends State<JobListingScreen> {
                           Icon(
                             Icons.work_off,
                             size: 64,
-                            color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                            color: isDarkMode
+                                ? Colors.grey
+                                : AppColors.lightTextSecondary,
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -80,14 +79,18 @@ class _JobListingScreenState extends State<JobListingScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : AppColors.lightTextPrimary,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Check back later for new opportunities',
                             style: TextStyle(
-                              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                              color: isDarkMode
+                                  ? Colors.grey
+                                  : AppColors.lightTextSecondary,
                             ),
                           ),
                         ],
@@ -103,7 +106,7 @@ class _JobListingScreenState extends State<JobListingScreen> {
                       itemBuilder: (context, index) {
                         final job = openJobs[index];
                         final hasApplied = jobProvider.hasAppliedForJob(job.id);
-                        
+
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 16),
                           child: AnimatedJobCard(
@@ -113,7 +116,8 @@ class _JobListingScreenState extends State<JobListingScreen> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                  builder: (context) => JobDetailScreen(job: job),
+                                  builder: (context) =>
+                                      JobDetailScreen(job: job),
                                 ),
                               );
                             },
@@ -127,4 +131,4 @@ class _JobListingScreenState extends State<JobListingScreen> {
       ),
     );
   }
-} 
+}

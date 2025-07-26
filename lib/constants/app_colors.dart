@@ -4,7 +4,7 @@ class AppColors {
   // Primary colors
   static const Color primary = Color(0xFFEAB308);
   static const Color primaryDark = Color(0xFF10182B);
-  
+
   // Dark theme colors
   static const Color backgroundPrimary = Color(0xFF1E293B);
   static const Color backgroundSecondary = Color(0xFF10182B);
@@ -14,7 +14,7 @@ class AppColors {
   static const Color borderSecondary = Colors.grey;
   static const Color overlayLight = Color(0x1AFFFFFF); // 10% white
   static const Color overlayPrimary = Color(0x1AEAB308); // 10% primary
-  
+
   // Light theme colors
   static const Color lightBackgroundPrimary = Color(0xFFF8FAFC);
   static const Color lightBackgroundSecondary = Color(0xFFE2E8F0);
@@ -36,7 +36,9 @@ class AppColors {
   static Color whiteWithAlpha(double alpha) => white.withOpacity(alpha);
   static Color greyWithAlpha(double alpha) => grey.withOpacity(alpha);
   static Color primaryWithAlpha(double alpha) => primary.withOpacity(alpha);
-  static Color orangeWithAlpha(double alpha) => Colors.orange.withOpacity(alpha);
+  static Color orangeWithAlpha(double alpha) =>
+      Colors.orange.withOpacity(alpha);
   static Color withAlpha(Color color, double alpha) => color.withOpacity(alpha);
-  static Color withOpacity(Color color, double opacity) => color.withOpacity(opacity);
-} 
+  static Color withOpacity(Color color, double opacity) =>
+      color.withOpacity(opacity);
+}

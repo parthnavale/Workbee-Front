@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 
 class LoadingDialog {
-  static Future<void> show(BuildContext context, {String message = 'Loading...'}) {
+  static Future<void> show(
+    BuildContext context, {
+    String message = 'Loading...',
+  }) {
     return showDialog(
       context: context,
       barrierDismissible: false,
@@ -18,7 +21,10 @@ class LoadingDialog {
               Flexible(
                 child: Text(
                   message,
-                  style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w500,
+                  ),
                 ),
               ),
             ],
@@ -31,4 +37,4 @@ class LoadingDialog {
   static void hide(BuildContext context) {
     Navigator.of(context, rootNavigator: true).pop();
   }
-} 
+}

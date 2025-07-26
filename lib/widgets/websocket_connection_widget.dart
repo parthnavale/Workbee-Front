@@ -5,14 +5,13 @@ import '../providers/notification_provider.dart';
 
 class WebSocketConnectionWidget extends StatefulWidget {
   final Widget child;
-  
-  const WebSocketConnectionWidget({
-    Key? key,
-    required this.child,
-  }) : super(key: key);
+
+  const WebSocketConnectionWidget({Key? key, required this.child})
+    : super(key: key);
 
   @override
-  State<WebSocketConnectionWidget> createState() => _WebSocketConnectionWidgetState();
+  State<WebSocketConnectionWidget> createState() =>
+      _WebSocketConnectionWidgetState();
 }
 
 class _WebSocketConnectionWidgetState extends State<WebSocketConnectionWidget> {
@@ -28,12 +27,14 @@ class _WebSocketConnectionWidgetState extends State<WebSocketConnectionWidget> {
 
   void _connectToWebSocket() {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
-    
-    if (authProvider.isWorker() && 
-        authProvider.workerId != null && 
+    final notificationProvider = Provider.of<NotificationProvider>(
+      context,
+      listen: false,
+    );
+
+    if (authProvider.isWorker() &&
+        authProvider.workerId != null &&
         !_hasConnected) {
-      
       notificationProvider.connect(authProvider.workerId!);
       _hasConnected = true;
     }
@@ -44,8 +45,8 @@ class _WebSocketConnectionWidgetState extends State<WebSocketConnectionWidget> {
     return Consumer2<AuthProvider, NotificationProvider>(
       builder: (context, authProvider, notificationProvider, child) {
         // Auto-connect when worker logs in
-        if (authProvider.isWorker() && 
-            authProvider.workerId != null && 
+        if (authProvider.isWorker() &&
+            authProvider.workerId != null &&
             !_hasConnected) {
           WidgetsBinding.instance.addPostFrameCallback((_) {
             _connectToWebSocket();
@@ -82,11 +83,11 @@ class _WebSocketConnectionWidgetState extends State<WebSocketConnectionWidget> {
       width: 8,
       height: 8,
       decoration: BoxDecoration(
-        color: notificationProvider.isConnected 
+        color: notificationProvider.isConnected
             ? Colors.green
             : notificationProvider.isConnecting
-                ? Colors.orange
-                : Colors.red,
+            ? Colors.orange
+            : Colors.red,
         shape: BoxShape.circle,
         boxShadow: [
           BoxShadow(
@@ -98,4 +99,4 @@ class _WebSocketConnectionWidgetState extends State<WebSocketConnectionWidget> {
       ),
     );
   }
-} 
+}

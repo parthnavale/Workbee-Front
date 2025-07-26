@@ -48,7 +48,6 @@ class NotificationsScreen extends StatelessWidget {
                       ],
                     ),
                   ),
-
                 ],
               );
             },
@@ -94,15 +93,15 @@ class NotificationsScreen extends StatelessWidget {
             itemBuilder: (context, index) {
               final notification = notificationProvider.notifications[index];
               final isUnread = notification['is_read'] == false;
-              
+
               return Card(
                 margin: const EdgeInsets.only(bottom: 12),
-                color: isUnread 
+                color: isUnread
                     ? AppColors.backgroundSecondary.withOpacity(0.1)
                     : AppColors.backgroundSecondary,
                 child: ListTile(
                   leading: CircleAvatar(
-                    backgroundColor: isUnread 
+                    backgroundColor: isUnread
                         ? AppColors.primary
                         : AppColors.textSecondary,
                     child: Icon(
@@ -114,7 +113,9 @@ class NotificationsScreen extends StatelessWidget {
                   title: Text(
                     notification['title'] ?? 'Notification',
                     style: TextStyle(
-                      fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
+                      fontWeight: isUnread
+                          ? FontWeight.bold
+                          : FontWeight.normal,
                       color: AppColors.textPrimary,
                     ),
                   ),
@@ -124,9 +125,7 @@ class NotificationsScreen extends StatelessWidget {
                       const SizedBox(height: 4),
                       Text(
                         notification['message'] ?? '',
-                        style: TextStyle(
-                          color: AppColors.textSecondary,
-                        ),
+                        style: TextStyle(color: AppColors.textSecondary),
                       ),
                       const SizedBox(height: 4),
                       Text(
@@ -154,7 +153,11 @@ class NotificationsScreen extends StatelessWidget {
                     }
                   },
                   onLongPress: () {
-                    _showNotificationOptions(context, notificationProvider, notification);
+                    _showNotificationOptions(
+                      context,
+                      notificationProvider,
+                      notification,
+                    );
                   },
                 ),
               );
@@ -167,12 +170,12 @@ class NotificationsScreen extends StatelessWidget {
 
   String _formatTimestamp(String? timestamp) {
     if (timestamp == null) return 'Just now';
-    
+
     try {
       final dateTime = DateTime.parse(timestamp);
       final now = DateTime.now();
       final difference = now.difference(dateTime);
-      
+
       if (difference.inMinutes < 1) {
         return 'Just now';
       } else if (difference.inMinutes < 60) {
@@ -188,9 +191,9 @@ class NotificationsScreen extends StatelessWidget {
   }
 
   void _showNotificationOptions(
-    BuildContext context, 
-    NotificationProvider notificationProvider, 
-    Map<String, dynamic> notification
+    BuildContext context,
+    NotificationProvider notificationProvider,
+    Map<String, dynamic> notification,
   ) {
     showModalBottomSheet(
       context: context,
@@ -220,4 +223,4 @@ class NotificationsScreen extends StatelessWidget {
       ),
     );
   }
-} 
+}

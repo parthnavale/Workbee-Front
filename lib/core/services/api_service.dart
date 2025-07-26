@@ -8,7 +8,7 @@ class ApiService {
   final http.Client _client;
   final AuthProvider? _authProvider;
 
-  ApiService({http.Client? client, AuthProvider? authProvider}) 
+  ApiService({http.Client? client, AuthProvider? authProvider})
     : _client = client ?? http.Client(),
       _authProvider = authProvider;
 
@@ -30,10 +30,9 @@ class ApiService {
   Future<dynamic> get(String endpoint) async {
     try {
       final url = AppConfig.getApiUrl(endpoint);
-      final response = await _client.get(
-        Uri.parse(url),
-        headers: _buildHeaders(),
-      ).timeout(AppConfig.getConnectionTimeout());
+      final response = await _client
+          .get(Uri.parse(url), headers: _buildHeaders())
+          .timeout(AppConfig.getConnectionTimeout());
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
@@ -45,13 +44,18 @@ class ApiService {
   }
 
   /// Generic POST request
-  Future<Map<String, dynamic>> post(String endpoint, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> post(
+    String endpoint,
+    Map<String, dynamic> data,
+  ) async {
     try {
-      final response = await _client.post(
-        Uri.parse(AppConfig.getApiUrl(endpoint)),
-        headers: _buildHeaders(),
-        body: json.encode(data),
-      ).timeout(AppConfig.getConnectionTimeout());
+      final response = await _client
+          .post(
+            Uri.parse(AppConfig.getApiUrl(endpoint)),
+            headers: _buildHeaders(),
+            body: json.encode(data),
+          )
+          .timeout(AppConfig.getConnectionTimeout());
       if (response.statusCode == 201 || response.statusCode == 200) {
         return json.decode(response.body);
       } else {
@@ -63,13 +67,18 @@ class ApiService {
   }
 
   /// Generic PUT request
-  Future<Map<String, dynamic>> put(String endpoint, Map<String, dynamic> data) async {
+  Future<Map<String, dynamic>> put(
+    String endpoint,
+    Map<String, dynamic> data,
+  ) async {
     try {
-      final response = await _client.put(
-        Uri.parse(AppConfig.getApiUrl(endpoint)),
-        headers: _buildHeaders(),
-        body: json.encode(data),
-      ).timeout(AppConfig.getConnectionTimeout());
+      final response = await _client
+          .put(
+            Uri.parse(AppConfig.getApiUrl(endpoint)),
+            headers: _buildHeaders(),
+            body: json.encode(data),
+          )
+          .timeout(AppConfig.getConnectionTimeout());
       if (response.statusCode == 200) {
         return json.decode(response.body);
       } else {
@@ -83,10 +92,12 @@ class ApiService {
   /// Generic DELETE request
   Future<void> delete(String endpoint) async {
     try {
-      final response = await _client.delete(
-        Uri.parse(AppConfig.getApiUrl(endpoint)),
-        headers: _buildHeaders(),
-      ).timeout(AppConfig.getConnectionTimeout());
+      final response = await _client
+          .delete(
+            Uri.parse(AppConfig.getApiUrl(endpoint)),
+            headers: _buildHeaders(),
+          )
+          .timeout(AppConfig.getConnectionTimeout());
       if (response.statusCode != 200) {
         throw _handleHttpError(response);
       }
@@ -101,9 +112,7 @@ class ApiService {
 
     if (response is List) {
       // Only keep items that are Map<String, dynamic>
-      return response
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      return response.whereType<Map<String, dynamic>>().toList();
     } else if (response is Map<String, dynamic>) {
       // Single job as a map
       return [response];
@@ -113,15 +122,15 @@ class ApiService {
   }
 
   /// Get jobs by business owner ID from the API
-  Future<List<Map<String, dynamic>>> getJobsByBusiness(String businessId) async {
+  Future<List<Map<String, dynamic>>> getJobsByBusiness(
+    String businessId,
+  ) async {
     final endpoint = '${AppConfig.jobsEndpoint}?business_owner_id=$businessId';
     final response = await get(endpoint);
 
     if (response is List) {
       // Only keep items that are Map<String, dynamic>
-      return response
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      return response.whereType<Map<String, dynamic>>().toList();
     } else if (response is Map<String, dynamic>) {
       // Single job as a map
       return [response];
@@ -134,10 +143,10 @@ class ApiService {
   Future<Map<String, dynamic>?> getJobById(int jobId) async {
     try {
       // Remove trailing slash from jobsEndpoint if it exists
-      final endpoint = AppConfig.jobsEndpoint.endsWith('/') 
+      final endpoint = AppConfig.jobsEndpoint.endsWith('/')
           ? '${AppConfig.jobsEndpoint.substring(0, AppConfig.jobsEndpoint.length - 1)}/$jobId'
           : '${AppConfig.jobsEndpoint}/$jobId';
-      
+
       final response = await get(endpoint);
       if (response is Map<String, dynamic>) {
         return response;
@@ -161,7 +170,9 @@ class ApiService {
   /// Get a business owner by ID
   Future<Map<String, dynamic>?> getBusinessOwnerById(int ownerId) async {
     try {
-      final response = await get('${AppConfig.businessOwnersEndpoint}/$ownerId');
+      final response = await get(
+        '${AppConfig.businessOwnersEndpoint}/$ownerId',
+      );
       if (response is Map<String, dynamic>) {
         return response;
       }
@@ -196,11 +207,13 @@ class ApiService {
       final url = AppConfig.getApiUrl(AppConfig.applicationsEndpoint);
       print('[DEBUG] Job Application Request URL: $url');
       print('[DEBUG] Job Application Request Body: $applicationData');
-      final response = await _client.post(
-        Uri.parse(url),
-        headers: _buildHeaders(),
-        body: json.encode(applicationData),
-      ).timeout(AppConfig.getConnectionTimeout());
+      final response = await _client
+          .post(
+            Uri.parse(url),
+            headers: _buildHeaders(),
+            body: json.encode(applicationData),
+          )
+          .timeout(AppConfig.getConnectionTimeout());
       print('[DEBUG] Job Application Response Status: ${response.statusCode}');
       print('[DEBUG] Job Application Response Headers: ${response.headers}');
       print('[DEBUG] Job Application Response Body: ${response.body}');
@@ -216,7 +229,9 @@ class ApiService {
   /// Get an application by ID
   Future<Map<String, dynamic>?> getApplicationById(int applicationId) async {
     try {
-      final response = await get('${AppConfig.applicationsEndpoint}/$applicationId');
+      final response = await get(
+        '${AppConfig.applicationsEndpoint}/$applicationId',
+      );
       if (response is Map<String, dynamic>) {
         return response;
       }
@@ -231,9 +246,7 @@ class ApiService {
     final response = await get(AppConfig.applicationsEndpoint);
 
     if (response is List) {
-      return response
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      return response.whereType<Map<String, dynamic>>().toList();
     } else if (response is Map<String, dynamic>) {
       return [response];
     }
@@ -255,14 +268,14 @@ class ApiService {
   }
 
   /// Get applications by worker ID from the API
-  Future<List<Map<String, dynamic>>> getApplicationsByWorker(String workerId) async {
+  Future<List<Map<String, dynamic>>> getApplicationsByWorker(
+    String workerId,
+  ) async {
     final endpoint = '${AppConfig.applicationsEndpoint}?worker_id=$workerId';
     final response = await get(endpoint);
 
     if (response is List) {
-      return response
-          .whereType<Map<String, dynamic>>()
-          .toList();
+      return response.whereType<Map<String, dynamic>>().toList();
     } else if (response is Map<String, dynamic>) {
       return [response];
     }
@@ -303,7 +316,10 @@ class ApiService {
   }
 
   /// Update a business owner
-  Future<void> updateBusinessOwner(int ownerId, Map<String, dynamic> ownerData) async {
+  Future<void> updateBusinessOwner(
+    int ownerId,
+    Map<String, dynamic> ownerData,
+  ) async {
     await put('${AppConfig.businessOwnersEndpoint}/$ownerId', ownerData);
   }
 
@@ -313,7 +329,10 @@ class ApiService {
   }
 
   /// Update a worker
-  Future<void> updateWorker(int workerId, Map<String, dynamic> workerData) async {
+  Future<void> updateWorker(
+    int workerId,
+    Map<String, dynamic> workerData,
+  ) async {
     await put('${AppConfig.workersEndpoint}$workerId', workerData);
   }
 
@@ -323,8 +342,14 @@ class ApiService {
   }
 
   /// Update an application
-  Future<void> updateApplication(int applicationId, Map<String, dynamic> applicationData) async {
-    await put('${AppConfig.applicationsEndpoint}$applicationId', applicationData);
+  Future<void> updateApplication(
+    int applicationId,
+    Map<String, dynamic> applicationData,
+  ) async {
+    await put(
+      '${AppConfig.applicationsEndpoint}$applicationId',
+      applicationData,
+    );
   }
 
   /// Delete an application
@@ -335,4 +360,4 @@ class ApiService {
   void dispose() {
     _client.close();
   }
-} 
+}

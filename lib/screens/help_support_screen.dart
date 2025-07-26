@@ -10,4 +10,4 @@ class HelpSupportScreen extends StatelessWidget {
       body: const Center(child: Text('Help & Support Screen (placeholder)')),
     );
   }
-} 
+}

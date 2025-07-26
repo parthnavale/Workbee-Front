@@ -47,9 +47,9 @@ class RespondToApplicationCommand implements JobCommand {
     this.applicationId,
     this.status,
     this.businessId,
-    this._jobService,
-    {this.message}
-  );
+    this._jobService, {
+    this.message,
+  });
 
   @override
   Future<void> execute() async {
@@ -112,4 +112,4 @@ class JobCommandInvoker {
 
   /// Get the number of commands in the queue
   int get queueLength => _commandQueue.length;
-} 
+}

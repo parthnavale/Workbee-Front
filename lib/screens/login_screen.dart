@@ -20,7 +20,7 @@ class LoginScreen extends StatefulWidget {
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> 
+class _LoginScreenState extends State<LoginScreen>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
 
@@ -44,10 +44,11 @@ class _LoginScreenState extends State<LoginScreen>
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    
+
     return Scaffold(
       appBar: AppHeader(
-        onNavigation: (action) => NavigationUtils.handleNavigation(action, context),
+        onNavigation: (action) =>
+            NavigationUtils.handleNavigation(action, context),
       ),
       body: GradientBackground(
         child: SingleChildScrollView(
@@ -64,11 +65,18 @@ class _LoginScreenState extends State<LoginScreen>
                   child: RichText(
                     textAlign: TextAlign.center,
                     text: TextSpan(
-                      style: TextStyle(fontSize: 50, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                        fontSize: 50,
+                        fontWeight: FontWeight.bold,
+                      ),
                       children: [
                         TextSpan(
                           text: 'Find Workers\n',
-                          style: TextStyle(color: isDarkMode ? Colors.white : AppColors.lightTextPrimary),
+                          style: TextStyle(
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
                         ),
                         TextSpan(
                           text: 'in 5 Minutes',
@@ -83,7 +91,9 @@ class _LoginScreenState extends State<LoginScreen>
                   'India\'s Premier Job Portal',
                   style: TextStyle(
                     fontSize: 18,
-                    color: isDarkMode ? Colors.grey[300] : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? Colors.grey[300]
+                        : AppColors.lightTextSecondary,
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -93,7 +103,9 @@ class _LoginScreenState extends State<LoginScreen>
                   'Whether you\'re hiring or seeking work, WorkBee makes it simple and secure.',
                   style: TextStyle(
                     fontSize: 16,
-                    color: isDarkMode ? Colors.grey[300] : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? Colors.grey[300]
+                        : AppColors.lightTextSecondary,
                     height: 1.5,
                   ),
                   textAlign: TextAlign.center,
@@ -103,32 +115,56 @@ class _LoginScreenState extends State<LoginScreen>
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _buildStatistic('≤5 Min', 'Average Job\nFill Time', Icons.timer, isDarkMode),
-                    _buildStatistic('24/7', 'Platform\nAvailability', Icons.access_time, isDarkMode),
-                    _buildStatistic('100%', 'Verified\nWorkers', Icons.verified_user, isDarkMode),
+                    _buildStatistic(
+                      '≤5 Min',
+                      'Average Job\nFill Time',
+                      Icons.timer,
+                      isDarkMode,
+                    ),
+                    _buildStatistic(
+                      '24/7',
+                      'Platform\nAvailability',
+                      Icons.access_time,
+                      isDarkMode,
+                    ),
+                    _buildStatistic(
+                      '100%',
+                      'Verified\nWorkers',
+                      Icons.verified_user,
+                      isDarkMode,
+                    ),
                   ],
                 ),
                 const SizedBox(height: 40),
                 // Action Buttons
                 AnimatedScaleButton(
                   onTap: () {
-                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                    
+                    final authProvider = Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    );
+
                     if (authProvider.isBusinessOwner()) {
                       // Already signed in as business, go to business dashboard
-                      Navigator.of(context).push(FadePageRoute(
-                        page: const BusinessDashboardScreen(),
-                      ));
+                      Navigator.of(context).push(
+                        FadePageRoute(page: const BusinessDashboardScreen()),
+                      );
                     } else {
                       // Not signed in or signed in as worker, go to sign-in with business role
-                      Navigator.of(context).push(FadePageRoute(
-                        page: const SignInScreen(preSelectedRole: UserRole.poster),
-                      ));
+                      Navigator.of(context).push(
+                        FadePageRoute(
+                          page: const SignInScreen(
+                            preSelectedRole: UserRole.poster,
+                          ),
+                        ),
+                      );
                     }
                   },
                   icon: Icons.add_business,
                   backgroundColor: AppColors.primary,
-                  foregroundColor: isDarkMode ? AppColors.primaryDark : Colors.white,
+                  foregroundColor: isDarkMode
+                      ? AppColors.primaryDark
+                      : Colors.white,
                   minimumSize: const Size(250, 50),
                   borderColor: AppColors.primary,
                   child: const Text("Hire Workers"),
@@ -136,34 +172,52 @@ class _LoginScreenState extends State<LoginScreen>
                 const SizedBox(height: 20),
                 AnimatedScaleButton(
                   onTap: () {
-                    final authProvider = Provider.of<AuthProvider>(context, listen: false);
-                    
+                    final authProvider = Provider.of<AuthProvider>(
+                      context,
+                      listen: false,
+                    );
+
                     if (authProvider.isWorker()) {
                       // Already signed in as worker, go to job search
-                      Navigator.of(context).push(FadePageRoute(
-                        page: const SeekerHomeScreen(),
-                      ));
+                      Navigator.of(
+                        context,
+                      ).push(FadePageRoute(page: const SeekerHomeScreen()));
                     } else {
                       // Not signed in or signed in as business, go to sign-in with worker role
-                      Navigator.of(context).push(FadePageRoute(
-                        page: const SignInScreen(preSelectedRole: UserRole.seeker),
-                      ));
+                      Navigator.of(context).push(
+                        FadePageRoute(
+                          page: const SignInScreen(
+                            preSelectedRole: UserRole.seeker,
+                          ),
+                        ),
+                      );
                     }
                   },
                   icon: Icons.search,
-                  backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-                  foregroundColor: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                  backgroundColor: isDarkMode
+                      ? AppColors.backgroundSecondary
+                      : AppColors.lightBackgroundSecondary,
+                  foregroundColor: isDarkMode
+                      ? Colors.white
+                      : AppColors.lightTextPrimary,
                   minimumSize: const Size(250, 50),
-                  borderColor: isDarkMode ? Colors.white : AppColors.lightBorderPrimary,
+                  borderColor: isDarkMode
+                      ? Colors.white
+                      : AppColors.lightBorderPrimary,
                   child: const Text("Find Work"),
                 ),
                 const SizedBox(height: 60),
                 // Why Choose Us Section
                 Container(
                   width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 40,
+                  ),
                   decoration: BoxDecoration(
-                    color: isDarkMode ? AppColors.backgroundSecondary : Colors.white,
+                    color: isDarkMode
+                        ? AppColors.backgroundSecondary
+                        : Colors.white,
                     borderRadius: const BorderRadius.only(
                       topLeft: Radius.circular(30),
                       topRight: Radius.circular(30),
@@ -176,7 +230,9 @@ class _LoginScreenState extends State<LoginScreen>
                         style: TextStyle(
                           fontSize: 22,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+                          color: isDarkMode
+                              ? AppColors.textPrimary
+                              : AppColors.lightTextPrimary,
                         ),
                         textAlign: TextAlign.center,
                       ),
@@ -185,7 +241,9 @@ class _LoginScreenState extends State<LoginScreen>
                         "Built for India's unique needs with cutting-edge technology and local insights",
                         style: TextStyle(
                           fontSize: 13,
-                          color: isDarkMode ? AppColors.textSecondary : AppColors.lightTextSecondary,
+                          color: isDarkMode
+                              ? AppColors.textSecondary
+                              : AppColors.lightTextSecondary,
                           height: 1.4,
                         ),
                         textAlign: TextAlign.center,
@@ -239,7 +297,12 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _buildStatistic(String value, String label, IconData icon, bool isDarkMode) {
+  Widget _buildStatistic(
+    String value,
+    String label,
+    IconData icon,
+    bool isDarkMode,
+  ) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
@@ -270,21 +333,25 @@ class _LoginScreenState extends State<LoginScreen>
     );
   }
 
-  Widget _buildFeatureCard(String title, String description, IconData icon, Color iconColor, bool isDarkMode) {
+  Widget _buildFeatureCard(
+    String title,
+    String description,
+    IconData icon,
+    Color iconColor,
+    bool isDarkMode,
+  ) {
     return Column(
       children: [
-        Icon(
-          icon,
-          size: 32,
-          color: iconColor,
-        ),
+        Icon(icon, size: 32, color: iconColor),
         const SizedBox(height: 6),
         Text(
           title,
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 15,
-            color: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+            color: isDarkMode
+                ? AppColors.textPrimary
+                : AppColors.lightTextPrimary,
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -293,10 +360,12 @@ class _LoginScreenState extends State<LoginScreen>
           textAlign: TextAlign.center,
           style: TextStyle(
             fontSize: 12,
-            color: isDarkMode ? AppColors.textSecondary : AppColors.lightTextSecondary,
+            color: isDarkMode
+                ? AppColors.textSecondary
+                : AppColors.lightTextSecondary,
           ),
         ),
       ],
     );
   }
-} 
+}

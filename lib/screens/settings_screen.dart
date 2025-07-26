@@ -10,4 +10,4 @@ class SettingsScreen extends StatelessWidget {
       body: const Center(child: Text('Settings Screen (placeholder)')),
     );
   }
-} 
+}

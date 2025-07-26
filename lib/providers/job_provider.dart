@@ -12,13 +12,18 @@ class JobProvider with ChangeNotifier {
   List<Job> get jobs => _jobs;
   List<JobApplication> get myApplications => _myApplications;
   List<Job> get myPostedJobs => _myPostedJobs;
-  
+
   // Get open jobs for workers to browse
-  List<Job> get openJobs => _jobs.where((job) => job.status == JobStatus.open).toList();
-  
+  List<Job> get openJobs =>
+      _jobs.where((job) => job.status == JobStatus.open).toList();
+
   // Get jobs with pending applications for business owners
   List<Job> get jobsWithPendingApplications => _myPostedJobs
-      .where((job) => job.applications.any((app) => app.status == ApplicationStatus.pending))
+      .where(
+        (job) => job.applications.any(
+          (app) => app.status == ApplicationStatus.pending,
+        ),
+      )
       .toList();
 
   // Post a new job (Business Owner)
@@ -47,11 +52,11 @@ class JobProvider with ChangeNotifier {
 
   // Accept/Reject application (Business Owner)
   Future<void> respondToApplication(
-    String jobId, 
-    String applicationId, 
-    ApplicationStatus status,
-    {String? message}
-  ) async {
+    String jobId,
+    String applicationId,
+    ApplicationStatus status, {
+    String? message,
+  }) async {
     try {
       // Get the business owner ID from the auth provider
       final authProvider = serviceLocator.authProvider;
@@ -62,7 +67,13 @@ class JobProvider with ChangeNotifier {
       if (businessOwnerId == null) {
         throw Exception('Business owner ID not found. Please log in again.');
       }
-      await serviceLocator.jobService.respondToApplication(jobId, applicationId, status, businessOwnerId.toString(), message: message);
+      await serviceLocator.jobService.respondToApplication(
+        jobId,
+        applicationId,
+        status,
+        businessOwnerId.toString(),
+        message: message,
+      );
       await fetchJobs();
       notifyListeners();
     } catch (e) {
@@ -107,7 +118,7 @@ class JobProvider with ChangeNotifier {
 
   // Get pending applications count for a business owner
   int _pendingApplicationsCount = 0;
-  
+
   int getPendingApplicationsCount() {
     return _pendingApplicationsCount;
   }
@@ -118,7 +129,9 @@ class JobProvider with ChangeNotifier {
       int totalPending = 0;
       for (final job in _myPostedJobs) {
         // Use applications that are already loaded in the job
-        totalPending += job.applications.where((app) => app.status == ApplicationStatus.pending).length;
+        totalPending += job.applications
+            .where((app) => app.status == ApplicationStatus.pending)
+            .length;
       }
       _pendingApplicationsCount = totalPending;
       notifyListeners();
@@ -136,12 +149,15 @@ class JobProvider with ChangeNotifier {
   // Fetch business owner's posted jobs
   Future<void> fetchBusinessOwnerJobs(String businessOwnerId) async {
     _myPostedJobs.clear();
-    final jobs = await serviceLocator.jobService.getBusinessJobs(businessOwnerId);
-    
+    final jobs = await serviceLocator.jobService.getBusinessJobs(
+      businessOwnerId,
+    );
+
     // Batch load applications for each job in parallel
     final List<Future<Job>> jobFutures = jobs.map((job) async {
       try {
-        final applications = await serviceLocator.jobService.getApplicationsForJob(job.id, businessOwnerId);
+        final applications = await serviceLocator.jobService
+            .getApplicationsForJob(job.id, businessOwnerId);
         return job.copyWith(applications: applications);
       } catch (e) {
         // If there's an error loading applications, add the job without applications
@@ -149,9 +165,13 @@ class JobProvider with ChangeNotifier {
       }
     }).toList();
     final updatedJobs = await Future.wait(jobFutures);
-    
+
     // Only update and notify if data actually changed
-    bool changed = _myPostedJobs.length != updatedJobs.length || !_myPostedJobs.asMap().entries.every((entry) => entry.value == updatedJobs[entry.key]);
+    bool changed =
+        _myPostedJobs.length != updatedJobs.length ||
+        !_myPostedJobs.asMap().entries.every(
+          (entry) => entry.value == updatedJobs[entry.key],
+        );
     if (changed) {
       _myPostedJobs
         ..clear()
@@ -163,21 +183,30 @@ class JobProvider with ChangeNotifier {
   // Fetch worker's applications
   Future<void> fetchWorkerApplications(String workerId) async {
     _myApplications.clear();
-    final applications = await serviceLocator.jobService.getWorkerApplications(workerId);
+    final applications = await serviceLocator.jobService.getWorkerApplications(
+      workerId,
+    );
     _myApplications.addAll(applications);
     notifyListeners();
   }
 
   // Fetch applications for a specific job
-  Future<List<JobApplication>> getApplicationsForJob(String jobId, String businessId) async {
-    final applications = await serviceLocator.jobService.getApplicationsForJob(jobId, businessId);
+  Future<List<JobApplication>> getApplicationsForJob(
+    String jobId,
+    String businessId,
+  ) async {
+    final applications = await serviceLocator.jobService.getApplicationsForJob(
+      jobId,
+      businessId,
+    );
     return applications;
   }
 
   // Fetch application count for a specific job
   Future<int> fetchJobApplicationsCount(String jobId) async {
     try {
-      final applications = await serviceLocator.jobService.getApplicationsForJob(jobId, '');
+      final applications = await serviceLocator.jobService
+          .getApplicationsForJob(jobId, '');
       return applications.length;
     } catch (e) {
       return 0;

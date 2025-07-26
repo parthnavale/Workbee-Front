@@ -14,7 +14,8 @@ class BusinessDashboardScreen extends StatefulWidget {
   const BusinessDashboardScreen({super.key});
 
   @override
-  State<BusinessDashboardScreen> createState() => _BusinessDashboardScreenState();
+  State<BusinessDashboardScreen> createState() =>
+      _BusinessDashboardScreenState();
 }
 
 class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
@@ -30,8 +31,12 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     if (authProvider.businessOwnerId != null) {
       final jobProvider = Provider.of<JobProvider>(context, listen: false);
-      await jobProvider.fetchBusinessOwnerJobs(authProvider.businessOwnerId.toString());
-      await jobProvider.fetchPendingApplicationsCount(authProvider.businessOwnerId.toString());
+      await jobProvider.fetchBusinessOwnerJobs(
+        authProvider.businessOwnerId.toString(),
+      );
+      await jobProvider.fetchPendingApplicationsCount(
+        authProvider.businessOwnerId.toString(),
+      );
     }
   }
 
@@ -44,17 +49,25 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
     final jobProvider = Provider.of<JobProvider>(context);
-    
+
     final pendingApplicationsCount = jobProvider.getPendingApplicationsCount();
     final myPostedJobs = jobProvider.myPostedJobs;
-    final activeJobs = myPostedJobs.where((job) => job.status == JobStatus.open).toList();
-    final completedJobs = myPostedJobs.where((job) => job.status == JobStatus.completed).toList();
+    final activeJobs = myPostedJobs
+        .where((job) => job.status == JobStatus.open)
+        .toList();
+    final completedJobs = myPostedJobs
+        .where((job) => job.status == JobStatus.completed)
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Business Dashboard'),
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-        foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
+        foregroundColor: isDarkMode
+            ? AppColors.textPrimary
+            : AppColors.lightTextPrimary,
         elevation: 0,
         actions: [
           if (pendingApplicationsCount > 0)
@@ -83,10 +96,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     ),
                     child: Text(
                       pendingApplicationsCount.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -100,7 +110,13 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
           index: _selectedIndex,
           children: [
             // Overview Tab
-            _buildOverviewTab(isDarkMode, jobProvider, pendingApplicationsCount, activeJobs, completedJobs),
+            _buildOverviewTab(
+              isDarkMode,
+              jobProvider,
+              pendingApplicationsCount,
+              activeJobs,
+              completedJobs,
+            ),
             // Applications Tab
             _buildApplicationsTab(isDarkMode, jobProvider),
             // Posted Jobs Tab
@@ -115,9 +131,13 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             _selectedIndex = index;
           });
         },
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+        unselectedItemColor: isDarkMode
+            ? Colors.grey
+            : AppColors.lightTextSecondary,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
@@ -127,19 +147,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             icon: Icon(Icons.people),
             label: 'Applications',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.work),
-            label: 'My Jobs',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.work), label: 'My Jobs'),
         ],
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () async {
           await Navigator.push(
             context,
-            MaterialPageRoute(
-              builder: (context) => const PostJobScreen(),
-            ),
+            MaterialPageRoute(builder: (context) => const PostJobScreen()),
           );
           // Refresh data after posting a job
           await _refreshData();
@@ -166,10 +181,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+              color: isDarkMode
+                  ? AppColors.whiteWithAlpha(0.05)
+                  : AppColors.lightBackgroundSecondary,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                color: isDarkMode
+                    ? AppColors.greyWithAlpha(0.3)
+                    : AppColors.lightBorderSecondary,
               ),
             ),
             child: Row(
@@ -196,14 +215,18 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                          color: isDarkMode
+                              ? Colors.white
+                              : AppColors.lightTextPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Manage your job postings and applications',
                         style: TextStyle(
-                          color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode
+                              ? Colors.grey
+                              : AppColors.lightTextSecondary,
                         ),
                       ),
                     ],
@@ -243,10 +266,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     children: [
                       Icon(Icons.add, size: 24),
                       const SizedBox(height: 4),
-                      Text(
-                        'Post New Job',
-                        style: TextStyle(fontSize: 12),
-                      ),
+                      Text('Post New Job', style: TextStyle(fontSize: 12)),
                     ],
                   ),
                 ),
@@ -259,17 +279,16 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                       _selectedIndex = 1;
                     });
                   },
-                  backgroundColor: pendingApplicationsCount > 0 ? Colors.orange : Colors.grey,
+                  backgroundColor: pendingApplicationsCount > 0
+                      ? Colors.orange
+                      : Colors.grey,
                   foregroundColor: Colors.white,
                   minimumSize: const Size(double.infinity, 60),
                   child: Column(
                     children: [
                       Icon(Icons.people, size: 24),
                       const SizedBox(height: 4),
-                      Text(
-                        'View Applications',
-                        style: TextStyle(fontSize: 12),
-                      ),
+                      Text('View Applications', style: TextStyle(fontSize: 12)),
                     ],
                   ),
                 ),
@@ -328,7 +347,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                 child: _buildStatCard(
                   icon: Icons.trending_up,
                   title: 'Total Applications',
-                  value: jobProvider.myPostedJobs.fold(0, (sum, job) => sum + job.applications.length).toString(),
+                  value: jobProvider.myPostedJobs
+                      .fold(0, (sum, job) => sum + job.applications.length)
+                      .toString(),
                   color: Colors.purple,
                   isDarkMode: isDarkMode,
                 ),
@@ -351,10 +372,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode
+                    ? AppColors.whiteWithAlpha(0.05)
+                    : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode
+                      ? AppColors.greyWithAlpha(0.3)
+                      : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -362,7 +387,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   Icon(
                     Icons.work_off,
                     size: 48,
-                    color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? Colors.grey
+                        : AppColors.lightTextSecondary,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -370,21 +397,27 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : AppColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Start by posting your first job',
                     style: TextStyle(
-                      color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                      color: isDarkMode
+                          ? Colors.grey
+                          : AppColors.lightTextSecondary,
                     ),
                   ),
                 ],
               ),
             )
           else
-            ...jobProvider.myPostedJobs.take(3).map((job) => _buildRecentJobCard(job, isDarkMode)),
+            ...jobProvider.myPostedJobs
+                .take(3)
+                .map((job) => _buildRecentJobCard(job, isDarkMode)),
         ],
       ),
     );
@@ -392,7 +425,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
 
   Widget _buildApplicationsTab(bool isDarkMode, JobProvider jobProvider) {
     final jobsWithApplications = jobProvider.jobsWithPendingApplications;
-    
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -411,10 +444,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode
+                    ? AppColors.whiteWithAlpha(0.05)
+                    : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode
+                      ? AppColors.greyWithAlpha(0.3)
+                      : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -422,7 +459,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   Icon(
                     Icons.people_outline,
                     size: 48,
-                    color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? Colors.grey
+                        : AppColors.lightTextSecondary,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -430,21 +469,27 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : AppColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Applications will appear here when workers apply',
                     style: TextStyle(
-                      color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                      color: isDarkMode
+                          ? Colors.grey
+                          : AppColors.lightTextSecondary,
                     ),
                   ),
                 ],
               ),
             )
           else
-            ...jobsWithApplications.map((job) => _buildJobApplicationsCard(job, isDarkMode)),
+            ...jobsWithApplications.map(
+              (job) => _buildJobApplicationsCard(job, isDarkMode),
+            ),
         ],
       ),
     );
@@ -469,10 +514,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode
+                    ? AppColors.whiteWithAlpha(0.05)
+                    : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode
+                      ? AppColors.greyWithAlpha(0.3)
+                      : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -480,7 +529,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   Icon(
                     Icons.work_off,
                     size: 48,
-                    color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? Colors.grey
+                        : AppColors.lightTextSecondary,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -488,21 +539,27 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : AppColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Start by posting your first job',
                     style: TextStyle(
-                      color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                      color: isDarkMode
+                          ? Colors.grey
+                          : AppColors.lightTextSecondary,
                     ),
                   ),
                 ],
               ),
             )
           else
-            ...jobProvider.myPostedJobs.map((job) => _buildPostedJobCard(job, isDarkMode)),
+            ...jobProvider.myPostedJobs.map(
+              (job) => _buildPostedJobCard(job, isDarkMode),
+            ),
         ],
       ),
     );
@@ -518,19 +575,19 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.whiteWithAlpha(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.greyWithAlpha(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 32,
-          ),
+          Icon(icon, color: color, size: 32),
           const SizedBox(height: 8),
           Text(
             value,
@@ -559,10 +616,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.whiteWithAlpha(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.greyWithAlpha(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -576,7 +637,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                    color: isDarkMode
+                        ? Colors.white
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
               ),
@@ -610,16 +673,22 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
   }
 
   Widget _buildJobApplicationsCard(Job job, bool isDarkMode) {
-    final pendingApplications = job.applications.where((app) => app.status == ApplicationStatus.pending).toList();
-    
+    final pendingApplications = job.applications
+        .where((app) => app.status == ApplicationStatus.pending)
+        .toList();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.whiteWithAlpha(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.greyWithAlpha(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -633,7 +702,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                    color: isDarkMode
+                        ? Colors.white
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
               ),
@@ -655,14 +726,18 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          ...pendingApplications.take(2).map((app) => _buildApplicationItem(app, isDarkMode)),
+          ...pendingApplications
+              .take(2)
+              .map((app) => _buildApplicationItem(app, isDarkMode)),
           if (pendingApplications.length > 2)
             Padding(
               padding: const EdgeInsets.only(top: 8),
               child: Text(
                 'And ${pendingApplications.length - 2} more applications...',
                 style: TextStyle(
-                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                  color: isDarkMode
+                      ? Colors.grey
+                      : AppColors.lightTextSecondary,
                   fontSize: 12,
                 ),
               ),
@@ -692,10 +767,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.whiteWithAlpha(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.greyWithAlpha(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -709,7 +788,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                    color: isDarkMode
+                        ? Colors.white
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
               ),
@@ -745,7 +826,9 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
               return Text(
                 ' $count applications',
                 style: TextStyle(
-                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                  color: isDarkMode
+                      ? Colors.grey
+                      : AppColors.lightTextSecondary,
                 ),
               );
             },
@@ -795,10 +878,14 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.whiteWithAlpha(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.whiteWithAlpha(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
-          color: isDarkMode ? AppColors.greyWithAlpha(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.greyWithAlpha(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Row(
@@ -823,14 +910,18 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                    color: isDarkMode
+                        ? Colors.white
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
                 Text(
                   'Expected: ₹${app.expectedSalary.toStringAsFixed(0)}',
                   style: TextStyle(
                     fontSize: 12,
-                    color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? Colors.grey
+                        : AppColors.lightTextSecondary,
                   ),
                 ),
               ],
@@ -877,7 +968,7 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       return 'Today';
     } else if (difference.inDays == 1) {
@@ -893,4 +984,4 @@ class _BusinessDashboardScreenState extends State<BusinessDashboardScreen> {
     final jobProvider = Provider.of<JobProvider>(context, listen: false);
     return await jobProvider.fetchJobApplicationsCount(jobId);
   }
-} 
+}

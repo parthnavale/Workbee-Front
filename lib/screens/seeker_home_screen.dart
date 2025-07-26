@@ -29,16 +29,24 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
     final jobProvider = Provider.of<JobProvider>(context);
-    
+
     final myApplications = jobProvider.myApplications;
-    final pendingApplications = myApplications.where((app) => app.status == ApplicationStatus.pending).toList();
-    final acceptedApplications = myApplications.where((app) => app.status == ApplicationStatus.accepted).toList();
+    final pendingApplications = myApplications
+        .where((app) => app.status == ApplicationStatus.pending)
+        .toList();
+    final acceptedApplications = myApplications
+        .where((app) => app.status == ApplicationStatus.accepted)
+        .toList();
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('Worker Dashboard'),
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-        foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
+        foregroundColor: isDarkMode
+            ? AppColors.textPrimary
+            : AppColors.lightTextPrimary,
         elevation: 0,
         actions: [
           if (pendingApplications.isNotEmpty)
@@ -67,10 +75,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                     ),
                     child: Text(
                       pendingApplications.length.toString(),
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 10,
-                      ),
+                      style: const TextStyle(color: Colors.white, fontSize: 10),
                       textAlign: TextAlign.center,
                     ),
                   ),
@@ -84,7 +89,12 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           index: _selectedIndex,
           children: [
             // Overview Tab
-            _buildOverviewTab(isDarkMode, jobProvider, pendingApplications, acceptedApplications),
+            _buildOverviewTab(
+              isDarkMode,
+              jobProvider,
+              pendingApplications,
+              acceptedApplications,
+            ),
             // Profile Tab
             _buildProfileTab(isDarkMode),
           ],
@@ -97,18 +107,19 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             _selectedIndex = index;
           });
         },
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
         selectedItemColor: AppColors.primary,
-        unselectedItemColor: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+        unselectedItemColor: isDarkMode
+            ? Colors.grey
+            : AppColors.lightTextSecondary,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.dashboard),
             label: 'Overview',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: 'Profile',
-          ),
+          BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Profile'),
         ],
       ),
     );
@@ -129,10 +140,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+              color: isDarkMode
+                  ? AppColors.white.withOpacity(0.05)
+                  : AppColors.lightBackgroundSecondary,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                color: isDarkMode
+                    ? AppColors.grey.withOpacity(0.3)
+                    : AppColors.lightBorderSecondary,
               ),
             ),
             child: Row(
@@ -143,11 +158,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                     color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(8),
                   ),
-                  child: Icon(
-                    Icons.person,
-                    color: AppColors.primary,
-                    size: 24,
-                  ),
+                  child: Icon(Icons.person, color: AppColors.primary, size: 24),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
@@ -159,14 +170,18 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                         style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
+                          color: isDarkMode
+                              ? AppColors.white
+                              : AppColors.lightTextPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         'Find your next opportunity',
                         style: TextStyle(
-                          color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode
+                              ? AppColors.grey
+                              : AppColors.lightTextSecondary,
                         ),
                       ),
                     ],
@@ -188,27 +203,24 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           ),
           const SizedBox(height: 16),
           AnimatedScaleButton(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const NearbyJobsMapScreen(),
-                      ),
-                    );
-                  },
-                  backgroundColor: AppColors.primary,
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const NearbyJobsMapScreen(),
+                ),
+              );
+            },
+            backgroundColor: AppColors.primary,
             foregroundColor: AppColors.primaryDark,
-                  minimumSize: const Size(double.infinity, 60),
-                  child: Column(
-                    children: [
-                      Icon(Icons.search, size: 24),
-                      const SizedBox(height: 4),
-                      Text(
-                        'Browse Jobs',
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
+            minimumSize: const Size(double.infinity, 60),
+            child: Column(
+              children: [
+                Icon(Icons.search, size: 24),
+                const SizedBox(height: 4),
+                Text('Browse Jobs', style: TextStyle(fontSize: 12)),
+              ],
+            ),
           ),
           const SizedBox(height: 30),
 
@@ -262,8 +274,8 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                 child: _buildStatCard(
                   icon: Icons.trending_up,
                   title: 'Success Rate',
-                  value: jobProvider.myApplications.isEmpty 
-                      ? '0%' 
+                  value: jobProvider.myApplications.isEmpty
+                      ? '0%'
                       : '${((acceptedApplications.length / jobProvider.myApplications.length) * 100).round()}%',
                   color: Colors.purple,
                   isDarkMode: isDarkMode,
@@ -287,10 +299,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             Container(
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+                color: isDarkMode
+                    ? AppColors.white.withOpacity(0.05)
+                    : AppColors.lightBackgroundSecondary,
                 borderRadius: BorderRadius.circular(12),
                 border: Border.all(
-                  color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                  color: isDarkMode
+                      ? AppColors.grey.withOpacity(0.3)
+                      : AppColors.lightBorderSecondary,
                 ),
               ),
               child: Column(
@@ -298,7 +314,9 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                   Icon(
                     Icons.work_off,
                     size: 48,
-                    color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? AppColors.grey
+                        : AppColors.lightTextSecondary,
                   ),
                   const SizedBox(height: 16),
                   Text(
@@ -306,21 +324,27 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
+                      color: isDarkMode
+                          ? AppColors.white
+                          : AppColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
                     'Start by browsing available jobs',
                     style: TextStyle(
-                      color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
+                      color: isDarkMode
+                          ? AppColors.grey
+                          : AppColors.lightTextSecondary,
                     ),
                   ),
                 ],
               ),
             )
           else
-            ...jobProvider.myApplications.take(3).map((app) => _buildRecentApplicationCard(app, isDarkMode)),
+            ...jobProvider.myApplications
+                .take(3)
+                .map((app) => _buildRecentApplicationCard(app, isDarkMode)),
         ],
       ),
     );
@@ -355,10 +379,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+              color: isDarkMode
+                  ? AppColors.white.withOpacity(0.05)
+                  : AppColors.lightBackgroundSecondary,
               borderRadius: BorderRadius.circular(12),
               border: Border.all(
-                color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+                color: isDarkMode
+                    ? AppColors.grey.withOpacity(0.3)
+                    : AppColors.lightBorderSecondary,
               ),
             ),
             child: Row(
@@ -385,21 +413,29 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                         style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.bold,
-                          color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
+                          color: isDarkMode
+                              ? AppColors.white
+                              : AppColors.lightTextPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
                         workerEmail,
                         style: TextStyle(
-                          color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode
+                              ? AppColors.grey
+                              : AppColors.lightTextSecondary,
                         ),
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        workerYears != null ? '$workerYears years experience' : '',
+                        workerYears != null
+                            ? '$workerYears years experience'
+                            : '',
                         style: TextStyle(
-                          color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode
+                              ? AppColors.grey
+                              : AppColors.lightTextSecondary,
                         ),
                       ),
                     ],
@@ -425,7 +461,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title: 'Edit Profile',
             subtitle: 'Update your personal information',
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const EditProfileScreen()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const EditProfileScreen()),
+              );
             },
             isDarkMode: isDarkMode,
           ),
@@ -435,7 +474,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title: 'Settings',
             subtitle: 'Manage app preferences',
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SettingsScreen()),
+              );
             },
             isDarkMode: isDarkMode,
           ),
@@ -445,7 +487,10 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title: 'Help & Support',
             subtitle: 'Get help and contact support',
             onTap: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const HelpSupportScreen()));
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const HelpSupportScreen()),
+              );
             },
             isDarkMode: isDarkMode,
           ),
@@ -455,10 +500,15 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             title: 'Logout',
             subtitle: 'Sign out of your account',
             onTap: () async {
-              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              final authProvider = Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              );
               await authProvider.logout();
               if (mounted) {
-                Navigator.of(context).pushNamedAndRemoveUntil('/', (route) => false);
+                Navigator.of(
+                  context,
+                ).pushNamedAndRemoveUntil('/', (route) => false);
               }
             },
             isDarkMode: isDarkMode,
@@ -479,19 +529,19 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.white.withOpacity(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.grey.withOpacity(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 32,
-          ),
+          Icon(icon, color: color, size: 32),
           const SizedBox(height: 8),
           Text(
             value,
@@ -520,10 +570,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.white.withOpacity(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.grey.withOpacity(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -537,7 +591,9 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                   style: TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
+                    color: isDarkMode
+                        ? AppColors.white
+                        : AppColors.lightTextPrimary,
                   ),
                 ),
               ),
@@ -566,10 +622,14 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
   }) {
     return Container(
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.white.withOpacity(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.grey.withOpacity(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: ListTile(
@@ -580,7 +640,9 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
         title: Text(
           title,
           style: TextStyle(
-            color: isDestructive ? Colors.red : (isDarkMode ? AppColors.white : AppColors.lightTextPrimary),
+            color: isDestructive
+                ? Colors.red
+                : (isDarkMode ? AppColors.white : AppColors.lightTextPrimary),
             fontWeight: FontWeight.bold,
           ),
         ),
@@ -603,7 +665,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
   Widget _buildStatusChip(ApplicationStatus status, bool isDarkMode) {
     Color color;
     String text;
-    
+
     switch (status) {
       case ApplicationStatus.pending:
         color = Colors.orange;
@@ -622,7 +684,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
         text = 'Withdrawn';
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -643,7 +705,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       return 'Today';
     } else if (difference.inDays == 1) {
@@ -654,4 +716,4 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
       return '${date.day}/${date.month}/${date.year}';
     }
   }
-} 
+}

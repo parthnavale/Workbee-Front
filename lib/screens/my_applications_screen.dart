@@ -21,15 +21,19 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
     final jobProvider = Provider.of<JobProvider>(context, listen: false);
-    
+
     final applications = jobProvider.myApplications;
     final filteredApplications = _getFilteredApplications(applications);
 
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Applications'),
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-        foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
+        foregroundColor: isDarkMode
+            ? AppColors.textPrimary
+            : AppColors.lightTextPrimary,
         elevation: 0,
       ),
       body: GradientBackground(
@@ -45,7 +49,9 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
-                      color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                      color: isDarkMode
+                          ? Colors.white
+                          : AppColors.lightTextPrimary,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -68,7 +74,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                 ],
               ),
             ),
-            
+
             // Applications List
             Expanded(
               child: applications.isEmpty
@@ -79,7 +85,9 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                           Icon(
                             Icons.work_off,
                             size: 64,
-                            color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                            color: isDarkMode
+                                ? Colors.grey
+                                : AppColors.lightTextSecondary,
                           ),
                           const SizedBox(height: 16),
                           Text(
@@ -87,14 +95,18 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                             style: TextStyle(
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
-                              color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                              color: isDarkMode
+                                  ? Colors.white
+                                  : AppColors.lightTextPrimary,
                             ),
                           ),
                           const SizedBox(height: 8),
                           Text(
                             'Start by browsing and applying for jobs',
                             style: TextStyle(
-                              color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                              color: isDarkMode
+                                  ? Colors.grey
+                                  : AppColors.lightTextSecondary,
                             ),
                           ),
                         ],
@@ -106,7 +118,11 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                       itemBuilder: (context, index) {
                         final application = filteredApplications[index];
                         final job = jobProvider.getJobById(application.jobId);
-                        return _buildApplicationCard(application, job, isDarkMode);
+                        return _buildApplicationCard(
+                          application,
+                          job,
+                          isDarkMode,
+                        );
                       },
                     ),
             ),
@@ -118,7 +134,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
 
   Widget _buildFilterChip(String filter, bool isDarkMode) {
     final isSelected = _selectedFilter == filter;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -128,21 +144,25 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected 
-              ? AppColors.primary 
-              : (isDarkMode ? AppColors.white.withOpacity(0.1) : AppColors.lightBackgroundSecondary),
+          color: isSelected
+              ? AppColors.primary
+              : (isDarkMode
+                    ? AppColors.white.withOpacity(0.1)
+                    : AppColors.lightBackgroundSecondary),
           borderRadius: BorderRadius.circular(20),
           border: Border.all(
-            color: isSelected 
-                ? AppColors.primary 
-                : (isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary),
+            color: isSelected
+                ? AppColors.primary
+                : (isDarkMode
+                      ? AppColors.grey.withOpacity(0.3)
+                      : AppColors.lightBorderSecondary),
           ),
         ),
         child: Text(
           filter,
           style: TextStyle(
-            color: isSelected 
-                ? Colors.white 
+            color: isSelected
+                ? Colors.white
                 : (isDarkMode ? Colors.white : AppColors.lightTextPrimary),
             fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
           ),
@@ -151,15 +171,23 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     );
   }
 
-  Widget _buildApplicationCard(JobApplication application, Job? job, bool isDarkMode) {
+  Widget _buildApplicationCard(
+    JobApplication application,
+    Job? job,
+    bool isDarkMode,
+  ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: isDarkMode ? AppColors.white.withOpacity(0.05) : AppColors.lightBackgroundSecondary,
+        color: isDarkMode
+            ? AppColors.white.withOpacity(0.05)
+            : AppColors.lightBackgroundSecondary,
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: isDarkMode ? AppColors.grey.withOpacity(0.3) : AppColors.lightBorderSecondary,
+          color: isDarkMode
+              ? AppColors.grey.withOpacity(0.3)
+              : AppColors.lightBorderSecondary,
         ),
       ),
       child: Column(
@@ -174,11 +202,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                   color: AppColors.primary.withOpacity(0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: Icon(
-                  Icons.work,
-                  color: AppColors.primary,
-                  size: 24,
-                ),
+                child: Icon(Icons.work, color: AppColors.primary, size: 24),
               ),
               const SizedBox(width: 16),
               Expanded(
@@ -190,14 +214,18 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
-                        color: isDarkMode ? Colors.white : AppColors.lightTextPrimary,
+                        color: isDarkMode
+                            ? Colors.white
+                            : AppColors.lightTextPrimary,
                       ),
                     ),
                     if (job != null)
                       Text(
                         job.businessName,
                         style: TextStyle(
-                          color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                          color: isDarkMode
+                              ? Colors.grey
+                              : AppColors.lightTextSecondary,
                         ),
                       ),
                   ],
@@ -207,22 +235,20 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // Job Details
           if (job != null) ...[
             Row(
               children: [
-                Icon(
-                  Icons.location_on,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
+                Icon(Icons.location_on, color: AppColors.primary, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(
                     '${job.city}, ${job.state}',
                     style: TextStyle(
-                      color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                      color: isDarkMode
+                          ? Colors.grey
+                          : AppColors.lightTextSecondary,
                     ),
                   ),
                 ),
@@ -231,62 +257,67 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(
-                  Icons.attach_money,
-                  color: AppColors.primary,
-                  size: 16,
-                ),
+                Icon(Icons.attach_money, color: AppColors.primary, size: 16),
                 const SizedBox(width: 8),
                 Text(
                   '₹${job.hourlyRate}/hour • ${job.estimatedHours} hours',
                   style: TextStyle(
-                    color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                    color: isDarkMode
+                        ? Colors.grey
+                        : AppColors.lightTextSecondary,
                   ),
                 ),
               ],
             ),
             const SizedBox(height: 16),
           ],
-          
+
           // Application Details
           Row(
             children: [
-              Icon(
-                Icons.schedule,
-                color: AppColors.primary,
-                size: 16,
-              ),
+              Icon(Icons.schedule, color: AppColors.primary, size: 16),
               const SizedBox(width: 8),
               Text(
                 'Applied ${_formatDate(application.appliedDate)}',
                 style: TextStyle(
-                  color: isDarkMode ? Colors.grey : AppColors.lightTextSecondary,
+                  color: isDarkMode
+                      ? Colors.grey
+                      : AppColors.lightTextSecondary,
                 ),
               ),
             ],
           ),
-          
+
           // Response Message
-          if (application.message != null && application.message!.isNotEmpty) ...[
+          if (application.message != null &&
+              application.message!.isNotEmpty) ...[
             const SizedBox(height: 16),
             Container(
               padding: const EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: (application.status == ApplicationStatus.accepted ? AppColors.green.withOpacity(0.1) : AppColors.red.withOpacity(0.1)),
+                color: (application.status == ApplicationStatus.accepted
+                    ? AppColors.green.withOpacity(0.1)
+                    : AppColors.red.withOpacity(0.1)),
                 borderRadius: BorderRadius.circular(8),
                 border: Border.all(
-                  color: (application.status == ApplicationStatus.accepted ? AppColors.green.withOpacity(0.3) : AppColors.red.withOpacity(0.3)),
+                  color: (application.status == ApplicationStatus.accepted
+                      ? AppColors.green.withOpacity(0.3)
+                      : AppColors.red.withOpacity(0.3)),
                 ),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    application.status == ApplicationStatus.accepted ? 'Acceptance Message:' : 'Rejection Message:',
+                    application.status == ApplicationStatus.accepted
+                        ? 'Acceptance Message:'
+                        : 'Rejection Message:',
                     style: TextStyle(
                       fontSize: 12,
                       fontWeight: FontWeight.bold,
-                      color: application.status == ApplicationStatus.accepted ? AppColors.green : AppColors.red,
+                      color: application.status == ApplicationStatus.accepted
+                          ? AppColors.green
+                          : AppColors.red,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -294,14 +325,16 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                     application.message!,
                     style: TextStyle(
                       fontSize: 12,
-                      color: application.status == ApplicationStatus.accepted ? AppColors.green : AppColors.red,
+                      color: application.status == ApplicationStatus.accepted
+                          ? AppColors.green
+                          : AppColors.red,
                     ),
                   ),
                 ],
               ),
             ),
           ],
-          
+
           // Action Buttons
           if (application.status == ApplicationStatus.accepted) ...[
             const SizedBox(height: 16),
@@ -346,7 +379,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     Color color;
     String text;
     IconData icon;
-    
+
     switch (status) {
       case ApplicationStatus.pending:
         color = Colors.orange;
@@ -369,7 +402,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         icon = Icons.remove_circle;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
       decoration: BoxDecoration(
@@ -379,11 +412,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(
-            icon,
-            color: color,
-            size: 16,
-          ),
+          Icon(icon, color: color, size: 16),
           const SizedBox(width: 4),
           Text(
             text,
@@ -398,14 +427,22 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     );
   }
 
-  List<JobApplication> _getFilteredApplications(List<JobApplication> applications) {
+  List<JobApplication> _getFilteredApplications(
+    List<JobApplication> applications,
+  ) {
     switch (_selectedFilter) {
       case 'Pending':
-        return applications.where((app) => app.status == ApplicationStatus.pending).toList();
+        return applications
+            .where((app) => app.status == ApplicationStatus.pending)
+            .toList();
       case 'Accepted':
-        return applications.where((app) => app.status == ApplicationStatus.accepted).toList();
+        return applications
+            .where((app) => app.status == ApplicationStatus.accepted)
+            .toList();
       case 'Rejected':
-        return applications.where((app) => app.status == ApplicationStatus.rejected).toList();
+        return applications
+            .where((app) => app.status == ApplicationStatus.rejected)
+            .toList();
       default:
         return applications;
     }
@@ -414,7 +451,7 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   String _formatDate(DateTime date) {
     final now = DateTime.now();
     final difference = now.difference(date);
-    
+
     if (difference.inDays == 0) {
       return 'Today';
     } else if (difference.inDays == 1) {
@@ -425,4 +462,4 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
       return '${date.day}/${date.month}/${date.year}';
     }
   }
-} 
+}

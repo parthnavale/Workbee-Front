@@ -1,16 +1,6 @@
-enum JobStatus {
-  open,
-  inProgress,
-  completed,
-  cancelled,
-}
+enum JobStatus { open, inProgress, completed, cancelled }
 
-enum ApplicationStatus {
-  pending,
-  accepted,
-  rejected,
-  withdrawn,
-}
+enum ApplicationStatus { pending, accepted, rejected, withdrawn }
 
 class Job {
   final String id;
@@ -141,29 +131,48 @@ class Job {
   factory Job.fromJson(Map<String, dynamic> json) {
     return Job(
       id: json['id'].toString(),
-      businessId: (json['business_owner_id'] ?? json['businessId'] ?? '').toString(),
+      businessId: (json['business_owner_id'] ?? json['businessId'] ?? '')
+          .toString(),
       businessName: (json['businessName'] ?? '').toString(),
       title: (json['title'] ?? '').toString(),
       description: (json['description'] ?? '').toString(),
       requiredSkills: json['requiredSkills'] != null
           ? List<String>.from(json['requiredSkills'])
-          : (json['required_skills'] != null ? (json['required_skills'] as String).split(',').map((s) => s.trim()).toList() : []),
+          : (json['required_skills'] != null
+                ? (json['required_skills'] as String)
+                      .split(',')
+                      .map((s) => s.trim())
+                      .toList()
+                : []),
       location: (json['location'] ?? '').toString(),
       address: (json['address'] ?? '').toString(),
       state: (json['state'] ?? '').toString(),
       city: (json['city'] ?? '').toString(),
       pinCode: (json['pinCode'] ?? json['pincode'] ?? '').toString(),
       hourlyRate: (json['hourlyRate'] ?? json['hourly_rate'] ?? 0).toDouble(),
-      estimatedHours: (json['estimatedHours'] ?? json['estimated_hours'] ?? 0) is int
+      estimatedHours:
+          (json['estimatedHours'] ?? json['estimated_hours'] ?? 0) is int
           ? (json['estimatedHours'] ?? json['estimated_hours'] ?? 0)
-          : int.tryParse((json['estimatedHours'] ?? json['estimated_hours'] ?? '0').toString()) ?? 0,
+          : int.tryParse(
+                  (json['estimatedHours'] ?? json['estimated_hours'] ?? '0')
+                      .toString(),
+                ) ??
+                0,
       postedDate: DateTime.parse(json['postedDate'] ?? json['posted_date']),
-      startDate: json['startDate'] != null ? DateTime.parse(json['startDate']) : (json['start_date'] != null ? DateTime.parse(json['start_date']) : null),
+      startDate: json['startDate'] != null
+          ? DateTime.parse(json['startDate'])
+          : (json['start_date'] != null
+                ? DateTime.parse(json['start_date'])
+                : null),
       status: JobStatus.values.firstWhere(
         (e) => e.toString() == (json['status'] ?? 'JobStatus.open'),
         orElse: () => JobStatus.open,
       ),
-      applications: (json['applications'] as List?)?.map((app) => JobApplication.fromJson(app)).toList() ?? [],
+      applications:
+          (json['applications'] as List?)
+              ?.map((app) => JobApplication.fromJson(app))
+              .toList() ??
+          [],
       contactPerson: (json['contactPerson'] ?? '').toString(),
       contactPhone: (json['contactPhone'] ?? '').toString(),
       contactEmail: (json['contactEmail'] ?? '').toString(),
@@ -238,15 +247,21 @@ class JobApplication {
     return JobApplication(
       id: json['id'].toString(),
       jobId: json['job_id']?.toString() ?? json['jobId']?.toString() ?? '',
-      workerId: json['worker_id']?.toString() ?? json['workerId']?.toString() ?? '',
+      workerId:
+          json['worker_id']?.toString() ?? json['workerId']?.toString() ?? '',
       coverLetter: json['message'] ?? json['coverLetter'] ?? '',
-      expectedSalary: (json['expectedSalary'] ?? json['expected_salary'] ?? 0.0).toDouble(),
-      availabilityDate: json['availabilityDate'] != null ? DateTime.parse(json['availabilityDate']) : 
-                       json['availability_date'] != null ? DateTime.parse(json['availability_date']) : null,
-      status: ApplicationStatus.values.firstWhere((e) => e.toString() == json['status']),
+      expectedSalary: (json['expectedSalary'] ?? json['expected_salary'] ?? 0.0)
+          .toDouble(),
+      availabilityDate: json['availabilityDate'] != null
+          ? DateTime.parse(json['availabilityDate'])
+          : json['availability_date'] != null
+          ? DateTime.parse(json['availability_date'])
+          : null,
+      status: ApplicationStatus.values.firstWhere(
+        (e) => e.toString() == json['status'],
+      ),
       appliedDate: DateTime.parse(json['applied_date'] ?? json['appliedDate']),
       message: json['message'],
     );
   }
 }
-

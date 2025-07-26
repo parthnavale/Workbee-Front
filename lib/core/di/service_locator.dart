@@ -13,21 +13,21 @@ class ServiceLocator {
 
   // Repositories
   JobRepository? _jobRepository;
-  
+
   // Services
   JobService? _jobService;
   ApiService? _apiService;
-  
+
   // Auth Provider
   AuthProvider? _authProvider;
 
   /// Initialize the service locator with dependencies
   void initialize({AuthProvider? authProvider}) {
     _authProvider = authProvider;
-    
+
     // Create API service with auth provider
     _apiService = ApiService(authProvider: authProvider);
-    
+
     // Always use the API repository with authenticated API service
     _jobRepository = ApiJobRepository(apiService: _apiService);
     _jobService = JobService(_jobRepository!);
@@ -36,7 +36,9 @@ class ServiceLocator {
   /// Get the job repository
   JobRepository get jobRepository {
     if (_jobRepository == null) {
-      throw StateError('ServiceLocator not initialized. Call initialize() first.');
+      throw StateError(
+        'ServiceLocator not initialized. Call initialize() first.',
+      );
     }
     return _jobRepository!;
   }
@@ -44,7 +46,9 @@ class ServiceLocator {
   /// Get the job service
   JobService get jobService {
     if (_jobService == null) {
-      throw StateError('ServiceLocator not initialized. Call initialize() first.');
+      throw StateError(
+        'ServiceLocator not initialized. Call initialize() first.',
+      );
     }
     return _jobService!;
   }
@@ -52,7 +56,9 @@ class ServiceLocator {
   /// Get the API service
   ApiService get apiService {
     if (_apiService == null) {
-      throw StateError('ServiceLocator not initialized. Call initialize() first.');
+      throw StateError(
+        'ServiceLocator not initialized. Call initialize() first.',
+      );
     }
     return _apiService!;
   }
@@ -70,4 +76,4 @@ class ServiceLocator {
 }
 
 /// Global instance for easy access
-final serviceLocator = ServiceLocator(); 
+final serviceLocator = ServiceLocator();

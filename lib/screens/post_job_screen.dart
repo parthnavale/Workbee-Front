@@ -27,7 +27,12 @@ class _PostJobScreenState extends State<PostJobScreen> {
   final _estimatedTimeController = TextEditingController();
   bool _isLoading = false;
   // No tile caching needed for Google Maps
-  final List<String> _rateTypes = ['Per Hour', 'Per Day', 'Per Week', 'Per Month'];
+  final List<String> _rateTypes = [
+    'Per Hour',
+    'Per Day',
+    'Per Week',
+    'Per Month',
+  ];
   String? _selectedRateType = 'Per Hour';
 
   @override
@@ -51,14 +56,21 @@ class _PostJobScreenState extends State<PostJobScreen> {
     return InputDecoration(
       labelText: labelText,
       labelStyle: TextStyle(color: isDarkMode ? Colors.grey : Colors.black54),
-      prefixIcon: Icon(prefixIcon, color: isDarkMode ? Colors.grey : Colors.black54),
+      prefixIcon: Icon(
+        prefixIcon,
+        color: isDarkMode ? Colors.grey : Colors.black54,
+      ),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: isDarkMode ? Colors.grey : Colors.black26),
+        borderSide: BorderSide(
+          color: isDarkMode ? Colors.grey : Colors.black26,
+        ),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
-        borderSide: BorderSide(color: isDarkMode ? Colors.grey : Colors.black26),
+        borderSide: BorderSide(
+          color: isDarkMode ? Colors.grey : Colors.black26,
+        ),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(12),
@@ -78,13 +90,19 @@ class _PostJobScreenState extends State<PostJobScreen> {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
       if (!authProvider.isLoggedIn) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Please log in to post jobs'), backgroundColor: Colors.red),
+          const SnackBar(
+            content: Text('Please log in to post jobs'),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
       if (authProvider.userRole != UserRole.poster) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Only business owners can post jobs'), backgroundColor: Colors.red),
+          const SnackBar(
+            content: Text('Only business owners can post jobs'),
+            backgroundColor: Colors.red,
+          ),
         );
         return;
       }
@@ -109,7 +127,10 @@ class _PostJobScreenState extends State<PostJobScreen> {
       await Provider.of<JobProvider>(context, listen: false).postJob(job);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Job posted successfully!'), backgroundColor: Colors.green),
+          const SnackBar(
+            content: Text('Job posted successfully!'),
+            backgroundColor: Colors.green,
+          ),
         );
         Navigator.pop(context);
       }
@@ -138,9 +159,15 @@ class _PostJobScreenState extends State<PostJobScreen> {
     final cardColor = isDarkMode
         ? AppColors.backgroundSecondary.withOpacity(0.95)
         : AppColors.lightBackgroundSecondary.withOpacity(0.95);
-    final textColor = isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary;
-    final borderColor = isDarkMode ? AppColors.borderSecondary : AppColors.lightBorderSecondary;
-    final inputFillColor = isDarkMode ? AppColors.backgroundPrimary : Colors.white;
+    final textColor = isDarkMode
+        ? AppColors.textPrimary
+        : AppColors.lightTextPrimary;
+    final borderColor = isDarkMode
+        ? AppColors.borderSecondary
+        : AppColors.lightBorderSecondary;
+    final inputFillColor = isDarkMode
+        ? AppColors.backgroundPrimary
+        : Colors.white;
     return Scaffold(
       appBar: AppBar(
         title: const Text(
@@ -148,8 +175,12 @@ class _PostJobScreenState extends State<PostJobScreen> {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
-        backgroundColor: isDarkMode ? AppColors.backgroundSecondary : AppColors.lightBackgroundSecondary,
-        foregroundColor: isDarkMode ? AppColors.textPrimary : AppColors.lightTextPrimary,
+        backgroundColor: isDarkMode
+            ? AppColors.backgroundSecondary
+            : AppColors.lightBackgroundSecondary,
+        foregroundColor: isDarkMode
+            ? AppColors.textPrimary
+            : AppColors.lightTextPrimary,
         elevation: 0,
       ),
       body: Stack(
@@ -209,10 +240,17 @@ class _PostJobScreenState extends State<PostJobScreen> {
                   children: [
                     DropdownButtonFormField<String>(
                       value: _selectedJobTitle,
-                      items: JobDesignations.designations.map((designation) => DropdownMenuItem(
-                        value: designation,
-                        child: Text(designation, style: TextStyle(color: textColor)),
-                      )).toList(),
+                      items: JobDesignations.designations
+                          .map(
+                            (designation) => DropdownMenuItem(
+                              value: designation,
+                              child: Text(
+                                designation,
+                                style: TextStyle(color: textColor),
+                              ),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (value) {
                         setState(() {
                           _selectedJobTitle = value;
@@ -222,10 +260,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                         labelText: 'Job Title',
                         prefixIcon: Icons.title,
                         isDarkMode: isDarkMode,
-                      ).copyWith(
-                        filled: true,
-                        fillColor: inputFillColor,
-                      ),
+                      ).copyWith(filled: true, fillColor: inputFillColor),
                       dropdownColor: inputFillColor,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -237,10 +272,17 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     const SizedBox(height: 16),
                     DropdownButtonFormField<String>(
                       value: _selectedRateType,
-                      items: _rateTypes.map((type) => DropdownMenuItem(
-                        value: type,
-                        child: Text(type, style: TextStyle(color: textColor)),
-                      )).toList(),
+                      items: _rateTypes
+                          .map(
+                            (type) => DropdownMenuItem(
+                              value: type,
+                              child: Text(
+                                type,
+                                style: TextStyle(color: textColor),
+                              ),
+                            ),
+                          )
+                          .toList(),
                       onChanged: (value) {
                         setState(() {
                           _selectedRateType = value;
@@ -250,10 +292,7 @@ class _PostJobScreenState extends State<PostJobScreen> {
                         labelText: 'Rate Type',
                         prefixIcon: Icons.schedule,
                         isDarkMode: isDarkMode,
-                      ).copyWith(
-                        filled: true,
-                        fillColor: inputFillColor,
-                      ),
+                      ).copyWith(filled: true, fillColor: inputFillColor),
                       dropdownColor: inputFillColor,
                       validator: (value) {
                         if (value == null || value.isEmpty) {
@@ -317,9 +356,11 @@ class _PostJobScreenState extends State<PostJobScreen> {
                     ),
                     const SizedBox(height: 16),
                     AnimatedScaleButton(
-                      onTap: _isLoading ? null : () {
-                        _submitJob();
-                      },
+                      onTap: _isLoading
+                          ? null
+                          : () {
+                              _submitJob();
+                            },
                       backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
                       minimumSize: const Size(double.infinity, 50),
@@ -329,7 +370,9 @@ class _PostJobScreenState extends State<PostJobScreen> {
                               width: 20,
                               child: CircularProgressIndicator(
                                 strokeWidth: 2,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+                                valueColor: AlwaysStoppedAnimation<Color>(
+                                  Colors.white,
+                                ),
                               ),
                             )
                           : const Text(
@@ -349,4 +392,4 @@ class _PostJobScreenState extends State<PostJobScreen> {
       ),
     );
   }
-} 
+}

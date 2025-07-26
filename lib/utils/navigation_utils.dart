@@ -12,41 +12,45 @@ import '../constants/user_roles.dart';
 class NavigationUtils {
   static void handleNavigation(String action, BuildContext context) {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    
+
     switch (action) {
       case 'Home':
         // Already on home
         break;
       case 'ForBusiness':
-        if (authProvider.isLoggedIn && authProvider.userRole == UserRole.poster) {
+        if (authProvider.isLoggedIn &&
+            authProvider.userRole == UserRole.poster) {
           // Logged in as business, go directly to business dashboard
-          Navigator.of(context).push(FadePageRoute(
-            page: const BusinessDashboardScreen(),
-          ));
+          Navigator.of(
+            context,
+          ).push(FadePageRoute(page: const BusinessDashboardScreen()));
         } else {
           // Not logged in or wrong role, go to sign in with business role
-          Navigator.of(context).push(FadePageRoute(
-            page: const SignInScreen(preSelectedRole: UserRole.poster),
-          ));
+          Navigator.of(context).push(
+            FadePageRoute(
+              page: const SignInScreen(preSelectedRole: UserRole.poster),
+            ),
+          );
         }
         break;
       case 'For Workers':
-        if (authProvider.isLoggedIn && authProvider.userRole == UserRole.seeker) {
+        if (authProvider.isLoggedIn &&
+            authProvider.userRole == UserRole.seeker) {
           // Logged in as worker, go to find jobs
-          Navigator.of(context).push(FadePageRoute(
-            page: const SeekerHomeScreen(),
-          ));
+          Navigator.of(
+            context,
+          ).push(FadePageRoute(page: const SeekerHomeScreen()));
         } else {
           // Not logged in or wrong role, go to sign in with worker role
-          Navigator.of(context).push(FadePageRoute(
-            page: const SignInScreen(preSelectedRole: UserRole.seeker),
-          ));
+          Navigator.of(context).push(
+            FadePageRoute(
+              page: const SignInScreen(preSelectedRole: UserRole.seeker),
+            ),
+          );
         }
         break;
       case 'Sign In':
-        Navigator.of(context).push(FadePageRoute(
-          page: const SignInScreen(),
-        ));
+        Navigator.of(context).push(FadePageRoute(page: const SignInScreen()));
         break;
       case 'Logout':
         authProvider.logout();
@@ -58,10 +62,8 @@ class NavigationUtils {
         break;
     }
   }
-  
+
   static void navigateToAddJob(BuildContext context) {
-    Navigator.of(context).push(FadePageRoute(
-      page: const PostJobScreen(),
-    ));
+    Navigator.of(context).push(FadePageRoute(page: const PostJobScreen()));
   }
-} 
+}
