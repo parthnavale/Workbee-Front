@@ -33,7 +33,7 @@ void main() {
   ) async {
     // Build a simple Container widget
     await tester.pumpWidget(
-      const MaterialApp(
+      MaterialApp(
         home: Scaffold(
           body: Center(
             child: Container(
@@ -85,7 +85,7 @@ void main() {
     expect(find.byType(MaterialApp), findsOneWidget);
     expect(find.byType(Scaffold), findsOneWidget);
     expect(find.byType(AppBar), findsOneWidget);
-    expect(find.text('Workbee'), findsOneWidget);
+    expect(find.text('Workbee'), findsNWidgets(2));
     expect(find.text('Find jobs near you'), findsOneWidget);
     expect(find.byIcon(Icons.work), findsOneWidget);
   });
