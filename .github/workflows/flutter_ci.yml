@@ -10,8 +10,13 @@ on:
 jobs:
   ci:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Workbee-Front
     steps:
       - uses: actions/checkout@v4
+        with:
+          path: Workbee-Front
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -54,10 +59,14 @@ jobs:
   ios-build:
     needs: ci
     runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: Workbee-Front
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          path: Workbee-Front
 
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
@@ -79,4 +88,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ios-ipa
-          path: build/ios/ipa/*.ipa 
+          path: Workbee-Front/build/ios/ipa/*.ipa 
