@@ -4,7 +4,7 @@ platform :ios, '14.0'
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
-flutter_application_path = File.expand_path('..', File.dirname(__dir__))
+flutter_application_path = File.expand_path('..', __dir__)
 load File.join(flutter_application_path, '.ios', 'Flutter', 'podhelper.rb')
 
 target 'Runner' do
