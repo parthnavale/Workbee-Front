@@ -63,13 +63,22 @@ jobs:
         with:
           flutter-version: '3.22.1'
 
+      - name: Get Flutter dependencies
+        run: flutter pub get
+
+      - name: List project root
+        run: ls -la
+
+      - name: List .ios directory
+        run: ls -la .ios || echo "No .ios directory"
+
+      - name: List .ios/Flutter directory
+        run: ls -la .ios/Flutter || echo "No .ios/Flutter directory"
+
       - name: Install CocoaPods dependencies
         run: |
           cd ios
           pod install
-
-      - name: Get Flutter dependencies
-        run: flutter pub get
 
       - name: Build IPA (unsigned)
         run: flutter build ipa --no-codesign
