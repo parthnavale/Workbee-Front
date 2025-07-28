@@ -94,23 +94,44 @@ class AuthProvider with ChangeNotifier {
   }
 
   Future<void> fetchBusinessOwnerProfile() async {
-    if (_userId == null) return;
+    if (_userId == null) {
+      print('[DEBUG] fetchBusinessOwnerProfile: _userId is null');
+      return;
+    }
+    print('[DEBUG] fetchBusinessOwnerProfile: _userId = $_userId');
+    
     final url = Uri.parse(AppConfig.getApiUrl("/business-owners/"));
+    print('[DEBUG] fetchBusinessOwnerProfile: URL = $url');
+    
     final headers = {
       "Content-Type": "application/json",
       if (_accessToken != null) "Authorization": "Bearer $_accessToken",
     };
+    print('[DEBUG] fetchBusinessOwnerProfile: Headers = $headers');
+    
     final response = await http.get(url, headers: headers);
+    print('[DEBUG] fetchBusinessOwnerProfile: Response status = ${response.statusCode}');
+    print('[DEBUG] fetchBusinessOwnerProfile: Response body = ${response.body}');
+    
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
+      print('[DEBUG] fetchBusinessOwnerProfile: Found ${data.length} business owners');
+      
       // Find the business owner profile for this user
       final owner = data.firstWhere(
         (o) => o["user_id"] == _userId,
         orElse: () => null,
       );
+      
       if (owner != null) {
         _businessOwnerId = owner["id"];
+        print('[DEBUG] fetchBusinessOwnerProfile: Found business owner with ID = $_businessOwnerId');
+      } else {
+        print('[DEBUG] fetchBusinessOwnerProfile: No business owner found for user_id = $_userId');
+        print('[DEBUG] fetchBusinessOwnerProfile: Available user_ids = ${data.map((o) => o["user_id"]).toList()}');
       }
+    } else {
+      print('[DEBUG] fetchBusinessOwnerProfile: Failed to fetch business owners');
     }
   }
 
@@ -200,6 +221,35 @@ class AuthProvider with ChangeNotifier {
       // The actual connection will be handled in the UI layer
     }
   }
+  
+  // Update FCM token for worker
+  Future<void> updateFCMToken(String token) async {
+    if (_workerId != null && _accessToken != null) {
+      try {
+        final url = Uri.parse('https://myworkbee.duckdns.org/workers/$_workerId/fcm-token');
+        final response = await http.put(
+          url,
+          body: token,
+          headers: {
+            'Content-Type': 'text/plain',
+            'Authorization': 'Bearer $_accessToken',
+          },
+        );
+        
+        if (response.statusCode == 200) {
+          print('FCM token updated successfully for worker $_workerId');
+        } else {
+          print('Failed to update FCM token. Status: ${response.statusCode}');
+        }
+      } catch (e) {
+        print('Failed to update FCM token: $e');
+      }
+    }
+  }
+  
+
+  
+
 
   // Remove token on logout
   Future<void> logout() async {

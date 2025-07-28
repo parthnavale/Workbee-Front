@@ -10,6 +10,8 @@ import 'dashboard_screen.dart';
 import 'sign_up_screen.dart';
 import '../widgets/gradient_background.dart';
 import '../widgets/loading_dialog.dart';
+import '../core/services/fcm_service.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class SignInScreen extends StatefulWidget {
   final UserRole? preSelectedRole;
@@ -60,6 +62,38 @@ class _SignInScreenState extends State<SignInScreen> {
       try {
         final success = await authProvider.login(email, password, role);
         if (success) {
+          // Update FCM token if user is a worker
+          if (role == UserRole.seeker) {
+            try {
+              // Update FCM token using the FCM service
+              await FCMService.updateFCMTokenForWorker(
+                authProvider.workerId!,
+                authProvider.accessToken!,
+              );
+            } catch (e) {
+              print('Failed to update FCM token after login: $e');
+            }
+          }
+          // Print FCM token if user is a business owner
+          if (role == UserRole.poster) {
+            try {
+              String? token = await FirebaseMessaging.instance.getToken();
+              print('[DEBUG] Business Owner FCM Token: ' + (token ?? 'null'));
+              // Update FCM token for business owner
+              final authProvider = Provider.of<AuthProvider>(context, listen: false);
+              if (authProvider.businessOwnerId != null && authProvider.accessToken != null) {
+                await FCMService.updateFCMTokenForBusinessOwner(
+                  authProvider.businessOwnerId!,
+                  authProvider.accessToken!,
+                );
+              } else {
+                print('[DEBUG] Business owner ID or access token is null, cannot update FCM token');
+              }
+            } catch (e) {
+              print('Failed to get or update FCM token for business owner: $e');
+            }
+          }
+          
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

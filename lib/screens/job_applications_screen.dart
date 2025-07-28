@@ -34,6 +34,10 @@ class _JobApplicationsScreenState extends State<JobApplicationsScreen> {
     });
     final jobProvider = Provider.of<JobProvider>(context, listen: false);
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    
+    print('[DEBUG] _fetchApplications: businessOwnerId = ${authProvider.businessOwnerId}');
+    print('[DEBUG] _fetchApplications: businessOwnerId.toString() = "${authProvider.businessOwnerId.toString()}"');
+    
     final apps = await jobProvider.getApplicationsForJob(
       widget.job.id,
       authProvider.businessOwnerId.toString(),

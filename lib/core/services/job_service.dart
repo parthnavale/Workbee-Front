@@ -129,15 +129,23 @@ class JobService {
     String jobId,
     String businessId,
   ) async {
+    print('[DEBUG] getApplicationsForJob called with jobId: $jobId, businessId: $businessId');
+    
     final job = await _repository.getJobById(jobId);
     if (job == null) {
+      print('[DEBUG] Job not found for jobId: $jobId');
       throw ArgumentError('Job not found');
     }
+    
+    print('[DEBUG] Found job with businessId: ${job.businessId}');
     if (job.businessId != businessId) {
+      print('[DEBUG] Business ID mismatch: job.businessId=${job.businessId}, provided businessId=$businessId');
       throw ArgumentError('Only the job owner can view applications');
     }
 
-    return await _repository.getApplicationsForJob(jobId);
+    final applications = await _repository.getApplicationsForJob(jobId);
+    print('[DEBUG] Retrieved ${applications.length} applications for job $jobId');
+    return applications;
   }
 
   /// Get applications by worker

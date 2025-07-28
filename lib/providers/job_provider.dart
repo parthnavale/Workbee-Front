@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import '../models/job.dart';
 import 'package:flutter/material.dart';
 import '../core/di/service_locator.dart';
+import '../core/repositories/api_job_repository.dart';
 
 class JobProvider with ChangeNotifier {
   List<Job> _jobs = [];
@@ -180,13 +181,34 @@ class JobProvider with ChangeNotifier {
     }
   }
 
-  // Fetch worker's applications
+  bool _isLoadingWorkerApplications = false;
+  bool get isLoadingWorkerApplications => _isLoadingWorkerApplications;
+
   Future<void> fetchWorkerApplications(String workerId) async {
+    print('[DEBUG] fetchWorkerApplications called with workerId: $workerId');
+    _isLoadingWorkerApplications = true;
+    notifyListeners();
     _myApplications.clear();
     final applications = await serviceLocator.jobService.getWorkerApplications(
       workerId,
     );
+    print('[DEBUG] fetchWorkerApplications: fetched ${applications.length} applications');
     _myApplications.addAll(applications);
+
+    // Batch fetch all jobs for these applications
+    final jobIdsNeeded = applications.map((app) => app.jobId).toSet().toList();
+    if (jobIdsNeeded.isNotEmpty) {
+      print('[DEBUG] fetchWorkerApplications: batch fetching jobs: $jobIdsNeeded');
+      final apiJobRepo = serviceLocator.jobRepository;
+      if (apiJobRepo is ApiJobRepository) {
+        final jobs = await apiJobRepo.getJobsByIds(jobIdsNeeded);
+        // Remove any existing jobs with these IDs
+        _jobs.removeWhere((job) => jobIdsNeeded.contains(job.id));
+        _jobs.addAll(jobs);
+        print('[DEBUG] fetchWorkerApplications: added ${jobs.length} jobs to _jobs');
+      }
+    }
+    _isLoadingWorkerApplications = false;
     notifyListeners();
   }
 

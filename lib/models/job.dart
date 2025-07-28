@@ -257,11 +257,27 @@ class JobApplication {
           : json['availability_date'] != null
           ? DateTime.parse(json['availability_date'])
           : null,
-      status: ApplicationStatus.values.firstWhere(
-        (e) => e.toString() == json['status'],
-      ),
+      status: _parseApplicationStatus(json['status']),
       appliedDate: DateTime.parse(json['applied_date'] ?? json['appliedDate']),
       message: json['message'],
     );
+  }
+
+  static ApplicationStatus _parseApplicationStatus(dynamic status) {
+    if (status is String) {
+      switch (status.toLowerCase()) {
+        case 'pending':
+          return ApplicationStatus.pending;
+        case 'accepted':
+          return ApplicationStatus.accepted;
+        case 'rejected':
+          return ApplicationStatus.rejected;
+        case 'withdrawn':
+          return ApplicationStatus.withdrawn;
+        default:
+          return ApplicationStatus.pending;
+      }
+    }
+    return ApplicationStatus.pending;
   }
 }

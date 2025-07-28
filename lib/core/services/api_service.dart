@@ -255,15 +255,26 @@ class ApiService {
 
   /// Get applications by job ID from the API
   Future<List<Map<String, dynamic>>> getApplicationsByJob(String jobId) async {
-    final endpoint = '${AppConfig.applicationsEndpoint}/job/$jobId';
+    print('[DEBUG] getApplicationsByJob called with jobId: $jobId');
+    final base = AppConfig.applicationsEndpoint;
+    final endpoint = base.endsWith('/')
+        ? '${base}job/$jobId'
+        : '$base/job/$jobId';
+    print('[DEBUG] Making API call to: $endpoint');
+    
     final response = await get(endpoint);
+    print('[DEBUG] API response type: ${response.runtimeType}');
+    print('[DEBUG] API response: $response');
 
     if (response is List) {
       final result = response.whereType<Map<String, dynamic>>().toList();
+      print('[DEBUG] Parsed ${result.length} applications from list response');
       return result;
     } else if (response is Map<String, dynamic>) {
+      print('[DEBUG] Parsed 1 application from map response');
       return [response];
     }
+    print('[DEBUG] No valid response format, returning empty list');
     return [];
   }
 
@@ -271,9 +282,11 @@ class ApiService {
   Future<List<Map<String, dynamic>>> getApplicationsByWorker(
     String workerId,
   ) async {
+    print('[DEBUG] ApiService.getApplicationsByWorker called with workerId: $workerId');
     final endpoint = '${AppConfig.applicationsEndpoint}?worker_id=$workerId';
+    print('[DEBUG] ApiService.getApplicationsByWorker: endpoint = $endpoint');
     final response = await get(endpoint);
-
+    print('[DEBUG] ApiService.getApplicationsByWorker: response = $response');
     if (response is List) {
       return response.whereType<Map<String, dynamic>>().toList();
     } else if (response is Map<String, dynamic>) {
@@ -355,6 +368,36 @@ class ApiService {
   /// Delete an application
   Future<void> deleteApplication(int applicationId) async {
     await delete('${AppConfig.applicationsEndpoint}/$applicationId');
+  }
+
+  /// Batch fetch jobs by a list of job IDs
+  Future<List<Map<String, dynamic>>> getJobsByIds(List<String> jobIds) async {
+    if (jobIds.isEmpty) return [];
+    final endpoint = '/jobs/batch';
+    final body = {"job_ids": jobIds.map((id) => int.parse(id)).toList()};
+    try {
+      final response = await post(endpoint, body);
+      if (response is List) {
+        return (response as List).map<Map<String, dynamic>>((e) {
+          if (e is Map<String, dynamic>) {
+            return e;
+          } else if (e is Map) {
+            return Map<String, dynamic>.from(e);
+          } else {
+            print('[DEBUG] Unexpected item type in response: ${e.runtimeType}');
+            return <String, dynamic>{};
+          }
+        }).toList();
+      } else if (response is Map<String, dynamic>) {
+        return [response];
+      } else if (response is Map) {
+        return [Map<String, dynamic>.from(response)];
+      }
+      return [];
+    } catch (e) {
+      print('[DEBUG] getJobsByIds error: $e');
+      return [];
+    }
   }
 
   void dispose() {

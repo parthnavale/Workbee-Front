@@ -13,6 +13,7 @@ import 'settings_screen.dart';
 import 'help_support_screen.dart';
 import '../providers/auth_provider.dart';
 import 'nearby_jobs_map_screen.dart';
+import 'notifications_screen.dart';
 
 class SeekerHomeScreen extends StatefulWidget {
   const SeekerHomeScreen({super.key});
@@ -55,9 +56,12 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
                 IconButton(
                   icon: Icon(Icons.notifications),
                   onPressed: () {
-                    setState(() {
-                      _selectedIndex = 1; // Switch to applications tab
-                    });
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => const NotificationsScreen(),
+                      ),
+                    );
                   },
                 ),
                 Positioned(
@@ -284,67 +288,6 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
             ],
           ),
           const SizedBox(height: 30),
-
-          // Recent Applications
-          Text(
-            'Recent Applications',
-            style: TextStyle(
-              fontSize: 20,
-              fontWeight: FontWeight.bold,
-              color: isDarkMode ? AppColors.white : AppColors.lightTextPrimary,
-            ),
-          ),
-          const SizedBox(height: 16),
-          if (jobProvider.myApplications.isEmpty)
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: isDarkMode
-                    ? AppColors.white.withOpacity(0.05)
-                    : AppColors.lightBackgroundSecondary,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(
-                  color: isDarkMode
-                      ? AppColors.grey.withOpacity(0.3)
-                      : AppColors.lightBorderSecondary,
-                ),
-              ),
-              child: Column(
-                children: [
-                  Icon(
-                    Icons.work_off,
-                    size: 48,
-                    color: isDarkMode
-                        ? AppColors.grey
-                        : AppColors.lightTextSecondary,
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'No applications yet',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode
-                          ? AppColors.white
-                          : AppColors.lightTextPrimary,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Start by browsing available jobs',
-                    style: TextStyle(
-                      color: isDarkMode
-                          ? AppColors.grey
-                          : AppColors.lightTextSecondary,
-                    ),
-                  ),
-                ],
-              ),
-            )
-          else
-            ...jobProvider.myApplications
-                .take(3)
-                .map((app) => _buildRecentApplicationCard(app, isDarkMode)),
         ],
       ),
     );
@@ -565,52 +508,7 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
     );
   }
 
-  Widget _buildRecentApplicationCard(JobApplication app, bool isDarkMode) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 12),
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: isDarkMode
-            ? AppColors.white.withOpacity(0.05)
-            : AppColors.lightBackgroundSecondary,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isDarkMode
-              ? AppColors.grey.withOpacity(0.3)
-              : AppColors.lightBorderSecondary,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Application for ${app.jobId}', // In real app, get job title
-                  style: TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: isDarkMode
-                        ? AppColors.white
-                        : AppColors.lightTextPrimary,
-                  ),
-                ),
-              ),
-              _buildStatusChip(app.status, isDarkMode),
-            ],
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'Applied ${_formatDate(app.appliedDate)}',
-            style: TextStyle(
-              color: isDarkMode ? AppColors.grey : AppColors.lightTextSecondary,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
+
 
   Widget _buildProfileActionCard({
     required IconData icon,

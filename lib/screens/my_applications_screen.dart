@@ -5,6 +5,7 @@ import '../providers/job_provider.dart';
 import '../providers/theme_provider.dart';
 import '../constants/app_colors.dart';
 import '../widgets/gradient_background.dart';
+import '../providers/auth_provider.dart';
 
 class MyApplicationsScreen extends StatefulWidget {
   const MyApplicationsScreen({super.key});
@@ -17,10 +18,23 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
   String _selectedFilter = 'All';
 
   @override
+  void initState() {
+    super.initState();
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
+    final jobProvider = Provider.of<JobProvider>(context, listen: false);
+    if (authProvider.workerId != null) {
+      print('[DEBUG] MyApplicationsScreen.initState: fetching applications for workerId: \\${authProvider.workerId}');
+      jobProvider.fetchWorkerApplications(authProvider.workerId.toString());
+    } else {
+      print('[DEBUG] MyApplicationsScreen.initState: workerId is null');
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
     final themeProvider = Provider.of<ThemeProvider>(context);
     final isDarkMode = themeProvider.isDarkMode;
-    final jobProvider = Provider.of<JobProvider>(context, listen: false);
+    final jobProvider = Provider.of<JobProvider>(context);
 
     final applications = jobProvider.myApplications;
     final filteredApplications = _getFilteredApplications(applications);
@@ -37,97 +51,99 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
         elevation: 0,
       ),
       body: GradientBackground(
-        child: Column(
-          children: [
-            // Filter Section
-            Container(
-              padding: const EdgeInsets.all(16),
-              child: Row(
+        child: jobProvider.isLoadingWorkerApplications
+            ? const Center(child: CircularProgressIndicator())
+            : Column(
                 children: [
-                  Text(
-                    'Filter: ',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: isDarkMode
-                          ? Colors.white
-                          : AppColors.lightTextPrimary,
+                  // Filter Section
+                  Container(
+                    padding: const EdgeInsets.all(16),
+                    child: Row(
+                      children: [
+                        Text(
+                          'Filter: ',
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: isDarkMode
+                                ? Colors.white
+                                : AppColors.lightTextPrimary,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Expanded(
+                          child: SingleChildScrollView(
+                            scrollDirection: Axis.horizontal,
+                            child: Row(
+                              children: [
+                                _buildFilterChip('All', isDarkMode),
+                                const SizedBox(width: 8),
+                                _buildFilterChip('Pending', isDarkMode),
+                                const SizedBox(width: 8),
+                                _buildFilterChip('Accepted', isDarkMode),
+                                const SizedBox(width: 8),
+                                _buildFilterChip('Rejected', isDarkMode),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  const SizedBox(width: 8),
+
+                  // Applications List
                   Expanded(
-                    child: SingleChildScrollView(
-                      scrollDirection: Axis.horizontal,
-                      child: Row(
-                        children: [
-                          _buildFilterChip('All', isDarkMode),
-                          const SizedBox(width: 8),
-                          _buildFilterChip('Pending', isDarkMode),
-                          const SizedBox(width: 8),
-                          _buildFilterChip('Accepted', isDarkMode),
-                          const SizedBox(width: 8),
-                          _buildFilterChip('Rejected', isDarkMode),
-                        ],
-                      ),
-                    ),
+                    child: applications.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.work_off,
+                                  size: 64,
+                                  color: isDarkMode
+                                      ? Colors.grey
+                                      : AppColors.lightTextSecondary,
+                                ),
+                                const SizedBox(height: 16),
+                                Text(
+                                  'No applications yet',
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: isDarkMode
+                                        ? Colors.white
+                                        : AppColors.lightTextPrimary,
+                                  ),
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Start by browsing and applying for jobs',
+                                  style: TextStyle(
+                                    color: isDarkMode
+                                        ? Colors.grey
+                                        : AppColors.lightTextSecondary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : ListView.builder(
+                            padding: const EdgeInsets.symmetric(horizontal: 16),
+                            itemCount: filteredApplications.length,
+                            itemBuilder: (context, index) {
+                              final application = filteredApplications[index];
+                              final job = jobProvider.getJobById(application.jobId);
+                              return _buildApplicationCard(
+                                application,
+                                job,
+                                isDarkMode,
+                              );
+                            },
+                          ),
                   ),
                 ],
               ),
-            ),
-
-            // Applications List
-            Expanded(
-              child: applications.isEmpty
-                  ? Center(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Icon(
-                            Icons.work_off,
-                            size: 64,
-                            color: isDarkMode
-                                ? Colors.grey
-                                : AppColors.lightTextSecondary,
-                          ),
-                          const SizedBox(height: 16),
-                          Text(
-                            'No applications yet',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: isDarkMode
-                                  ? Colors.white
-                                  : AppColors.lightTextPrimary,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Start by browsing and applying for jobs',
-                            style: TextStyle(
-                              color: isDarkMode
-                                  ? Colors.grey
-                                  : AppColors.lightTextSecondary,
-                            ),
-                          ),
-                        ],
-                      ),
-                    )
-                  : ListView.builder(
-                      padding: const EdgeInsets.symmetric(horizontal: 16),
-                      itemCount: filteredApplications.length,
-                      itemBuilder: (context, index) {
-                        final application = filteredApplications[index];
-                        final job = jobProvider.getJobById(application.jobId);
-                        return _buildApplicationCard(
-                          application,
-                          job,
-                          isDarkMode,
-                        );
-                      },
-                    ),
-            ),
-          ],
-        ),
       ),
     );
   }
