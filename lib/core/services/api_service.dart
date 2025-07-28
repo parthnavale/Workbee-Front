@@ -261,7 +261,7 @@ class ApiService {
         ? '${base}job/$jobId'
         : '$base/job/$jobId';
     print('[DEBUG] Making API call to: $endpoint');
-    
+
     final response = await get(endpoint);
     print('[DEBUG] API response type: ${response.runtimeType}');
     print('[DEBUG] API response: $response');
@@ -282,7 +282,9 @@ class ApiService {
   Future<List<Map<String, dynamic>>> getApplicationsByWorker(
     String workerId,
   ) async {
-    print('[DEBUG] ApiService.getApplicationsByWorker called with workerId: $workerId');
+    print(
+      '[DEBUG] ApiService.getApplicationsByWorker called with workerId: $workerId',
+    );
     final endpoint = '${AppConfig.applicationsEndpoint}?worker_id=$workerId';
     print('[DEBUG] ApiService.getApplicationsByWorker: endpoint = $endpoint');
     final response = await get(endpoint);

@@ -142,16 +142,20 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<List<JobApplication>> getApplicationsForJob(String jobId) async {
     try {
-      print('[DEBUG] ApiJobRepository.getApplicationsForJob called with jobId: $jobId');
+      print(
+        '[DEBUG] ApiJobRepository.getApplicationsForJob called with jobId: $jobId',
+      );
       // Use backend filtering instead of fetching all applications
       final applications = await _apiService.getApplicationsByJob(jobId);
       print('[DEBUG] Got ${applications.length} applications from API');
-      
+
       final mappedApplications = applications
           .map((appData) => _mapApiApplicationToFlutterApplication(appData))
           .toList();
-      print('[DEBUG] Mapped ${mappedApplications.length} applications to Flutter models');
-      
+      print(
+        '[DEBUG] Mapped ${mappedApplications.length} applications to Flutter models',
+      );
+
       return mappedApplications;
     } catch (e) {
       print('[DEBUG] Error in getApplicationsForJob: $e');
@@ -162,10 +166,14 @@ class ApiJobRepository implements JobRepository {
   @override
   Future<List<JobApplication>> getApplicationsByWorker(String workerId) async {
     try {
-      print('[DEBUG] ApiJobRepository.getApplicationsByWorker called with workerId: $workerId');
+      print(
+        '[DEBUG] ApiJobRepository.getApplicationsByWorker called with workerId: $workerId',
+      );
       // Use backend filtering instead of fetching all applications
       final applications = await _apiService.getApplicationsByWorker(workerId);
-      print('[DEBUG] ApiJobRepository.getApplicationsByWorker: got ${applications.length} applications from API');
+      print(
+        '[DEBUG] ApiJobRepository.getApplicationsByWorker: got ${applications.length} applications from API',
+      );
       return applications
           .map((appData) => _mapApiApplicationToFlutterApplication(appData))
           .toList();
@@ -288,7 +296,7 @@ class ApiJobRepository implements JobRepository {
     Map<String, dynamic> apiApplication,
   ) {
     print('[DEBUG] Mapping API application: $apiApplication');
-    
+
     final application = JobApplication(
       id: apiApplication['id'].toString(),
       jobId: apiApplication['job_id'].toString(),
@@ -304,8 +312,10 @@ class ApiJobRepository implements JobRepository {
       appliedDate: _parseDateTime(apiApplication['applied_date']),
       message: null, // Response messages are not stored in the API yet
     );
-    
-    print('[DEBUG] Mapped to Flutter application: ${application.id}, status: ${application.status}');
+
+    print(
+      '[DEBUG] Mapped to Flutter application: ${application.id}, status: ${application.status}',
+    );
     return application;
   }
 

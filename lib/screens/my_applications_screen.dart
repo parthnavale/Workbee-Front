@@ -23,7 +23,9 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
     final jobProvider = Provider.of<JobProvider>(context, listen: false);
     if (authProvider.workerId != null) {
-      print('[DEBUG] MyApplicationsScreen.initState: fetching applications for workerId: \\${authProvider.workerId}');
+      print(
+        '[DEBUG] MyApplicationsScreen.initState: fetching applications for workerId: \\${authProvider.workerId}',
+      );
       jobProvider.fetchWorkerApplications(authProvider.workerId.toString());
     } else {
       print('[DEBUG] MyApplicationsScreen.initState: workerId is null');
@@ -133,7 +135,9 @@ class _MyApplicationsScreenState extends State<MyApplicationsScreen> {
                             itemCount: filteredApplications.length,
                             itemBuilder: (context, index) {
                               final application = filteredApplications[index];
-                              final job = jobProvider.getJobById(application.jobId);
+                              final job = jobProvider.getJobById(
+                                application.jobId,
+                              );
                               return _buildApplicationCard(
                                 application,
                                 job,

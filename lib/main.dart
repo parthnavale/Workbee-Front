@@ -69,7 +69,7 @@ class _MyAppState extends State<MyApp> {
     _requireLocationService();
     _initFCM();
     _initLocalNotifications();
-    
+
     // Print FCM token for testing
     _printFCMTokenForTesting();
   }
@@ -131,29 +131,32 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _initFCM() async {
     // Request permission for notifications
-    NotificationSettings settings = await FirebaseMessaging.instance.requestPermission(
-      alert: true,
-      announcement: false,
-      badge: true,
-      carPlay: false,
-      criticalAlert: false,
-      provisional: false,
-      sound: true,
-    );
-    
+    NotificationSettings settings = await FirebaseMessaging.instance
+        .requestPermission(
+          alert: true,
+          announcement: false,
+          badge: true,
+          carPlay: false,
+          criticalAlert: false,
+          provisional: false,
+          sound: true,
+        );
+
     print('User granted permission: ${settings.authorizationStatus}');
-    
+
     // Get FCM token
     String? token = await FirebaseMessaging.instance.getToken();
     print('🔥 FCM Token: $token');
     print('📱 App initialized with FCM token');
-    
+
     // Send FCM token to backend if user is worker and logged in
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
-    if (authProvider.isWorker() && authProvider.workerId != null && token != null) {
+    if (authProvider.isWorker() &&
+        authProvider.workerId != null &&
+        token != null) {
       await _sendFCMTokenToBackend(authProvider.workerId!, token);
     }
-    
+
     // Listen for token refresh
     FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
       print('FCM Token refreshed: $newToken');
@@ -161,60 +164,73 @@ class _MyAppState extends State<MyApp> {
         _sendFCMTokenToBackend(authProvider.workerId!, newToken);
       }
     });
-    
+
     // Handle foreground messages
     FirebaseMessaging.onMessage.listen((RemoteMessage message) {
-      print('Received FCM message in foreground: ${message.notification?.title} - ${message.notification?.body}');
+      print(
+        'Received FCM message in foreground: ${message.notification?.title} - ${message.notification?.body}',
+      );
       _showLocalNotification(message);
-      
+
       // Add to notification provider (inbox)
-      final notificationProvider = Provider.of<NotificationProvider>(context, listen: false);
+      final notificationProvider = Provider.of<NotificationProvider>(
+        context,
+        listen: false,
+      );
       notificationProvider.addNotificationFromFCM(message);
     });
-    
+
     // Handle background messages
     FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-    
+
     // Handle when app is opened from notification
-    FirebaseMessaging.instance.getInitialMessage().then((RemoteMessage? message) {
+    FirebaseMessaging.instance.getInitialMessage().then((
+      RemoteMessage? message,
+    ) {
       if (message != null) {
         print('App opened from notification: ${message.notification?.title}');
         // Handle navigation or other actions
       }
     });
-    
+
     // Handle when app is in background and notification is tapped
     FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
-      print('App opened from background notification: ${message.notification?.title}');
+      print(
+        'App opened from background notification: ${message.notification?.title}',
+      );
       // Handle navigation or other actions
     });
   }
-  
+
   Future<void> _sendFCMTokenToBackend(int workerId, String token) async {
     try {
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
-      final url = Uri.parse('https://myworkbee.duckdns.org/workers/$workerId/fcm-token');
-      
+      final url = Uri.parse(
+        'https://myworkbee.duckdns.org/workers/$workerId/fcm-token',
+      );
+
       final response = await http.put(
         url,
         body: token,
         headers: {
           'Content-Type': 'text/plain',
-          if (authProvider.accessToken != null) 
+          if (authProvider.accessToken != null)
             'Authorization': 'Bearer ${authProvider.accessToken}',
         },
       );
-      
+
       if (response.statusCode == 200) {
         print('FCM token sent to backend successfully for worker $workerId');
       } else {
-        print('Failed to send FCM token to backend. Status: ${response.statusCode}');
+        print(
+          'Failed to send FCM token to backend. Status: ${response.statusCode}',
+        );
       }
     } catch (e) {
       print('Failed to send FCM token to backend: $e');
     }
   }
-  
+
   // Method to update FCM token when user logs in
   Future<void> updateFCMTokenForLoggedInUser() async {
     final authProvider = Provider.of<AuthProvider>(context, listen: false);
@@ -225,10 +241,12 @@ class _MyAppState extends State<MyApp> {
       }
     }
   }
-  
+
   // Print FCM token for testing
   Future<void> _printFCMTokenForTesting() async {
-    await Future.delayed(const Duration(seconds: 2)); // Wait for Firebase to initialize
+    await Future.delayed(
+      const Duration(seconds: 2),
+    ); // Wait for Firebase to initialize
     String? token = await FirebaseMessaging.instance.getToken();
     if (token != null) {
       print('🔥 FCM Token for Testing: $token');
@@ -238,13 +256,18 @@ class _MyAppState extends State<MyApp> {
       print('❌ No FCM token available for testing');
     }
   }
-  
+
   // Global method to update FCM token (can be called from anywhere)
-  static Future<void> updateFCMTokenForWorker(int workerId, String accessToken) async {
+  static Future<void> updateFCMTokenForWorker(
+    int workerId,
+    String accessToken,
+  ) async {
     try {
       String? token = await FirebaseMessaging.instance.getToken();
       if (token != null) {
-        final url = Uri.parse('https://myworkbee.duckdns.org/workers/$workerId/fcm-token');
+        final url = Uri.parse(
+          'https://myworkbee.duckdns.org/workers/$workerId/fcm-token',
+        );
         final response = await http.put(
           url,
           body: token,
@@ -253,11 +276,13 @@ class _MyAppState extends State<MyApp> {
             'Authorization': 'Bearer $accessToken',
           },
         );
-        
+
         if (response.statusCode == 200) {
           print('FCM token sent to backend successfully for worker $workerId');
         } else {
-          print('Failed to send FCM token to backend. Status: ${response.statusCode}');
+          print(
+            'Failed to send FCM token to backend. Status: ${response.statusCode}',
+          );
         }
       }
     } catch (e) {

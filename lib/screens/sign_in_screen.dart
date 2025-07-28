@@ -80,20 +80,26 @@ class _SignInScreenState extends State<SignInScreen> {
               String? token = await FirebaseMessaging.instance.getToken();
               print('[DEBUG] Business Owner FCM Token: ' + (token ?? 'null'));
               // Update FCM token for business owner
-              final authProvider = Provider.of<AuthProvider>(context, listen: false);
-              if (authProvider.businessOwnerId != null && authProvider.accessToken != null) {
+              final authProvider = Provider.of<AuthProvider>(
+                context,
+                listen: false,
+              );
+              if (authProvider.businessOwnerId != null &&
+                  authProvider.accessToken != null) {
                 await FCMService.updateFCMTokenForBusinessOwner(
                   authProvider.businessOwnerId!,
                   authProvider.accessToken!,
                 );
               } else {
-                print('[DEBUG] Business owner ID or access token is null, cannot update FCM token');
+                print(
+                  '[DEBUG] Business owner ID or access token is null, cannot update FCM token',
+                );
               }
             } catch (e) {
               print('Failed to get or update FCM token for business owner: $e');
             }
           }
-          
+
           if (mounted) {
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(

@@ -508,8 +508,6 @@ class _SeekerHomeScreenState extends State<SeekerHomeScreen> {
     );
   }
 
-
-
   Widget _buildProfileActionCard({
     required IconData icon,
     required String title,

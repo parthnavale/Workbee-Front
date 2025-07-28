@@ -192,20 +192,26 @@ class JobProvider with ChangeNotifier {
     final applications = await serviceLocator.jobService.getWorkerApplications(
       workerId,
     );
-    print('[DEBUG] fetchWorkerApplications: fetched ${applications.length} applications');
+    print(
+      '[DEBUG] fetchWorkerApplications: fetched ${applications.length} applications',
+    );
     _myApplications.addAll(applications);
 
     // Batch fetch all jobs for these applications
     final jobIdsNeeded = applications.map((app) => app.jobId).toSet().toList();
     if (jobIdsNeeded.isNotEmpty) {
-      print('[DEBUG] fetchWorkerApplications: batch fetching jobs: $jobIdsNeeded');
+      print(
+        '[DEBUG] fetchWorkerApplications: batch fetching jobs: $jobIdsNeeded',
+      );
       final apiJobRepo = serviceLocator.jobRepository;
       if (apiJobRepo is ApiJobRepository) {
         final jobs = await apiJobRepo.getJobsByIds(jobIdsNeeded);
         // Remove any existing jobs with these IDs
         _jobs.removeWhere((job) => jobIdsNeeded.contains(job.id));
         _jobs.addAll(jobs);
-        print('[DEBUG] fetchWorkerApplications: added ${jobs.length} jobs to _jobs');
+        print(
+          '[DEBUG] fetchWorkerApplications: added ${jobs.length} jobs to _jobs',
+        );
       }
     }
     _isLoadingWorkerApplications = false;
